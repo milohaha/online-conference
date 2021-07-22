@@ -1,0 +1,60 @@
+version: "3"
+services: 
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    container_name: MEVN-mariadb
+    ports:
+      - "3307:3306"
+    environment: 
+      MYSQL_ROOT_PASSWORD: "password"
+    networks:
+      - db-network
+    volumes:
+      - maria-data:/data/db
+
+
+  backend:
+    build: ./backend
+    container_name: MEVN-express
+    restart: always
+    volumes: 
+      - ./backend:/express
+    ports:
+      - "3000:3000"
+    networks:
+      - db-network
+      - fb-network
+    links:
+      - mariadb
+    depends_on: 
+      - mariadb
+    # command: >
+    #   bash -c "npm install
+    #   && DEBUG=backend:* npm start"
+
+  frontend:
+    build: ./frontend
+    restart: always
+    container_name: MEVN-vue
+    ports:
+      - "8080:8080"
+    networks:
+      - fb-network
+    volumes:
+      - ./frontend:/code
+    #   command: bash -c "npm run serve"
+
+
+networks:
+  db-network:
+    driver: bridge
+
+  fb-network:
+    driver: bridge
+
+volumes:
+  maria-data:
+    driver: local
+
+  

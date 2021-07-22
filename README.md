@@ -1,3 +1,10 @@
-### Conference Room
+# Conference Room
 
-此项目旨在构建一个线上会议室应用,拥有协作编辑文件与音视频通话的核心功能,尝试还原线下会议室的体验
+前端使用Vue框架
+
+后端使用Node.js的ExpressJS
+
+数据库使用mariadb
+
+已配置好基础Lint和EditorConfig
+
