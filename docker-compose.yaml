@@ -29,9 +29,8 @@ services:
       - mariadb
     depends_on: 
       - mariadb
-    # command: >
-    #   bash -c "npm install
-    #   && DEBUG=backend:* npm start"
+    command: sh -c "npm install
+        && DEBUG=backend:* npm start"
 
   frontend:
     build: ./frontend
@@ -43,7 +42,8 @@ services:
       - fb-network
     volumes:
       - ./frontend:/code
-    #   command: bash -c "npm run serve"
+    command: sh -c "npm install
+        && npm run serve"
 
 
 networks:
