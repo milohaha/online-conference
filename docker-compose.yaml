@@ -8,10 +8,11 @@ services:
       - "3307:3306"
     environment: 
       MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "database_development"
     networks:
       - db-network
     volumes:
-      - maria-data:/data/db
+      - ./data:/data/db
 
 
   backend:
@@ -24,37 +25,17 @@ services:
       - "3000:3000"
     networks:
       - db-network
-      - fb-network
     links:
       - mariadb
     depends_on: 
       - mariadb
     command: sh -c "npm install
+        && cd db
+        && npx sequelize-cli db:migrate
+        && cd ../
         && DEBUG=backend:* npm start"
-
-  frontend:
-    build: ./frontend
-    restart: always
-    container_name: MEVN-vue
-    ports:
-      - "8080:8080"
-    networks:
-      - fb-network
-    volumes:
-      - ./frontend:/code
-    command: sh -c "npm install
-        && npm run serve"
-
 
 networks:
   db-network:
     driver: bridge
-
-  fb-network:
-    driver: bridge
-
-volumes:
-  maria-data:
-    driver: local
-
   
