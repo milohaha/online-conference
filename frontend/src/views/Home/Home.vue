@@ -22,3 +22,8 @@
     </div>
   </div>
 </template>
+<style scoped>
+* {
+  font-family: 陈继世-硬笔行书;
+}
+</style>
