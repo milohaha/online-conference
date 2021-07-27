@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home/Home.vue'
 import login from '../views/Login/Login.vue'
+import store from '../store/index.js'
 
 Vue.use(VueRouter)
 
@@ -41,7 +42,29 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode: 'history',
+  saveScrollPosition: true,
   routes
+})
+
+router.beforeEach(({ meta, path }, from, next) => {
+  console.log('meta: ', meta)
+  console.log('path: ', path)
+  console.log('from: ', from)
+  console.log('next: ', next)
+  const { auth = true } = meta
+  const isLogin = Boolean(store.state.login.token)
+  if (auth && path === '/') {
+    next()
+  } else {
+    if (auth && !isLogin && path !== '/login') {
+      return next({ path: '/login' })
+    }
+    if (isLogin && (path === '/login' || path === 'reg')) {
+      return next({ path: '/team' })
+    }
+  }
+  next()
 })
 
 export default router

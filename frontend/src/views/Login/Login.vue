@@ -1,93 +1,85 @@
 <template>
   <div id="login">
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group id="input-group-2" label="UserName:" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.name"
-          required
-          placeholder="Enter name"
-        ></b-form-input>
-      </b-form-group>
-      <b-form  @submit.stop.prevent>
-        <label for="feedback-user">User ID</label>
-        <b-input v-model="userId" :state="validation" id="feedback-user"></b-input>
-        <b-form-invalid-feedback :state="validation">
-          Your user ID must be 5-12 characters long.
-        </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation">
-          Looks Good.
-        </b-form-valid-feedback>
-      </b-form>
-      <b-form-group
-        id="input-group-1"
-        label="Email address:"
-        label-for="input-1"
-      >
+    <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form-group id="input-group-1" label="用户名:" label-for="input-1">
         <b-form-input
           id="input-1"
-          v-model="form.email"
-          type="email"
+          ref="input1"
+          v-model="user.username"
+          :state="validation_username"
           required
-          placeholder="Enter email"
+          placeholder="输入用户名"
         ></b-form-input>
+        <b-form-invalid-feedback :state="validation_username">
+          你的用户名长度必须在5-12个字符之间
+        </b-form-invalid-feedback>
+        <b-form-valid-feedback :state="validation_username">
+          符合要求
+        </b-form-valid-feedback>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
+      <b-form-group id="input-group-3" label="密码:" label-for="input-3">
         <b-form-input
-          id="input-2"
-          v-model="form.name"
+          id="input-3"
+          v-model="user.password"
+          ref="input3"
+          :state="validation_password"
           required
-          placeholder="Enter name"
+          placeholder="输入密码"
         ></b-form-input>
+        <b-form-invalid-feedback :state="validation_password">
+          你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
+        </b-form-invalid-feedback>
+        <b-form-valid-feedback :state="validation_password">
+          符合要求
+        </b-form-valid-feedback>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
+      <b-button type="submit" variant="primary">登录</b-button>
+      <b-button variant="danger" to="/">返回</b-button>
     </b-form>
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card>
+
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
-      form: {
-        email: '',
-        name: '',
-        food: null,
-        checked: []
+      user: {
+        username: '',
+        password: ''
       },
-      foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
-      show: true,
-      userId: ''
+      show: true
     }
   },
   computed: {
-    validation () {
-      return this.userId.length > 4 && this.userId.length < 13
+    ...mapActions({
+      UserLogin: 'UserLogin'
+    }),
+    validation_username () {
+      return this.user.username.length > 4 && this.user.username.length < 13
+    },
+    validation_password () {
+      const reg = /^(\w){8,20}$/
+      return !!reg.exec(this.user.password)
     }
   },
   methods: {
     onSubmit (evt) {
-      evt.preventDefault()
-      alert(JSON.stringify(this.form))
+      if (this.isSubmitReady()) {
+        console.log(this.user)
+      }
     },
-    onReset (evt) {
-      evt.preventDefault()
-      // Reset our form values
-      this.form.email = ''
-      this.form.name = ''
-      this.form.food = null
-      this.form.checked = []
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
+    isSubmitReady () {
+      return this.isNameReady() && this.isPasswordReady()
+    },
+    isNameReady () {
+      return this.$refs.input1.state
+    },
+    isPasswordReady () {
+      return this.$refs.input3.state
     }
   }
 }
