@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const expressJWT = require('express-jwt')
 
-const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
+const userRouter = require('./routes/user')
+const teamRouter = require('./routes/team')
 const { PRIVATE_KEY, CODE_ERROR } = require('./utils/constant')
 
 const app = express()
@@ -36,8 +36,8 @@ app.use(expressJWT({
   path: ['/', '/login', '/register']
 }))
 
-app.use('/', indexRouter)
-app.use('/users', usersRouter)
+app.use('/', userRouter)
+app.use('/team', teamRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
