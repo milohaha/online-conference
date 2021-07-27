@@ -4,7 +4,7 @@
     <img src="../../assets/picture/fmt.png">
   </header>
   <body>
-    <b-nav vertical tabs class="nav" id="nav1" align="start">
+    <b-nav vertical tabs class="nav" id="firstnav" align="start">
       <b-nav-item @click="viewFile" to="/team/recentfile">最近文件</b-nav-item>
       <b-nav-item @click="manageTeam">团队管理</b-nav-item>
       <b-nav-item>
@@ -12,7 +12,7 @@
         <b-badge variant="info">99+</b-badge>
       </b-nav-item>
     </b-nav>
-    <b-nav vertical pills class="nav" id="nav2" v-if="IsManagingTeam">
+    <b-nav vertical pills class="nav" id="secondnav" v-if="isManagingTeam">
       <b-nav-item to="/team/teambuild">创建团队</b-nav-item>
       <b-nav-item to="/team/teamjoin">加入团队</b-nav-item>
       <b-nav-item v-b-toggle.created>我创建的团队</b-nav-item>
@@ -38,15 +38,15 @@
 export default {
   data: function () {
     return {
-      IsManagingTeam: false
+      isManagingTeam: false
     }
   },
   methods: {
     manageTeam () {
-      this.IsManagingTeam = true
+      this.isManagingTeam = true
     },
     viewFile () {
-      this.IsManagingTeam = false
+      this.isManagingTeam = false
     }
   }
 }
@@ -68,10 +68,9 @@ body {
 }
 .nav {
   width: 115px;
-  /*ackground-color: #FAF3F3;*/
   background-color: #f2f6fa;
 }
-#nav2 {
+#secondnav {
   padding-top: 41px;
   width: 150px;
 }

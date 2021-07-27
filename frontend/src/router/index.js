@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home/Home.vue'
-import login from '../views/Login/Login.vue'
-import register from '../views/Login/Register'
-import store from '../store/index.js'
+import Login from '../views/Login/Login.vue'
+import Register from '../views/Login/Register'
+import Store from '../store/index.js'
 
 Vue.use(VueRouter)
 
@@ -16,12 +16,12 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: login
+    component: Login
   },
   {
     path: '/register',
     name: 'register',
-    component: register
+    component: Register
   },
   {
     path: '/team',
@@ -54,13 +54,8 @@ const router = new VueRouter({
 })
 
 router.beforeEach(({ meta, path }, from, next) => {
-  console.log('meta: ', meta)
-  console.log('path: ', path)
-  console.log('from: ', from)
-  console.log('next: ', next)
   const { auth = true } = meta
-  const isLogin = Boolean(store.state.login.token)
-
+  const isLogin = Boolean(Store.state.Login.token)
   if (auth && isLogin) {
     console.log('I am in')
     return next({ path: '/team' })

@@ -1,19 +1,19 @@
 <template>
   <div id="login">
-    <b-form @submit.prevent="onSubmit" v-if="show">
+    <b-form v-if="show">
       <b-form-group id="input-group-1" label="用户名:" label-for="input-1">
         <b-form-input
           id="input-1"
           ref="input1"
           v-model="user.username"
-          :state="validation_username"
+          :state="validationUsername"
           required
           placeholder="输入用户名"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_username">
+        <b-form-invalid-feedback :state="validationUsername">
           你的用户名长度必须在5-12个字符之间
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_username">
+        <b-form-valid-feedback :state="validationUsername">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -22,14 +22,14 @@
           id="input-3"
           v-model="user.password"
           ref="input3"
-          :state="validation_password"
+          :state="validationPassword"
           required
           placeholder="输入密码"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_password">
+        <b-form-invalid-feedback :state="validationPassword">
           你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_password">
+        <b-form-valid-feedback :state="validationPassword">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -57,20 +57,15 @@ export default {
     ...mapActions({
       UserLogin: 'UserLogin'
     }),
-    validation_username () {
+    validationUsername () {
       return this.user.username.length > 4 && this.user.username.length < 13
     },
-    validation_password () {
+    validationPassword () {
       const reg = /^(\w){8,20}$/
       return !!reg.exec(this.user.password)
     }
   },
   methods: {
-    onSubmit () {
-      if (this.isSubmitReady()) {
-        console.log(this.user)
-      }
-    },
     isSubmitReady () {
       return this.isNameReady() && this.isPasswordReady()
     },

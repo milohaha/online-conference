@@ -5,7 +5,7 @@
         <b-button variant="outline-primary" id="delete" @click="deletefile">删除</b-button>
         <b-button variant="outline-primary" id="share">共享</b-button>
       </div>
-      <b-form-checkbox-group id="selectfile" v-model="selectedfile">
+      <b-form-checkbox-group id="selectfile" v-model="selectedFile">
         <b-form-checkbox v-for="(file,index) in files" :key="index" :value="file.value" size="lg" class="file">
           <b-link :to="file.value">{{ file.text }}</b-link>
         </b-form-checkbox>
@@ -16,8 +16,7 @@
 export default {
   data: function () {
     return {
-      itemnum: 2,
-      selectedfile: [],
+      selectedFile: [],
       files: [
         { text: '文件1', value: '1' },
         { text: '文件2', value: '2' },
@@ -29,12 +28,12 @@ export default {
   methods: {
     deletefile () {
       for (let i = 0; i < this.files.length; i++) {
-        if (this.selectedfile.indexOf(this.files[i].value) !== -1) {
+        if (this.selectedFile.indexOf(this.files[i].value) !== -1) {
           this.files.splice(i, 1)
           i--
         }
       }
-      this.selectedfile.length = 0
+      this.selectedFile.length = 0
     }
   }
 }

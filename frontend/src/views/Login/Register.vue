@@ -1,19 +1,19 @@
 <template>
   <div id="register">
-    <b-form @submit.prevent="onSubmit" v-if="show">
+    <b-form v-if="show">
       <b-form-group id="input-group-2" label="邮箱地址:" label-for="input-2">
         <b-form-input
           id="input-2"
           ref="input2"
           v-model="user.email"
-          :state="validation_email"
+          :state="validationEmail"
           required
           placeholder="输入邮箱"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_email">
+        <b-form-invalid-feedback :state="validationEmail">
           请输入正确的邮箱格式
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_email">
+        <b-form-valid-feedback :state="validationEmail">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -22,14 +22,14 @@
           id="input-1"
           ref="input1"
           v-model="user.username"
-          :state="validation_username"
+          :state="validationUsername"
           required
           placeholder="输入用户名"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_username">
+        <b-form-invalid-feedback :state="validationUsername">
           你的用户名长度必须在5-12个字符之间
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_username">
+        <b-form-valid-feedback :state="validationUsername">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -38,14 +38,14 @@
           id="input-3"
           v-model="user.password"
           ref="input3"
-          :state="validation_password"
+          :state="validationPassword"
           required
           placeholder="输入密码"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_password">
+        <b-form-invalid-feedback :state="validationPassword">
           你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_password">
+        <b-form-valid-feedback :state="validationPassword">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -54,14 +54,14 @@
           id="input-4"
           v-model="user.passwordCheck"
           ref="input4"
-          :state="validation_password_check"
+          :state="validationPasswordCheck"
           required
           placeholder="再次输入密码"
         ></b-form-input>
-        <b-form-invalid-feedback :state="validation_password_check">
+        <b-form-invalid-feedback :state="validationPasswordCheck">
           密码不一致
         </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation_password_check">
+        <b-form-valid-feedback :state="validationPasswordCheck">
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
@@ -84,18 +84,18 @@ export default {
     }
   },
   computed: {
-    validation_email () {
+    validationEmail () {
       const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
       return reg.test(this.user.email)
     },
-    validation_username () {
+    validationUsername () {
       return this.user.username.length > 4 && this.user.username.length < 13
     },
-    validation_password () {
+    validationPassword () {
       const reg = /^(\w){8,20}$/
       return !!reg.exec(this.user.password)
     },
-    validation_password_check () {
+    validationPasswordCheck () {
       if (this.user.password !== '') {
         return this.user.password === this.user.passwordCheck
       }
@@ -103,11 +103,6 @@ export default {
     }
   },
   methods: {
-    onSubmit () {
-      if (this.isSubmitReady()) {
-        console.log(this.user)
-      }
-    },
     isEmailReady () {
       return this.$refs.input2.state
     },
@@ -127,7 +122,7 @@ export default {
 }
 </script>
 <style>
-#register{
+#register {
   width: 400px;
   height: 700px;
   position: absolute;

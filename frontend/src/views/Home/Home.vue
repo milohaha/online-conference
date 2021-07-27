@@ -6,7 +6,6 @@
       <b-nav-item>Another Link</b-nav-item>
       <b-nav-item disabled>Disabled</b-nav-item>
     </b-nav>
-
     <b-jumbotron>
       <template v-slot:header>富媒体实时协作平台</template>
 
@@ -22,8 +21,3 @@
     </div>
   </div>
 </template>
-<style scoped>
-* {
-  font-family: 陈继世-硬笔行书;
-}
-</style>
