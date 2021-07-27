@@ -17,7 +17,6 @@
           符合要求
         </b-form-valid-feedback>
       </b-form-group>
-
       <b-form-group id="input-group-3" label="密码:" label-for="input-3">
         <b-form-input
           id="input-3"
@@ -67,7 +66,7 @@ export default {
     }
   },
   methods: {
-    onSubmit (evt) {
+    onSubmit () {
       if (this.isSubmitReady()) {
         console.log(this.user)
       }

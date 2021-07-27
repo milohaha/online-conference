@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home/Home.vue'
 import login from '../views/Login/Login.vue'
+import register from '../views/Login/Register'
 import store from '../store/index.js'
 
 Vue.use(VueRouter)
@@ -16,6 +17,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: login
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: register
   },
   {
     path: '/team',
@@ -54,15 +60,10 @@ router.beforeEach(({ meta, path }, from, next) => {
   console.log('next: ', next)
   const { auth = true } = meta
   const isLogin = Boolean(store.state.login.token)
-  if (auth && path === '/') {
-    next()
-  } else {
-    if (auth && !isLogin && path !== '/login') {
-      return next({ path: '/login' })
-    }
-    if (isLogin && (path === '/login' || path === 'reg')) {
-      return next({ path: '/team' })
-    }
+
+  if (auth && isLogin) {
+    console.log('I am in')
+    return next({ path: '/team' })
   }
   next()
 })
