@@ -4,7 +4,7 @@ const DB = require('../db/models/index')
 const models = DB.sequelize.models
 
 function checkString (string) {
-  return typeof (string) === 'undefined' || string.toString() === ''
+  return !(typeof (string) === 'undefined' || string.toString() === '')
 }
 async function createTeam (teamname, userid) {
   if (!checkString(userid)) { return 'User Error' }
