@@ -5,7 +5,7 @@ module.exports = {
     return md5.update(password).digest('hex')
   },
   checkString: function (string) {
-    return !(typeof (string) === 'undefined' || string.toString() === '')
+    return !(string === undefined || string.toString() === '')
   },
   getObjectId: async function (Model, name) {
     if (!this.checkString(name)) {

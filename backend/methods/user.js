@@ -2,8 +2,8 @@ const publicMethods = require('public')
 const database = require('../db/models')
 const models = database.sequelize.models
 module.exports = {
-  createUser: async function (username, password, email) {
-    if (!publicMethods.checkString(username)) {
+  createUser: async function (userName, password, email) {
+    if (!publicMethods.checkString(userName)) {
       return 'Username Error'
     }
     if (!publicMethods.checkString(password)) {
@@ -13,7 +13,7 @@ module.exports = {
       return 'Email Error'
     }
     await models.User.create({
-      username: username,
+      username: userName,
       password: password,
       email: email
     })

@@ -26,17 +26,17 @@ router.get('/', async (request, response, next) => {
 // login
 router.post('/login', async (request, response, next) => {
   try {
-    let { username, password } = request.body
+    let { userName, password } = request.body
     password = publicMethods.md5(`${password}${constant.SALT_KEY}`)
     const user = await User.findAll({
       where: {
-        username: username,
+        username: userName,
         password: password
       }
     })
     console.log(JSON.stringify(user, null, 2))
     if (user && user.length !== 0) {
-      const token = jsonwebtoken.sign({ username }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
+      const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_LOGININ',
@@ -57,14 +57,14 @@ router.post('/login', async (request, response, next) => {
 // register
 router.post('/register', async (request, response, next) => {
   let {
-    username,
+    userName,
     password,
     email
   } = request.body
   try {
     const user = await User.findAll({
       where: {
-        username: username
+        username: userName
       }
     })
     if (user && user.length !== 0) {
@@ -74,8 +74,8 @@ router.post('/register', async (request, response, next) => {
       })
     } else {
       password = publicMethods.md5(`${password}${constant.SALT_KEY}`)
-      await userMethods.createUser(username, password, email)
-      const token = jsonwebtoken.sign({ username }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
+      await userMethods.createUser(userName, password, email)
+      const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_REGISTER',
