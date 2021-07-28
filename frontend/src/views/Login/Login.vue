@@ -43,6 +43,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import socketio from 'socket.io-client'
 export default {
   data () {
     return {
@@ -74,6 +75,16 @@ export default {
     },
     isPasswordReady () {
       return this.$refs.input3.state
+    },
+    loginMsg () {
+      const io = socketio('http://localhost:3000', {
+        transports: ['websocket']
+      })
+      io.emit('sendMsg', { name: this.user.username })
+      io.on('receiveMsg', function () {
+        // 收到信息
+        console.log('receive message')
+      })
     }
   }
 }

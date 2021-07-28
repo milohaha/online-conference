@@ -10,9 +10,15 @@ const teamRouter = require('./routes/team')
 const { PRIVATE_KEY, CODE_ERROR } = require('./utils/constant')
 
 const app = express()
+app.disable('x-powered-by')
+const server = require('http').createServer(app)
+require('./utils/socket')(server)
+// const io = require('socket.io')(server, { transports: ['websocket'] })
+// server.listen(3001)
+
 // cross-domain
 app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.header('Access-Control-Allow-Headers', 'authorization,Content-Type,x-csrftoken,x-requested-with')
   res.header('Access-Control-Allow-Methods', '*')
   res.header('Content-Type', 'application/json;charset=utf-8')

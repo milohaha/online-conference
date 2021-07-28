@@ -7,16 +7,6 @@ const jsonwebtoken = require('jsonwebtoken')
 const database = require('../db/models/index')
 const sequelize = database.sequelize
 const User = sequelize.models.User
-// 查找所有用户并打印的实例
-// User.findAll().then(users => { console.log('All users:', JSON.stringify(users, null, 2)) })
-// 创建用户到数据库的用法实例
-// const createUser = async (name, password, email) => {
-//   await sequelize.models.User.create({
-//     name: name,
-//     password: password,
-//     email: email
-//   })
-// }
 
 /* GET home page. */
 router.get('/', async (request, response, next) => {
@@ -27,7 +17,7 @@ router.get('/', async (request, response, next) => {
 router.post('/login', async (request, response, next) => {
   try {
     let { userName, password } = request.body
-    password = publicMethods.md5(`${password}${constant.SALT_KEY}`)
+    password = publicMethods.sha512(`${password}`)
     const user = await User.findAll({
       where: {
         username: userName,
@@ -37,15 +27,17 @@ router.post('/login', async (request, response, next) => {
     console.log(JSON.stringify(user, null, 2))
     if (user && user.length !== 0) {
       const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
+      const expireTime = (Date.now() + constant.EXPIRED * 1000).toString()
       response.json({
         code: constant.CODE_SUCCESS,
-        message: 'USER_LOGININ',
-        token: token
+        message: 'USER_LOGIN',
+        token: token,
+        expireTime: expireTime
       })
     } else {
       response.json({
         code: constant.CODE_ERROR,
-        message: 'WRONG_PASSWORD'
+        message: 'WRONG_USERNAME_OR_PASSWORD'
       })
     }
   } catch (error) {
@@ -73,13 +65,11 @@ router.post('/register', async (request, response, next) => {
         message: 'ALREADY_REGISTERED'
       })
     } else {
-      password = publicMethods.md5(`${password}${constant.SALT_KEY}`)
+      password = publicMethods.sha512(`${password}`)
       await userMethods.createUser(userName, password, email)
-      const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       response.json({
         code: constant.CODE_SUCCESS,
-        message: 'USER_REGISTER',
-        token: token
+        message: 'USER_REGISTER'
       })
     }
   } catch (error) {

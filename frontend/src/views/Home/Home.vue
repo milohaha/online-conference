@@ -27,7 +27,7 @@
   background-color: #04294f;
   height: 800px;
   color: #fff;
-  font-family: 字魂27号-布丁体;
+  font-family: 字魂27号-布丁体, Helvetica, Arial, Verdana, Tahoma, sans-serif;;
 }
 #title {
   margin-left: auto;

@@ -1,8 +1,8 @@
 const crypto = require('crypto')
 module.exports = {
-  md5: (password) => {
-    const md5 = crypto.createHash('md5')
-    return md5.update(password).digest('hex')
+  sha512: (password) => {
+    const sha512 = crypto.createHash('sha512')
+    return sha512.update(password).digest('hex')
   },
   checkString: function (string) {
     return !(string === undefined || string.toString() === '')

@@ -1,7 +1,7 @@
 <template>
 <div id="all">
   <header class="logo">
-    <img src="../../assets/picture/fmt.png">
+    <img alt="logo" src="../../assets/picture/fmt.png">
   </header>
   <body>
     <b-nav vertical tabs class="nav" id="firstnav" align="start">
@@ -53,7 +53,7 @@ export default {
 </script>
 <style scoped>
 * {
-  font-family: MicrosoftYaHei;
+  font-family: MicrosoftYaHei, Serif, Sans-serif, cursive, fantasy, Monospace;
 }
 #all {
   margin: 50px 50px;

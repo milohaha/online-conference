@@ -17,9 +17,9 @@ const state = {
 }
 
 const mutations = {
-  [USER_SIGNIN] (state, username) {
+  [USER_SIGNIN] (stateLocal, username) {
     localStorage.setItem('username', JSON.stringify(username))
-    state.token = username
+    stateLocal.token = username
   }
 }
 
