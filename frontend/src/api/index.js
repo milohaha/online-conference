@@ -11,5 +11,8 @@ if (localStorage.getItem('userToken')) {
 export default {
   localLogin: function (data) {
     return Vue.axios.post(process.env.VUE_APP_API_BASE + '/login', data)
+  },
+  localRegister: function (data) {
+    return Vue.axios.post(process.env.VUE_APP_API_BASE + '/register', data)
   }
 }

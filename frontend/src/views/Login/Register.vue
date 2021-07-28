@@ -1,6 +1,20 @@
 <template>
   <div id="register">
-    <b-form v-if="show">
+    <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-alert
+        :show="dismissCountDown"
+        variant="danger"
+        @dismissed="dismissCountDown=0"
+        @dismiss-count-down="dismissCountDownChanged">
+        该账号已存在</b-alert>
+      <b-alert
+        :show="countDown"
+        variant="success"
+        @dismissed="countDown=0"
+        @dismiss-count-down="countDownChanged">
+        该页面将在{{countDown}}秒后跳转至登录界面&nbsp;
+        <b-link to="/login" class="alert-link">点击此处</b-link>立即跳转
+      </b-alert>
       <b-form-group id="input-group-2" label="邮箱地址:" label-for="input-2">
         <b-form-input
           id="input-2"
@@ -71,6 +85,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -80,10 +95,15 @@ export default {
         email: '',
         passwordCheck: ''
       },
-      show: true
+      show: true,
+      dismissCountDown: 0,
+      countDown: 0
     }
   },
   computed: {
+    ...mapActions({
+      UserRegister: 'UserRegister'
+    }),
     validationEmail () {
       const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
       return reg.test(this.user.email)
@@ -103,6 +123,23 @@ export default {
     }
   },
   methods: {
+    onSubmit () {
+      if (this.isSubmitReady()) {
+        this.$store.dispatch('UserRegister', {
+          userName: this.user.userName,
+          password: this.user.password,
+          email: this.user.email
+        })
+          .then(response => {
+            if (response.data.message === 'ALREADY_REGISTERED') {
+              this.showFailureAlert()
+            } else if (response.data.message === 'USER_REGISTER') {
+              this.showSuccessAlert()
+            }
+          })
+          .catch(error => console.log(error))
+      }
+    },
     isEmailReady () {
       return this.$refs.input2.state
     },
@@ -117,6 +154,21 @@ export default {
     },
     isPassCheckReady () {
       return this.$refs.input4.state
+    },
+    countDownChanged (countDown) {
+      this.countDown = countDown
+      if (countDown === 0) {
+        this.$router.push({ path: '/login' })
+      }
+    },
+    dismissCountDownChanged (dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    showSuccessAlert () {
+      this.countDown = 5
+    },
+    showFailureAlert () {
+      this.dismissCountDown = 3
     }
   }
 }
@@ -129,6 +181,6 @@ export default {
   top: 50%;
   left: 50%;
   margin-left: -200px;
-  margin-top: -350px;
+  margin-top: -250px;
 }
 </style>
