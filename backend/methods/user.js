@@ -1,4 +1,4 @@
-const publicMethods = require('public')
+const publicMethods = require('../methods/public')
 const database = require('../db/models')
 const models = database.sequelize.models
 module.exports = {
@@ -12,11 +12,15 @@ module.exports = {
     if (!publicMethods.checkString(email)) {
       return 'Email Error'
     }
-    await models.User.create({
+    models.User.create({
       username: userName,
       password: password,
       email: email
+    }).then(data => {
+      return 'USER_REGISTER'
     })
-    return 'USER_REGISTER'
+    setTimeout(() => {
+      return 'CONNECT_ERROR'
+    }, 1000)
   }
 }

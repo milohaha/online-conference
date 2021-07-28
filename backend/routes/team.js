@@ -5,7 +5,7 @@ const models = database.sequelize.models
 const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
-router.post('/createteam', function (request, response, next) {
+router.post('/createteam', async (request, response, next) => {
   let userName
   let teamName
   try {
@@ -14,8 +14,9 @@ router.post('/createteam', function (request, response, next) {
   } catch (error) {
     response.json({ message: 'Paras Error' })
   }
-  const userId = publicMethods.getObjectId(models.User, userName)
-  return response.json({ message: teamMethods.createTeam(teamName, userId) })
+  const userId = await publicMethods.getObjectId(models.User, userName)
+  const result = await teamMethods.createTeam(teamName, userId)
+  return response.json({ message: result })
 })
 
 module.exports = router

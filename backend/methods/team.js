@@ -1,4 +1,4 @@
-const publicMethods = require('public')
+const publicMethods = require('../methods/public')
 const database = require('../db/models')
 const models = database.sequelize.models
 module.exports = {
@@ -9,7 +9,8 @@ module.exports = {
     if (!publicMethods.checkString(teamName)) {
       return 'TeamName Error'
     }
-    if (await publicMethods.getObjectId(models.Team, teamName) === '') {
+    const objectId = await publicMethods.getObjectId(models.Team, teamName)
+    if (objectId === '') {
       await models.Team.create({ teamname: teamName, founderid: userId })
       return 'created'
     } else {

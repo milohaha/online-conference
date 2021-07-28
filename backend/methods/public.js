@@ -11,16 +11,15 @@ module.exports = {
     if (!this.checkString(name)) {
       return 'Name Error'
     }
-    Model.findAll({
+    const objects = await Model.findAll({
       where: {
-        name: name.toString()
-      }
-    }).then(data => {
-      if (data.length !== 0) {
-        return data[0].id.toString()
-      } else {
-        return ''
+        username: name.toString()
       }
     })
+    if (objects.length !== 0) {
+      return objects[0].id
+    } else {
+      return ''
+    }
   }
 }
