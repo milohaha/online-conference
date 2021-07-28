@@ -21,7 +21,7 @@
         <b-form-input
           id="input-1"
           ref="input1"
-          v-model="user.username"
+          v-model="user.userName"
           :state="validationUsername"
           required
           placeholder="输入用户名"
@@ -75,7 +75,7 @@ export default {
   data () {
     return {
       user: {
-        username: '',
+        userName: '',
         password: '',
         email: '',
         passwordCheck: ''
@@ -89,7 +89,7 @@ export default {
       return reg.test(this.user.email)
     },
     validationUsername () {
-      return this.user.username.length > 4 && this.user.username.length < 13
+      return this.user.userName.length > 4 && this.user.userName.length < 13
     },
     validationPassword () {
       const reg = /^(\w){8,20}$/

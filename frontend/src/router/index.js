@@ -56,8 +56,13 @@ const router = new VueRouter({
 router.beforeEach(({ meta, path }, from, next) => {
   const { auth = true } = meta
   const isLogin = Boolean(Store.state.Login.token)
-  if (auth && isLogin) {
-    console.log('I am in')
+  if (path === '/') {
+    return next()
+  }
+  if (auth && !isLogin && (path !== '/login' && path !== '/register')) {
+    return next({ path: '/' })
+  }
+  if (isLogin && (path === '/login' || path === '/register')) {
     return next({ path: '/team' })
   }
   next()

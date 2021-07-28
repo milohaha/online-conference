@@ -1,11 +1,12 @@
 <template>
   <div id="login">
-    <b-form v-if="show">
+    <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-alert :show="alert" variant="danger">用户名不存在或密码错误</b-alert>
       <b-form-group id="input-group-1" label="用户名:" label-for="input-1">
         <b-form-input
           id="input-1"
           ref="input1"
-          v-model="user.username"
+          v-model="user.userName"
           :state="validationUsername"
           required
           placeholder="输入用户名"
@@ -43,15 +44,15 @@
 
 <script>
 import { mapActions } from 'vuex'
-import socketio from 'socket.io-client'
 export default {
   data () {
     return {
       user: {
-        username: '',
+        userName: '',
         password: ''
       },
-      show: true
+      show: true,
+      alert: false
     }
   },
   computed: {
@@ -59,7 +60,7 @@ export default {
       UserLogin: 'UserLogin'
     }),
     validationUsername () {
-      return this.user.username.length > 4 && this.user.username.length < 13
+      return this.user.userName.length > 4 && this.user.userName.length < 13
     },
     validationPassword () {
       const reg = /^(\w){8,20}$/
@@ -67,6 +68,17 @@ export default {
     }
   },
   methods: {
+    onSubmit () {
+      if (this.isSubmitReady()) {
+        this.$store.dispatch('UserLogin', this.user)
+          .then(response => {
+            if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
+              this.alert = true
+            }
+          })
+          .catch(error => console.log(error))
+      }
+    },
     isSubmitReady () {
       return this.isNameReady() && this.isPasswordReady()
     },
@@ -75,16 +87,6 @@ export default {
     },
     isPasswordReady () {
       return this.$refs.input3.state
-    },
-    loginMsg () {
-      const io = socketio('http://localhost:3000', {
-        transports: ['websocket']
-      })
-      io.emit('sendMsg', { name: this.user.username })
-      io.on('receiveMsg', function () {
-        // 收到信息
-        console.log('receive message')
-      })
     }
   }
 }
@@ -97,6 +99,6 @@ export default {
   top: 50%;
   left: 50%;
   margin-left: -200px;
-  margin-top: -350px;
+  margin-top: -250px;
 }
 </style>

@@ -24,7 +24,6 @@ router.post('/login', async (request, response, next) => {
         password: password
       }
     })
-    console.log(JSON.stringify(user, null, 2))
     if (user && user.length !== 0) {
       const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       const expireTime = (Date.now() + constant.EXPIRED * 1000).toString()
@@ -67,6 +66,7 @@ router.post('/register', async (request, response, next) => {
     } else {
       password = publicMethods.sha512(`${password}`)
       await userMethods.createUser(userName, password, email)
+
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_REGISTER'

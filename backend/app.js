@@ -11,6 +11,7 @@ const { PRIVATE_KEY, CODE_ERROR } = require('./utils/constant')
 
 const app = express()
 app.disable('x-powered-by')
+
 const server = require('http').createServer(app)
 require('./utils/socket')(server)
 
@@ -22,6 +23,7 @@ app.all('*', function (req, res, next) {
   res.header('Content-Type', 'application/json;charset=utf-8')
   next()
 })
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
