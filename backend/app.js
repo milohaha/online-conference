@@ -13,8 +13,6 @@ const app = express()
 app.disable('x-powered-by')
 const server = require('http').createServer(app)
 require('./utils/socket')(server)
-// const io = require('socket.io')(server, { transports: ['websocket'] })
-// server.listen(3001)
 
 // cross-domain
 app.all('*', function (req, res, next) {
