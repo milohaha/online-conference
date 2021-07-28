@@ -5,8 +5,8 @@
   </header>
   <body>
     <b-nav vertical tabs class="nav" id="firstnav" align="start">
-      <b-nav-item @click="viewFile" to="/team/recentfile">最近文件</b-nav-item>
-      <b-nav-item @click="manageTeam">团队管理</b-nav-item>
+      <b-nav-item @click="viewFile" to="/team/recentfile" id="recentfile">最近文件</b-nav-item>
+      <b-nav-item @click="manageTeam" id="manageteam">团队管理</b-nav-item>
       <b-nav-item>
         通知
         <b-badge variant="info">99+</b-badge>
