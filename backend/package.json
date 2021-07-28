@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon -L ./bin/www",
-    "test": "mocha --recursive"
+    "test": "jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,6 +13,7 @@
     "express-jwt": "^6.0.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "jest": "^27.0.6",
     "jsonwebtoken": "^8.5.1",
     "mariadb": "^2.5.4",
     "morgan": "~1.9.1",

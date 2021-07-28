@@ -12,6 +12,14 @@ module.exports = {
     if (!publicMethods.checkString(email)) {
       return 'Email Error'
     }
+    const user = await models.User.findAll({
+      where: {
+        username: userName
+      }
+    })
+    if (!(user === undefined || user.length === 0)) {
+      return 'USER_EXIST'
+    }
     models.User.create({
       username: userName,
       password: password,

@@ -9,6 +9,14 @@ module.exports = {
     if (!publicMethods.checkString(teamName)) {
       return 'TeamName Error'
     }
+    const user = await models.User.findAll({
+      where: {
+        id: userId
+      }
+    })
+    if (user === undefined || user.length === 0) {
+      return 'FounderId Error'
+    }
     const objectId = await publicMethods.getObjectId(models.Team, teamName)
     if (objectId === '') {
       await models.Team.create({ teamname: teamName, founderid: userId })
