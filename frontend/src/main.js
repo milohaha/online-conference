@@ -5,6 +5,9 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import store from './store/index.js'
+import socketio from 'socket.io-client'
+
+Vue.prototype.$io = socketio.connect('ws://127.0.0.1:3000', { transports: ['websocket'] })
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)

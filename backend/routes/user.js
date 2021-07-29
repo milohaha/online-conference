@@ -66,7 +66,6 @@ router.post('/register', async (request, response, next) => {
     } else {
       password = publicMethods.sha512(`${password}`)
       await userMethods.createUser(userName, password, email)
-
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_REGISTER'
