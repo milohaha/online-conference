@@ -102,7 +102,7 @@ export default {
   },
   computed: {
     ...mapActions({
-      UserRegister: 'UserRegister'
+      userRegister: 'userRegister'
     }),
     validationEmail () {
       const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
@@ -125,7 +125,7 @@ export default {
   methods: {
     onSubmit () {
       if (this.isSubmitReady()) {
-        this.$store.dispatch('UserRegister', {
+        this.$store.dispatch('userRegister', {
           userName: this.user.userName,
           password: this.user.password,
           email: this.user.email

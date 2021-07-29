@@ -1,4 +1,4 @@
-import { USER_REGISTER, USER_SIGNIN } from '../types'
+import { USER_LOGOUT, USER_REGISTER, USER_SIGNIN } from '../types'
 
 const isLoginIn = function () {
   const token = localStorage.getItem('userToken')
@@ -23,6 +23,10 @@ const mutations = {
   [USER_REGISTER] (stateLocal, userToken) {
     localStorage.setItem('userToken', userToken)
     stateLocal.token = userToken
+  },
+  [USER_LOGOUT] (stateLocal, userToken) {
+    localStorage.removeItem('userToken')
+    stateLocal.token = false
   }
 }
 

@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapActions({
-      UserLogin: 'UserLogin'
+      userLogin: 'userLogin'
     }),
     validationUsername () {
       return this.user.userName.length > 4 && this.user.userName.length < 13
@@ -70,7 +70,7 @@ export default {
   methods: {
     onSubmit () {
       if (this.isSubmitReady()) {
-        this.$store.dispatch('UserLogin', this.user)
+        this.$store.dispatch('userLogin', this.user)
           .then(response => {
             if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
               this.alert = true

@@ -1,7 +1,7 @@
 import Api from '../api'
-import { USER_REGISTER, USER_SIGNIN } from './types'
+import { USER_LOGOUT, USER_REGISTER, USER_SIGNIN } from './types'
 
-export const UserLogin = ({ commit }, data) => {
+export const userLogin = ({ commit }, data) => {
   return new Promise((resolve, reject) => {
     Api.localLogin(data).then(function (response) {
       if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
@@ -16,7 +16,7 @@ export const UserLogin = ({ commit }, data) => {
       })
   })
 }
-export const UserRegister = ({ commit }, data) => {
+export const userRegister = ({ commit }, data) => {
   return new Promise((resolve, reject) => {
     Api.localRegister(data).then(function (response) {
       if (response.data.message === 'ALREADY_REGISTERED') {
@@ -27,4 +27,8 @@ export const UserRegister = ({ commit }, data) => {
       }
     })
   })
+}
+export const userLogout = ({ commit }, data) => {
+  commit(USER_LOGOUT)
+  window.location = '/'
 }

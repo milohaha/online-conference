@@ -1,1 +1,1 @@
-export const UserInfo = state => state.Login.token
+export const userInfo = state => state.Login.token

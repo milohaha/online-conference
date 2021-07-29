@@ -1,10 +1,10 @@
 <template>
   <div id="home">
-    <b-nav tabs align="right">
+    <person-page></person-page>
+    <b-nav tabs align="center">
       <b-nav-item active>Home</b-nav-item>
       <b-nav-item>Link</b-nav-item>
       <b-nav-item>Another Link</b-nav-item>
-      <b-nav-item disabled>Disabled</b-nav-item>
     </b-nav>
     <b-jumbotron id="title">
       <template v-slot:header>富媒体实时协作平台</template>
@@ -13,13 +13,30 @@
       </template>
     </b-jumbotron>
     <div>
-      <b-button pill variant="outline-success" to="/login" id="loginbtn">登录</b-button>
+      <b-button pill variant="outline-success" to="/login" id="loginbtn" v-if="!isLogin">登录</b-button>
     </div>
     <div>
-      <b-button variant="link" to="/register" id="registerbtn">点我注册</b-button>
+      <b-button variant="link" to="/register" id="registerbtn" v-if="!isLogin">点我注册</b-button>
     </div>
   </div>
 </template>
+<script>
+import PersonPage from '../../components/PersonPage/PersonPage'
+import { mapGetters } from 'vuex'
+export default {
+  computed: {
+    ...mapGetters({
+      userInfo: 'userInfo'
+    }),
+    isLogin () {
+      return this.userInfo
+    }
+  },
+  components: {
+    PersonPage
+  }
+}
+</script>
 <style scoped>
 #home {
   background-image: url("../../assets/picture/bkgdpic.png");
