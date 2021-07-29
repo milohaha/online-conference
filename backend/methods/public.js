@@ -10,21 +10,28 @@ module.exports = {
   checkString: function (string) {
     return !(string === undefined || string.toString() === '')
   },
-  getObjectId: async function (Model, condition) {
+  getObjects: async function (Model, condition) {
     if (Model === undefined || condition === undefined) {
-      return ''
+      return {}
     }
-    Object.keys(condition).forEach(key => {
-      if (!this.checkString(condition[key])) {
-        return ''
-      }
-    })
-    const objects = await Model.findAll({
-      where: condition
-    })
-    if (objects.length !== 0) {
+    let objects
+    try {
+      Object.keys(condition).forEach(key => {
+        condition[key] = condition[key].toString()
+      })
+      objects = await Model.findAll({
+        where: condition
+      })
+    } catch (error) {
+      return {}
+    }
+    return objects
+  },
+  getObjectId: async function (Model, condition) {
+    const objects = await this.getObjects(Model, condition)
+    try {
       return objects[0].id
-    } else {
+    } catch (error) {
       return ''
     }
   }

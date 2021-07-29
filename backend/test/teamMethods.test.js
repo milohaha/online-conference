@@ -3,45 +3,27 @@ const database = require('../db/models/index')
 const sequelize = database.sequelize
 const Team = sequelize.models.Team
 const User = sequelize.models.User
-test('no paras should return User Error', async () => {
+test('no paras should return TeamName Error', async () => {
   const result = await teamMethods.createTeam()
-  expect(result).toBe('User Error')
+  expect(result).toBe('TeamName Error')
 })
-test('one paras should return Team Error', async () => {
+test('one paras should return User Error', async () => {
   const result = await teamMethods.createTeam('name')
-  expect(result).toBe('Team Error')
-})
-test('if team exists, return exists', async () => {
-  const user = await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-  await Team.create({ teamName: 'testteam' })
-  const result = await teamMethods.createTeam('testteam', user[0].id)
-  await User.destroy({
-    where: {
-      username: 'testname',
-      password: 'testpassword',
-      email: 'testemail'
-    }
-  })
-  await Team.destroy({
-    where: {
-      teamName: 'testteam'
-    }
-  })
-  expect(result).toBe('exists')
+  expect(result).toBe('User Error')
 })
 test('if team created, return created', async () => {
   const user = await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-  const result = await teamMethods.createTeam('testteam', user[0].id)
+  const result = await teamMethods.createTeam('testteam', user.id)
+  await Team.destroy({
+    where: {
+      teamname: 'testteam'
+    }
+  })
   await User.destroy({
     where: {
       username: 'testname',
       password: 'testpassword',
       email: 'testemail'
-    }
-  })
-  await Team.destroy({
-    where: {
-      teamName: 'testteam'
     }
   })
   expect(result).toBe('created')

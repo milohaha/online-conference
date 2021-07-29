@@ -20,15 +20,11 @@ module.exports = {
     if (!(user === undefined || user.length === 0)) {
       return 'USER_EXIST'
     }
-    models.User.create({
+    await models.User.create({
       username: userName,
       password: password,
       email: email
-    }).then(data => {
-      return 'USER_REGISTER'
     })
-    setTimeout(() => {
-      return 'CONNECT_ERROR'
-    }, 1000)
+    return 'USER_REGISTER'
   }
 }

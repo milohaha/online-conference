@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "start": "nodemon -L ./bin/www",
-    "test": "jest"
+    "test": "jest",
+    "api": "apidoc -i api/ -o ../apidoc/"
   },
   "dependencies": {
+    "apidoc": "^0.28.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",

@@ -12,6 +12,7 @@ test('"hello" should return 9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2df
 test('" " should return f90ddd77e400dfe6a3fcf479b00b1ee29e7015c5bb8cd70f5f15b4886cc339275ff553fc8a053f8ddc7324f45168cffaf81f8c3ac93996f6536eef38e5e40768', () => {
   expect(publicMethods.sha512(' ')).toBe('f90ddd77e400dfe6a3fcf479b00b1ee29e7015c5bb8cd70f5f15b4886cc339275ff553fc8a053f8ddc7324f45168cffaf81f8c3ac93996f6536eef38e5e40768')
 })
+
 test('no paras should return false', () => {
   expect(publicMethods.checkString()).toBe(false)
 })
@@ -21,6 +22,57 @@ test('"hello" should be a string', () => {
 test('"" should not be a string', () => {
   expect(publicMethods.checkString('')).toBe(false)
 })
+
+test('zero paras should return {}', async () => {
+  const actualId = await publicMethods.getObjects()
+  expect(actualId).toEqual({})
+})
+test('one paras should return {}', async () => {
+  const objects = await publicMethods.getObjects(User)
+  expect(objects).toEqual({})
+})
+test('paras type error should return {}', async () => {
+  const objects = await publicMethods.getObjects(User, 'name')
+  expect(objects).toEqual({})
+})
+test('find one object ', async () => {
+  await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
+  const objects = await publicMethods.getObjects(User, { username: 'testname' })
+  const expectResult = await User.findAll({
+    where: { username: 'testname' }
+  })
+  await User.destroy({
+    where: {
+      username: 'testname',
+      password: 'testpassword',
+      email: 'testemail'
+    }
+  })
+  expect(objects).toEqual(expectResult)
+})
+test('find many objects ', async () => {
+  await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
+  await User.create({ username: 'testname2', password: 'testpassword', email: 'testemail' })
+  const objects = await publicMethods.getObjects(User, { username: 'testname' })
+  expect(objects).toEqual(await User.findAll({
+    where: { username: 'testname' }
+  }))
+  await User.destroy({
+    where: {
+      username: 'testname',
+      password: 'testpassword',
+      email: 'testemail'
+    }
+  })
+  await User.destroy({
+    where: {
+      username: 'testname2',
+      password: 'testpassword',
+      email: 'testemail'
+    }
+  })
+})
+
 test('find objectId that exists', async () => {
   await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
   const actualId = await publicMethods.getObjectId(User, { username: 'testname' })
@@ -29,7 +81,13 @@ test('find objectId that exists', async () => {
       username: 'testname'
     }
   })
-  await User.destroy({ username: 'testname', password: 'testpassword', email: 'testemail' })
+  await User.destroy({
+    where: {
+      username: 'testname',
+      password: 'testpassword',
+      email: 'testemail'
+    }
+  })
   expect(actualId).toBe(expectedObject[0].id)
 })
 test('no condition paras should return ""', async () => {

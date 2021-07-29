@@ -1,0 +1,294 @@
+define({ "api": [
+  {
+    "name": "CreateTeam",
+    "description": "<p>用户创建团队的接口</p>",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "type": "post",
+    "url": "/team/createteam",
+    "title": "",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "teamName",
+            "description": "<p>团队名称</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  \"teamName\": \"EpTeamName\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>成功:created, 已经存在:exists, 一个参数为空:TeamName Error, 两个参数为空:User Error, 无用户Id:FounderId Error</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"message\": \"created\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "401",
+            "description": "<p>未授权，无token或token过期或非指定地址端口访问</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 401 Unauthorized\n{\n  “code”: -1,\n  ”message“: 'INVALID_TOKEN'\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "Team",
+    "version": "1.0.0",
+    "filename": "api/apidoc.js",
+    "groupTitle": "Team",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/team/createteam"
+      }
+    ]
+  },
+  {
+    "name": "Homepage",
+    "description": "<p>这是一个返回homepage字符串的接口</p>",
+    "permission": [
+      {
+        "name": "everyone"
+      }
+    ],
+    "type": "get",
+    "url": "/",
+    "title": "",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "homepage",
+            "description": "<p>返回一个纯字符串homepage</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\nhomepage",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "User",
+    "version": "0.0.0",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/"
+      }
+    ],
+    "filename": "api/apidoc.js",
+    "groupTitle": "User"
+  },
+  {
+    "name": "Login",
+    "description": "<p>用户登录的接口</p>",
+    "permission": [
+      {
+        "name": "everyone"
+      }
+    ],
+    "type": "post",
+    "url": "/login",
+    "title": "",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "userName",
+            "description": "<p>用户名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>用户密码</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  \"userName\": \"EpUserName\"\n  \"password\": \"EpPassword\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>结果码，登录成功为0，登录失败为-1。(此码与服务器返回的状态码不同)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>登录成功：USER_LOGIN 登录失败：WRONG_USERNAME_OR_PASSWORD</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>如果登录成功，返回token用于用户验证</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "expireTime",
+            "description": "<p>如果登录成功，返回token过期时刻的时间戳</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"code\": 0,\n  \"message\": \"USER_LOGIN\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ\",\n  \"expireTime\": \"1627493571504\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "User",
+    "version": "1.0.0",
+    "filename": "api/apidoc.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/login"
+      }
+    ]
+  },
+  {
+    "name": "Register",
+    "description": "<p>用户注册的接口</p>",
+    "permission": [
+      {
+        "name": "everyone"
+      }
+    ],
+    "type": "post",
+    "url": "/register",
+    "title": "",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "userName",
+            "description": "<p>用户名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>用户密码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>用户邮箱</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  \"userName\": \"EpUserName\"\n  \"password\": \"EpPassword\"\n  \"email\": \"ExEmail@mail.com\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>成功为0，失败为-1</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>成功为USER_REGISTER，失败为ALREADY_REGISTERED</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"code\": 0,\n  \"message\": \"USER_REGISTER\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "User",
+    "version": "1.0.0",
+    "filename": "api/apidoc.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/register"
+      }
+    ]
+  }
+] });

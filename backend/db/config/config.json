@@ -9,7 +9,7 @@
   "test": {
     "username": "root",
     "password": "password",
-    "database": "database_test",
+    "database": "database_development",
     "host": "mariadb",
     "dialect": "mariadb"
   },
