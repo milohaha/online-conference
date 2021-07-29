@@ -6,7 +6,7 @@
       <b-nav-item>Link</b-nav-item>
       <b-nav-item>Another Link</b-nav-item>
     </b-nav>
-    <b-jumbotron id="title">
+    <b-jumbotron id="title" style="text-align: center">
       <template v-slot:header>富媒体实时协作平台</template>
       <template v-slot:lead>
         让线上会议室成为可能
