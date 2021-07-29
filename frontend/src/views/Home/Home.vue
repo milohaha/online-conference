@@ -25,7 +25,7 @@
   background-image: url("../../assets/picture/bkgdpic.png");
   background-repeat: no-repeat;
   background-color: #04294f;
-  height: 800px;
+  height: 100vh;
   color: #fff;
   font-family: 字魂27号-布丁体, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }

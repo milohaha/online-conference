@@ -1,16 +1,13 @@
 <template>
-<div id="all">
+<div id="team-page">
   <header class="logo">
-    <img alt="logo" src="../../assets/picture/fmt.png">
+    <img alt="logo" src="../../assets/picture/fmtOrange.png">
+    <notification id="notification"></notification>
   </header>
   <body>
     <b-nav vertical tabs class="nav" id="firstnav" align="start">
       <b-nav-item @click="viewFile" to="/team/recentfile" id="recentfile">最近文件</b-nav-item>
       <b-nav-item @click="manageTeam" id="manageteam">团队管理</b-nav-item>
-      <b-nav-item>
-        通知
-        <b-badge variant="info">99+</b-badge>
-      </b-nav-item>
     </b-nav>
     <b-nav vertical pills class="nav" id="secondnav" v-if="isManagingTeam">
       <b-nav-item to="/team/teambuild">创建团队</b-nav-item>
@@ -30,11 +27,14 @@
         </b-nav>
       </b-collapse>
     </b-nav>
-    <router-view></router-view>
+    <div id="changing-part">
+      <router-view></router-view>
+    </div>
   </body>
 </div>
 </template>
 <script>
+import Notification from '../../components/PublicComponents/Notice/Notification.vue'
 export default {
   data: function () {
     return {
@@ -48,6 +48,9 @@ export default {
     viewFile () {
       this.isManagingTeam = false
     }
+  },
+  components: {
+    Notification
   }
 }
 </script>
@@ -55,20 +58,20 @@ export default {
 * {
   font-family: MicrosoftYaHei, Serif, Sans-serif, cursive, fantasy, Monospace;
 }
-#all {
-  margin: 50px 50px;
+#team-page {
+  margin: 0;
 }
 .logo {
-  padding: 15px;
+  padding: 20px;
   display: flex;
+  background-color:#04294f;
 }
 body {
-  padding: 15px;
   display: flex;
 }
 .nav {
   width: 115px;
-  background-color: #f2f6fa;
+  background-color: #cde5ec;
 }
 #secondnav {
   padding-top: 41px;
@@ -77,5 +80,18 @@ body {
 #created {
   display: block;
 }
-
+#changing-part {
+  padding: 40px;
+  background-color:linen;
+  width: auto;
+}
+img {
+  width: 80px;
+}
+#notification {
+  float: right;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+}
 </style>

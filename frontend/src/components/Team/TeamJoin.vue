@@ -17,7 +17,7 @@ export default {
 </script>
 <style scoped>
 #teamjoin {
-  margin-left: 50px;
+  margin: 0;
 }
 #title, #getTeamname {
   margin-bottom: 20px;

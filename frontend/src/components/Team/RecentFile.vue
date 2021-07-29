@@ -27,10 +27,9 @@ export default {
   },
   methods: {
     deletefile () {
-      for (const selectfile of this.selectedFiles) {
+      for (const selectFile of this.selectedFiles) {
         for (const index in this.files) {
-          alert(index)
-          if (this.files[index].value === selectfile) {
+          if (this.files[index].value === selectFile) {
             this.files.splice(index, 1)
             break
           }
@@ -44,7 +43,6 @@ export default {
 <style scoped>
 #recentfile {
   margin: 0;
-  margin-left: 50px;
 }
 .button {
   margin-top: 20px;
