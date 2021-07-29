@@ -1,4 +1,4 @@
-const database = require('../db/models')
+const database = require('../db/models/index')
 const models = database.sequelize.models
 const socketMap = new Map()
 module.exports = {

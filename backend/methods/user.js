@@ -1,5 +1,5 @@
 const publicMethods = require('../methods/public')
-const database = require('../db/models')
+const database = require('../db/models/index')
 const models = database.sequelize.models
 module.exports = {
   createUser: async function (userName, password, email) {
