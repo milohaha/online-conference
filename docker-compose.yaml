@@ -12,7 +12,7 @@ services:
     networks:
       - db-network
     volumes:
-      - ./data:/data/db
+      - ./initDB:/docker-entrypoint-initdb.d
 
 
   backend:

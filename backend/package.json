@@ -1,10 +1,16 @@
 {
   "name": "backend",
+  "jest": {
+    "clearMocks": true,
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "testResultsProcessor": "jest-sonar-reporter"
+  },
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "nodemon -L ./bin/www",
-    "test": "jest",
+    "test": "export NODE_ENV=test && cd db && npx sequelize-cli db:migrate && cd ../ && jest && export NODE_ENV=development",
     "api": "apidoc -i api/ -o ../apidoc/"
   },
   "dependencies": {
@@ -31,6 +37,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^2.0.12",
     "sequelize-cli": "^6.2.0"
   }
