@@ -6,7 +6,7 @@ module.exports = {
   NOT_READ: 0,
   ALREADY_READ: 1,
   NOT_SOLVED: 0,
-  AGREED: 1,
+  ACCEPTED: 1,
   REJECTED: 2,
   IS_CONFERENCE: 1,
   IS_TEAM: 2

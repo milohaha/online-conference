@@ -23,13 +23,13 @@ router.get('/getMembers', async function (request, response, next) {
     const { teamID } = request.query
     const teamMembers = []
     const allUsers = await models.User.findAll({
-      attributes: [['id', 'userID'], 'username']
+      attributes: ['id', 'username']
     })
     if (allUsers && allUsers.length !== 0) {
       for (const user of allUsers) {
         const existResult = await models.UserTeam.findAll({
           where: {
-            userID: user.userID,
+            userID: user.id,
             teamID: teamID
           }
         })

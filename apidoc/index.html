@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Loading...</title>
@@ -14,9 +15,10 @@
   <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
   <script src="vendor/polyfill.js"></script>
 </head>
+
 <body class="container-fluid">
 
-<script id="template-sidenav" type="text/x-handlebars-template">
+  <script id="template-sidenav" type="text/x-handlebars-template">
 <nav id="scrollingNav">
   <div class="sidenav-search">
     <input class="form-control search" type="text" placeholder="{{__ "Filter..."}}">
@@ -42,7 +44,7 @@
 </nav>
 </script>
 
-<script id="template-project" type="text/x-handlebars-template">
+  <script id="template-project" type="text/x-handlebars-template">
   <div class="pull-left">
     <h1>{{name}}</h1>
     {{#if description}}<h2>{{{nl2br description}}}</h2>{{/if}}
@@ -71,19 +73,19 @@
   <div class="clearfix"></div>
 </script>
 
-<script id="template-header" type="text/x-handlebars-template">
+  <script id="template-header" type="text/x-handlebars-template">
   {{#if content}}
     <div id="api-_" class="show-api-article show-api-_-article">{{{content}}}</div>
   {{/if}}
 </script>
 
-<script id="template-footer" type="text/x-handlebars-template">
+  <script id="template-footer" type="text/x-handlebars-template">
   {{#if content}}
     <div id="api-_footer" class="show-api-article show-api-_-article">{{{content}}}</div>
   {{/if}}
 </script>
 
-<script id="template-generator" type="text/x-handlebars-template">
+  <script id="template-generator" type="text/x-handlebars-template">
   {{#if template.withGenerator}}
     {{#if generator}}
       <div class="content">
@@ -93,7 +95,7 @@
   {{/if}}
 </script>
 
-<script id="template-sections" type="text/x-handlebars-template">
+  <script id="template-sections" type="text/x-handlebars-template">
   <section id="api-{{group}}" class="show-api-group show-api-{{group}}-group {{#if aloneDisplay}} hide{{/if}}">
     <h1>{{underscoreToSpace title}}</h1>
     {{#if description}}
@@ -107,7 +109,7 @@
   </section>
 </script>
 
-<script id="template-article" type="text/x-handlebars-template">
+  <script id="template-article" type="text/x-handlebars-template">
   <article id="api-{{article.group}}-{{article.name}}-{{article.version}}" {{#if hidden}}class="hide"{{/if}} data-group="{{article.group}}" data-name="{{article.name}}" data-version="{{article.version}}">
     <div class="pull-left">
       <h1>{{underscoreToSpace article.groupTitle}}{{#if article.title}} - {{article.title}}{{/if}}</h1>
@@ -187,7 +189,7 @@
   </article>
 </script>
 
-<script id="template-article-query-block" type="text/x-handlebars-template">
+  <script id="template-article-query-block" type="text/x-handlebars-template">
   {{#if article.query}}
     <h2>Query Parameter(s)</h2>
     <table>
@@ -215,7 +217,7 @@
   {{/if}}
 </script>
 
-<script id="template-article-body-block" type="text/x-handlebars-template">
+  <script id="template-article-body-block" type="text/x-handlebars-template">
   {{#if article.body}}
     <h2>Request Body</h2>
     <table>
@@ -258,7 +260,7 @@
   {{/if}}
 </script>
 
-<script id="template-article-param-block" type="text/x-handlebars-template">
+  <script id="template-article-param-block" type="text/x-handlebars-template">
   {{#if params}}
     {{#each params.fields}}
       <h2>{{__ @key}}</h2>
@@ -315,7 +317,7 @@
   {{/if}}
 </script>
 
-<script id="template-article-sample-request" type="text/x-handlebars-template">
+  <script id="template-article-sample-request" type="text/x-handlebars-template">
     {{#if article.sampleRequest}}
       <h2>{{__ "Send a Sample Request"}}</h2>
       <form class="form-horizontal">
@@ -447,7 +449,7 @@
     {{/if}}
 </script>
 
-<script id="template-compare-article" type="text/x-handlebars-template">
+  <script id="template-compare-article" type="text/x-handlebars-template">
   <article id="api-{{article.group}}-{{article.name}}-{{article.version}}" {{#if hidden}}class="hide"{{/if}} data-group="{{article.group}}" data-name="{{article.name}}" data-version="{{article.version}}" data-compare-version="{{compare.version}}">
     <div class="pull-left">
       <h1>{{underscoreToSpace article.group}} - {{{showDiff article.title compare.title}}}</h1>
@@ -539,7 +541,7 @@
   </article>
 </script>
 
-<script id="template-article-compare-permission" type="text/x-handlebars-template">
+  <script id="template-article-compare-permission" type="text/x-handlebars-template">
   <p>
   {{__ "Permission:"}}
   {{#each_compare_list_field article.permission compare.permission field="name"}}
@@ -608,7 +610,7 @@
   </p>
 </script>
 
-<script id="template-article-compare-param-block" type="text/x-handlebars-template">
+  <script id="template-article-compare-param-block" type="text/x-handlebars-template">
   {{#if source}}
     {{#each_compare_keys source.fields compare.fields}}
       {{#if typeSame}}
@@ -703,7 +705,7 @@
   {{/if}}
 </script>
 
-<script id="template-article-compare-param-block-body" type="text/x-handlebars-template">
+  <script id="template-article-compare-param-block-body" type="text/x-handlebars-template">
   <tbody>
     {{#each_compare_field source compare}}
       {{#if typeSame}}
@@ -783,34 +785,44 @@
   </tbody>
 </script>
 
-<div class="container-fluid">
-  <div class="row">
-    <div id="sidenav" class="span2"></div>
-    <div id="content">
-      <div id="project"></div>
-      <div id="header"></div>
-      <div id="sections"></div>
-      <div id="footer"></div>
-      <div id="generator"></div>
+  <div class="container-fluid">
+    <div class="row">
+      <div id="sidenav" class="span2"></div>
+      <div id="content">
+        <div id="project"></div>
+        <div id="header"></div>
+        <div id="sections"></div>
+        <div id="footer"></div>
+        <div id="generator"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="loader">
-  <div class="spinner">
-    <div class="spinner-container container1">
-      <div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div>
+  <div id="loader">
+    <div class="spinner">
+      <div class="spinner-container container1">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container2">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container3">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <p>Loading...</p>
     </div>
-    <div class="spinner-container container2">
-      <div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div>
-    </div>
-    <div class="spinner-container container3">
-      <div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div>
-    </div>
-    <p>Loading...</p>
   </div>
-</div>
 
-<script data-main="main.js" src="vendor/require.min.js"></script>
+  <script data-main="main.js" src="vendor/require.min.js"></script>
 </body>
+
 </html>
