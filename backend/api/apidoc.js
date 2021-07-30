@@ -70,7 +70,7 @@
  * @apiPermission user
  * @api {post} /team/createteam CreateTeam
  * @apiParam {String} teamName        团队名称
- * @apiSuccess {String} message        成功:created, 已经存在:exists, 一个参数为空:TeamName Error, 两个参数为空:User Error, 无用户Id:FounderId Error
+ * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
@@ -81,7 +81,61 @@
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "message": "created"
+ *       "message": "CREATED"
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
+ * @apiName getMembers
+ * @apiDescription 获取所有人员是否在团队里的接口
+ * @apiPermission user
+ * @api {get} /team/getMembers getMembers
+ * @apiParam {int} teamID        团队ID
+ * @apiSuccess {Object[]} teamMembers       一个包含用户是否存在于此团队的列表.
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "teamID": 3
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": [{ userName: 'username1', ifInTeam: true }, { userName: 'username2', ifInTeam: false }]
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
+ * @apiName checkTeam
+ * @apiDescription 加入团队预请求的接口
+ * @apiPermission user
+ * @api {post} /team/checkTeam checkTeam
+ * @apiParam {int} teamID        团队ID
+ * @apiSuccess {String} message       可加入:NOT_JOINED, 已经加入:HAS_JOINED, 团队ID不存在:NOT_EXIST, 参数错误:PARAS_ERROR
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "teamID": 3
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": 'NOT_JOINED'
  *     }
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 401 Unauthorized

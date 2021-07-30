@@ -9,7 +9,7 @@
     ],
     "type": "post",
     "url": "/team/createteam",
-    "title": "",
+    "title": "CreateTeam",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -38,14 +38,14 @@
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>成功:created, 已经存在:exists, 一个参数为空:TeamName Error, 两个参数为空:User Error, 无用户Id:FounderId Error</p>"
+            "description": "<p>成功:CREATED, 已经存在:EXISTS</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"message\": \"created\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"message\": \"CREATED\"\n}",
           "type": "json"
         }
       ]
@@ -80,6 +80,166 @@
     ]
   },
   {
+    "name": "checkTeam",
+    "description": "<p>加入团队预请求的接口</p>",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "type": "post",
+    "url": "/team/checkTeam",
+    "title": "checkTeam",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "teamID",
+            "description": "<p>团队ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  \"teamID\": 3\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>可加入:NOT_JOINED, 已经加入:HAS_JOINED, 团队ID不存在:NOT_EXIST, 参数错误:PARAS_ERROR</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"message\": 'NOT_JOINED'\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "401",
+            "description": "<p>未授权，无token或token过期或非指定地址端口访问</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 401 Unauthorized\n{\n  “code”: -1,\n  ”message“: 'INVALID_TOKEN'\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "Team",
+    "version": "1.0.0",
+    "filename": "api/apidoc.js",
+    "groupTitle": "Team",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/team/checkTeam"
+      }
+    ]
+  },
+  {
+    "name": "getMembers",
+    "description": "<p>获取所有人员是否在团队里的接口</p>",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "type": "get",
+    "url": "/team/getMembers",
+    "title": "getMembers",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "teamID",
+            "description": "<p>团队ID</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  \"teamID\": 3\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "teamMembers",
+            "description": "<p>一个包含用户是否存在于此团队的列表.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"message\": [{ userName: 'username1', ifInTeam: true }, { userName: 'username2', ifInTeam: false }]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "401",
+            "description": "<p>未授权，无token或token过期或非指定地址端口访问</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 401 Unauthorized\n{\n  “code”: -1,\n  ”message“: 'INVALID_TOKEN'\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "group": "Team",
+    "version": "1.0.0",
+    "filename": "api/apidoc.js",
+    "groupTitle": "Team",
+    "sampleRequest": [
+      {
+        "url": "http://localhost:3000/team/getMembers"
+      }
+    ]
+  },
+  {
     "name": "Homepage",
     "description": "<p>这是一个返回homepage字符串的接口</p>",
     "permission": [
@@ -89,7 +249,7 @@
     ],
     "type": "get",
     "url": "/",
-    "title": "",
+    "title": "Homepage",
     "success": {
       "fields": {
         "Success 200": [
@@ -130,7 +290,7 @@
     ],
     "type": "post",
     "url": "/login",
-    "title": "",
+    "title": "Login",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -219,7 +379,7 @@
     ],
     "type": "post",
     "url": "/register",
-    "title": "",
+    "title": "Register",
     "parameter": {
       "fields": {
         "Parameter": [

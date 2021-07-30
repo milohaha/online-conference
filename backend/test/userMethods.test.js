@@ -4,15 +4,15 @@ const sequelize = database.sequelize
 const User = sequelize.models.User
 test('zero paras return Username Error', async () => {
   const result = await userMethods.createUser()
-  expect(result).toBe('Username Error')
+  expect(result).toBe('USERNAME_ERROR')
 })
 test('one paras return Password Error', async () => {
   const result = await userMethods.createUser('name')
-  expect(result).toBe('Password Error')
+  expect(result).toBe('PASSWORD_ERROR')
 })
 test('two paras return Email Error', async () => {
   const result = await userMethods.createUser('name', 'password')
-  expect(result).toBe('Email Error')
+  expect(result).toBe('EMAIL_ERROR')
 })
 test('if user has been created return USER_EXIST', async () => {
   await User.create({ username: 'name', password: 'password', email: 'email' })

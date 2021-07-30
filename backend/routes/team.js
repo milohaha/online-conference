@@ -6,20 +6,19 @@ const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
 router.post('/createteam', async (request, response, next) => {
-  let userName
+  let userId
   let teamName
   try {
-    userName = request.user.userName
+    userId = request.user.userId
     teamName = request.body.teamName
   } catch (error) {
-    response.json({ message: 'Paras Error' })
+    response.json({ message: 'PARAS_ERROR' })
   }
-  const userId = await publicMethods.getObjectId(models.User, userName)
   const result = await teamMethods.createTeam(teamName, userId)
   return response.json({ message: result })
 })
 
-router.get('/inviteIntoTeam', async function (request, response, next) {
+router.get('/getMembers', async function (request, response, next) {
   try {
     const { teamID } = request.query
     const teamMembers = []
@@ -45,6 +44,31 @@ router.get('/inviteIntoTeam', async function (request, response, next) {
   } catch (error) {
     console.log(error)
     next(error)
+  }
+})
+
+router.post('/checkTeam', async function (request, response, next) {
+  let teamID, userID
+  try {
+    teamID = request.body.teamID
+    userID = request.user.userId
+  } catch (error) {
+    response.json({ message: 'PARAS_ERROR' })
+  }
+  const teamExistResult = await publicMethods.getObjectId(models.Team, { id: teamID })
+  if (!publicMethods.checkString(teamExistResult)) {
+    return response.json({ message: 'NOT_EXIST ' })
+  }
+  const existResult = await models.UserTeam.findAll({
+    where: {
+      userID: userID,
+      teamID: teamID
+    }
+  })
+  if (existResult && existResult.length !== 0) {
+    return response.json({ message: 'HAS_JOINED' })
+  } else {
+    return response.json({ message: 'NOT_JOINED' })
   }
 })
 

@@ -4,13 +4,13 @@ const models = database.sequelize.models
 module.exports = {
   createUser: async function (userName, password, email) {
     if (!publicMethods.checkString(userName)) {
-      return 'Username Error'
+      return 'USERNAME_ERROR'
     }
     if (!publicMethods.checkString(password)) {
-      return 'Password Error'
+      return 'PASSWORD_ERROR'
     }
     if (!publicMethods.checkString(email)) {
-      return 'Email Error'
+      return 'EMAIL_ERROR'
     }
     const user = await models.User.findAll({
       where: {

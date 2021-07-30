@@ -6,7 +6,6 @@ const constant = require('../utils/constant')
 const jsonwebtoken = require('jsonwebtoken')
 const database = require('../db/models/index')
 const models = database.sequelize.models
-const { AGREED } = require('../utils/constant')
 
 /* GET home page. */
 router.get('/', async (request, response, next) => {
@@ -25,7 +24,8 @@ router.post('/login', async (request, response, next) => {
       }
     })
     if (user && user.length !== 0) {
-      const token = jsonwebtoken.sign({ userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
+      const userId = user[0].id
+      const token = jsonwebtoken.sign({ userId: userId, userName: userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       const expireTime = (Date.now() + constant.EXPIRED * 1000).toString()
       response.json({
         code: constant.CODE_SUCCESS,
@@ -69,26 +69,6 @@ router.post('/register', async (request, response, next) => {
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_REGISTER'
-      })
-    }
-  } catch (error) {
-    console.log(error)
-    next(error)
-  }
-})
-
-router.post('/invitedIntoTeam', function (request, response, next) {
-  try {
-    const { userID, teamID, agreeOrReject, verificationID } = request.body
-    models.UserVerification.update(
-      { hasSolved: agreeOrReject },
-      {
-        where: { userID: userID, verificationID: verificationID }
-      })
-    if (agreeOrReject === AGREED) {
-      models.UserTeam.create({
-        userID: userID,
-        teamID: teamID
       })
     }
   } catch (error) {

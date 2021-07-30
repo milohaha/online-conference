@@ -4,10 +4,10 @@ const models = database.sequelize.models
 module.exports = {
   createTeam: async function (teamName, userId) {
     if (!publicMethods.checkString(teamName)) {
-      return 'TeamName Error'
+      return 'TEAMNAME_ERROR'
     }
     if (!publicMethods.checkString(userId)) {
-      return 'User Error'
+      return 'USER_ERROR'
     }
     const user = await models.User.findAll({
       where: {
@@ -15,14 +15,14 @@ module.exports = {
       }
     })
     if (user === undefined || user.length === 0) {
-      return 'FounderId Error'
+      return 'FOUNDERID_ERROR'
     }
     const objectId = await publicMethods.getObjectId(models.Team, { teamname: teamName })
     if (objectId === '') {
       await models.Team.create({ teamname: teamName, founderid: userId })
-      return 'created'
+      return 'CREATED'
     } else {
-      return 'exists'
+      return 'EXISTS'
     }
   }
 }
