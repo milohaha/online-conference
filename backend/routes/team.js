@@ -6,58 +6,49 @@ const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
 router.post('/createteam', async (request, response, next) => {
-  let userId
+  let userID
   let teamName
   try {
-    userId = request.user.userId
+    userID = request.user.userID
     teamName = request.body.teamName
   } catch (error) {
     response.json({ message: 'PARAS_ERROR' })
   }
-  const result = await teamMethods.createTeam(teamName, userId)
+  const result = await teamMethods.createTeam(teamName, userID)
   return response.json({ message: result })
 })
 
-router.get('/getMembers', async function (request, response, next) {
+router.post('/getMembers', async function (request, response, next) {
+  let teamID, inTeam
   try {
-    const { teamID } = request.query
-    const teamMembers = []
-    const allUsers = await models.User.findAll({
-      attributes: ['id', 'username']
-    })
-    if (allUsers && allUsers.length !== 0) {
-      for (const user of allUsers) {
-        const existResult = await models.UserTeam.findAll({
-          where: {
-            userID: user.id,
-            teamID: teamID
-          }
-        })
-        if (existResult && existResult.length !== 0) {
-          teamMembers.push({ userName: user.username, ifInTeam: true })
-        } else {
-          teamMembers.push({ userName: user.username, ifInTeam: false })
-        }
-      }
-    }
-    response.json({ teamMembers: teamMembers })
+    teamID = request.body.teamID
+    inTeam = request.body.inTeam
   } catch (error) {
-    console.log(error)
-    next(error)
+    response.json({ members: [] })
   }
+  const allUsers = publicMethods.getObjects(models.User, {})
+  const members = []
+  for (const user of allUsers) {
+    const inTeamResult = publicMethods.getObjects(models.UserTeam, { userID: user.id, teamID: teamID })
+    const isInTeam = (inTeamResult) && (inTeamResult.length !== 0)
+    if (isInTeam.toString() === inTeam.toString()) {
+      members.push({ id: user.id, userName: user.username, email: user.email })
+    }
+  }
+  response.json({ members: members })
 })
 
 router.post('/checkTeam', async function (request, response, next) {
   let teamID, userID
   try {
     teamID = request.body.teamID
-    userID = request.user.userId
+    userID = request.user.userID
   } catch (error) {
     response.json({ message: 'PARAS_ERROR' })
   }
-  const teamExistResult = await publicMethods.getObjectId(models.Team, { id: teamID })
+  const teamExistResult = await publicMethods.getObjectID(models.Team, { id: teamID })
   if (!publicMethods.checkString(teamExistResult)) {
-    return response.json({ message: 'NOT_EXIST ' })
+    return response.json({ message: 'NOT_EXIST' })
   }
   const existResult = await models.UserTeam.findAll({
     where: {

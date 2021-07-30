@@ -24,8 +24,8 @@ router.post('/login', async (request, response, next) => {
       }
     })
     if (user && user.length !== 0) {
-      const userId = user[0].id
-      const token = jsonwebtoken.sign({ userId: userId, userName: userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
+      const userID = user[0].id
+      const token = jsonwebtoken.sign({ userID: userID, userName: userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
       const expireTime = (Date.now() + constant.EXPIRED * 1000).toString()
       response.json({
         code: constant.CODE_SUCCESS,

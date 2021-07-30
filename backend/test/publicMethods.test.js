@@ -28,8 +28,8 @@ describe('checkString', () => {
 
 describe('getObjects', () => {
   test('zero paras should return {}', async () => {
-    const actualId = await publicMethods.getObjects()
-    expect(actualId).toEqual({})
+    const object = await publicMethods.getObjects()
+    expect(object).toEqual({})
   })
   test('one paras should return {}', async () => {
     const objects = await publicMethods.getObjects(User)
@@ -78,10 +78,10 @@ describe('getObjects', () => {
   })
 })
 
-describe('getObjectId', () => {
-  test('find objectId that exists', async () => {
+describe('getObjectID', () => {
+  test('find objectID that exists', async () => {
     await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-    const actualId = await publicMethods.getObjectId(User, { username: 'testname' })
+    const actualID = await publicMethods.getObjectID(User, { username: 'testname' })
     const expectedObject = await User.findAll({
       where: {
         username: 'testname'
@@ -94,18 +94,18 @@ describe('getObjectId', () => {
         email: 'testemail'
       }
     })
-    expect(actualId).toBe(expectedObject[0].id)
+    expect(actualID).toBe(expectedObject[0].id)
   })
   test('no condition paras should return ""', async () => {
-    const actualId = await publicMethods.getObjectId(User)
-    expect(actualId).toBe('')
+    const actualID = await publicMethods.getObjectID(User)
+    expect(actualID).toBe('')
   })
   test('no Model para should return ""', async () => {
-    const actualId = await publicMethods.getObjectId({ username: 'testname' })
-    expect(actualId).toBe('')
+    const actualID = await publicMethods.getObjectID({ username: 'testname' })
+    expect(actualID).toBe('')
   })
-  test('find objectId that doesnt exist', async () => {
-    const actualId = await publicMethods.getObjectId(User, { username: 'dontExistName' })
-    expect(actualId).toBe('')
+  test('find objectID that doesnt exist', async () => {
+    const actualID = await publicMethods.getObjectID(User, { username: 'dontExistName' })
+    expect(actualID).toBe('')
   })
 })

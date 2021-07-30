@@ -27,7 +27,7 @@ module.exports = {
     }
     return objects
   },
-  getObjectId: async function (Model, condition) {
+  getObjectID: async function (Model, condition) {
     const objects = await this.getObjects(Model, condition)
     try {
       return objects[0].id

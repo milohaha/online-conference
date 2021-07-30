@@ -33,6 +33,7 @@ services:
         && cd db
         && npx sequelize-cli db:migrate
         && cd ../
+        && npm run api
         && DEBUG=backend:* npm start"
 
 networks:

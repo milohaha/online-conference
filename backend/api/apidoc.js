@@ -93,22 +93,24 @@
 
 /**
  * @apiName getMembers
- * @apiDescription 获取所有人员是否在团队里的接口
+ * @apiDescription 获取在团队里成员或不在团队里的成员的接口
  * @apiPermission user
  * @api {get} /team/getMembers getMembers
  * @apiParam {int} teamID        团队ID
- * @apiSuccess {Object[]} teamMembers       一个包含用户是否存在于此团队的列表.
+ * @apiParam {Boolean} inTeam        是否在团队里
+ * @apiSuccess {Object[]} teamMembers       一个包含所需用户的列表.
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
  *       "teamID": 3
+ *       “inTeam”: true
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "message": [{ userName: 'username1', ifInTeam: true }, { userName: 'username2', ifInTeam: false }]
+ *       "message": [{ id: '1', userName: 'username1', email: '299@.com' }, { id: '2', userName: 'username2', email: '298@.com' }]
  *     }
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 401 Unauthorized
