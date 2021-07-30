@@ -1,22 +1,22 @@
 <template>
-  <div id="home">
+  <div class="home">
     <person-page></person-page>
     <b-nav tabs align="center">
       <b-nav-item active>Home</b-nav-item>
       <b-nav-item>Link</b-nav-item>
       <b-nav-item>Another Link</b-nav-item>
     </b-nav>
-    <b-jumbotron id="title" style="text-align: center">
+    <b-jumbotron class="title" style="text-align: center">
       <template v-slot:header>富媒体实时协作平台</template>
       <template v-slot:lead>
         让线上会议室成为可能
       </template>
     </b-jumbotron>
     <div>
-      <b-button pill variant="outline-success" to="/login" id="loginbtn" v-if="!isLogin">登录</b-button>
+      <b-button pill variant="outline-success" to="/login" class="login-btn" v-if="!isLogin">登录</b-button>
     </div>
     <div>
-      <b-button variant="link" to="/register" id="registerbtn" v-if="!isLogin">点我注册</b-button>
+      <b-button variant="link" to="/register" class="register-btn" v-if="!isLogin">点我注册</b-button>
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@ export default {
       userInfo: 'userInfo'
     }),
     isLogin () {
+      console.log(this.userInfo)
       return this.userInfo
     }
   },
@@ -38,7 +39,7 @@ export default {
 }
 </script>
 <style scoped>
-#home {
+.home {
   background-image: url("../../assets/picture/bkgdpic.png");
   background-repeat: no-repeat;
   background-color: #04294f;
@@ -46,7 +47,7 @@ export default {
   color: #fff;
   font-family: 字魂27号-布丁体, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }
-#title {
+.title {
   margin-left: auto;
   margin-right: 100px;
   margin-top: 200px;
@@ -55,12 +56,12 @@ export default {
 div + div {
   display: flex;
 }
-#loginbtn {
+.login-btn {
   margin-left: auto;
   margin-right: 350px;
   margin-top: 20px;
 }
-#registerbtn {
+.register-btn {
   margin-left: auto;
   margin-right: 332px;
 }

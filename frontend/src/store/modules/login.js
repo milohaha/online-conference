@@ -1,32 +1,29 @@
-import { USER_LOGOUT, USER_REGISTER, USER_SIGNIN } from '../types'
+import { USER_LOGOUT, USER_SIGNIN } from '../types'
 
 const isLoginIn = function () {
-  const token = localStorage.getItem('userToken')
-  if (token) {
-    if (token > Date.now()) {
+  const expireTime = localStorage.getItem('expireTime')
+  if (expireTime) {
+    if (expireTime > Date.now()) {
       return true
     }
-  } else {
-    return false
   }
+  return false
 }
 
 const state = {
-  token: isLoginIn()
+  isLogin: isLoginIn()
 }
 
 const mutations = {
-  [USER_SIGNIN] (stateLocal, userToken) {
-    localStorage.setItem('userToken', userToken)
-    stateLocal.token = userToken
+  [USER_SIGNIN] (stateLocal, userInfo) {
+    localStorage.setItem('expireTime', userInfo.expireTime)
+    localStorage.setItem('token', userInfo.token)
+    stateLocal.isLogin = true
   },
-  [USER_REGISTER] (stateLocal, userToken) {
-    localStorage.setItem('userToken', userToken)
-    stateLocal.token = userToken
-  },
-  [USER_LOGOUT] (stateLocal, userToken) {
-    localStorage.removeItem('userToken')
-    stateLocal.token = false
+  [USER_LOGOUT] (stateLocal) {
+    localStorage.removeItem('expireTime')
+    localStorage.removeItem('token')
+    stateLocal.isLogin = false
   }
 }
 

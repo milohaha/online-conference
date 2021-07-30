@@ -1,5 +1,5 @@
 import Api from '../api'
-import { USER_LOGOUT, USER_REGISTER, USER_SIGNIN } from './types'
+import { USER_LOGOUT, USER_SIGNIN, CREATE_TEAM } from './types'
 
 export const userLogin = ({ commit }, data) => {
   return new Promise((resolve, reject) => {
@@ -7,7 +7,10 @@ export const userLogin = ({ commit }, data) => {
       if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
         resolve(response)
       } else if (response.data.message === 'USER_LOGIN') {
-        commit(USER_SIGNIN, response.data.expireTime)
+        commit(USER_SIGNIN, {
+          expireTime: response.data.expireTime,
+          token: response.data.token
+        })
         window.location = '/team'
       }
     })
@@ -17,18 +20,26 @@ export const userLogin = ({ commit }, data) => {
   })
 }
 export const userRegister = ({ commit }, data) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Api.localRegister(data).then(function (response) {
-      if (response.data.message === 'ALREADY_REGISTERED') {
+      resolve(response)
+    })
+  })
+}
+export const userLogout = ({ commit }) => {
+  commit(USER_LOGOUT)
+  window.location = '/'
+}
+
+export const createTeam = ({ commit }, data) => {
+  return new Promise((resolve, reject) => {
+    Api.createTeam(data).then(function (response) {
+      if (response.data.type === 'SUCCESS') {
+        commit(CREATE_TEAM, response.data.teamManage)
         resolve(response)
-      } else if (response.data.message === 'USER_REGISTER') {
-        commit(USER_REGISTER, response.data.expireTime)
+      } else if (response.data.type === 'Failure') {
         resolve(response)
       }
     })
   })
-}
-export const userLogout = ({ commit }, data) => {
-  commit(USER_LOGOUT)
-  window.location = '/'
 }

@@ -71,7 +71,8 @@ body {
 }
 .nav {
   width: 115px;
-  background-color: #cde5ec;
+  height: 700px;
+  background-color: #eeeeee;
 }
 #secondnav {
   padding-top: 41px;
@@ -82,7 +83,6 @@ body {
 }
 #changing-part {
   padding: 40px;
-  background-color:linen;
   width: auto;
 }
 img {
