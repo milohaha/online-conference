@@ -9,5 +9,7 @@ module.exports = {
   ACCEPTED: 1,
   REJECTED: 2,
   IS_CONFERENCE: 1,
-  IS_TEAM: 2
+  IS_TEAM: 2,
+  REMOVED: 1,
+  LEAVE: 2
 }

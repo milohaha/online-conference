@@ -2,7 +2,7 @@ const noticeMethods = require('../methods/notice')
 const publicMethods = require('../methods/public')
 const database = require('../db/models/index')
 const models = database.sequelize.models
-const { NOT_READ, ACCEPTED, REJECTED } = require('../utils/constant')
+const { NOT_READ, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE } = require('../utils/constant')
 
 const sendUniqueNotice = function (toWhom, title, content) {
   const noticeID = noticeMethods.storeNotice({ title: title, content: content })
@@ -15,8 +15,8 @@ const sendUniqueNotice = function (toWhom, title, content) {
 
 const verificationHandler = async function (acceptOrReject, userID, verificationID) {
   try {
-    const user = await publicMethods.getObjects(models.User, { id: userID })
     const title = '系统通知'
+    const userName = await publicMethods.getUserNameByID(userID)
     let content
     // 给发出邀请/申请的人发消息
     const solvedVerification = await models.Verification.findAll({
@@ -24,8 +24,7 @@ const verificationHandler = async function (acceptOrReject, userID, verification
         id: verificationID
       }
     })
-    if (solvedVerification && solvedVerification.length !== 0 && user.length !== 0) {
-      const userName = user[0].username
+    if (solvedVerification && solvedVerification.length !== 0) {
       const typeName = solvedVerification[0].type === 'invitation' ? '邀请' : '申请'
       const responseName = acceptOrReject === REJECTED ? '拒绝' : '同意'
       content = userName + responseName + '了您的' + typeName
@@ -69,6 +68,49 @@ const acceptGroupHandler = async function (userID, verificationID) {
   }
 }
 
+const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTeam, conferenceOrTeamID) {
+  const title = '系统通知'
+  const groupType = conferenceOrTeamID === IS_TEAM ? '团队' : '会议室'
+  let content, receiverID, founderID, groupName, userName
+  const group = await publicMethods.findGroup(conferenceOrTeam, conferenceOrTeamID)
+  if (group && group.length !== 0) {
+    founderID = group.founderID
+    groupName = conferenceOrTeamID === IS_TEAM ? group.teamName : group.conferenceName
+    // 成员主动退出，需通知会议室/团队创建者
+    if (removedOrLeave === LEAVE) {
+      receiverID = founderID
+      userName = publicMethods.getUserNameByID(userID)
+      content = userName + '已退出' + groupType + ':' + groupName
+    } else {
+      receiverID = userID
+      content = '您已被移出' + groupType + ':' + groupName
+    }
+    if (userName !== '') {
+      sendUniqueNotice(receiverID, title, content)
+    }
+  }
+  // 把用户从相应的表中删除
+  try {
+    if (conferenceOrTeam === IS_TEAM) {
+      await models.UserTeam.destroy({
+        where: {
+          userID: userID,
+          teamID: conferenceOrTeamID
+        }
+      })
+    } else if (conferenceOrTeam === IS_CONFERENCE) {
+      await models.UserConference.destroy({
+        where: {
+          userID: userID,
+          conferenceID: conferenceOrTeamID
+        }
+      })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
 
@@ -82,6 +124,8 @@ module.exports = function (server) {
     socket.on('rejectNotice', rejectGroupHandler)
 
     socket.on('acceptNotice', acceptGroupHandler)
+
+    socket.on('leaveNotice', leaveGroupHandler)
 
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)
