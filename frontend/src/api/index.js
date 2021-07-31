@@ -9,17 +9,16 @@ if (localStorage.getItem('token')) {
 }
 
 export default {
-  localLogin: function (data) {
+  login: function (data) {
     return Vue.axios.post(process.env.VUE_APP_API_BASE + '/login', data)
   },
-  localRegister: function (data) {
+  register: function (data) {
     return Vue.axios.post(process.env.VUE_APP_API_BASE + '/register', data)
   },
   createTeam: function (data) {
-    return Vue.axios.post(process.env.VUE_APP_API_BASE + '/team/createteam', data, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
-    })
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/createteam', data)
+  },
+  joinTeam: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/checkTeam', data)
   }
 }

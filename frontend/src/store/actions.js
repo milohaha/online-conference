@@ -1,9 +1,9 @@
 import Api from '../api'
-import { USER_LOGOUT, USER_SIGNIN, CREATE_TEAM } from './types'
+import { USER_LOGOUT, USER_SIGNIN } from './types'
 
 export const userLogin = ({ commit }, data) => {
   return new Promise((resolve, reject) => {
-    Api.localLogin(data).then(function (response) {
+    Api.login(data).then(function (response) {
       if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
         resolve(response)
       } else if (response.data.message === 'USER_LOGIN') {
@@ -21,7 +21,7 @@ export const userLogin = ({ commit }, data) => {
 }
 export const userRegister = ({ commit }, data) => {
   return new Promise((resolve) => {
-    Api.localRegister(data).then(function (response) {
+    Api.register(data).then(function (response) {
       resolve(response)
     })
   })
@@ -32,14 +32,16 @@ export const userLogout = ({ commit }) => {
 }
 
 export const createTeam = ({ commit }, data) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Api.createTeam(data).then(function (response) {
-      if (response.data.type === 'SUCCESS') {
-        commit(CREATE_TEAM, response.data.teamManage)
-        resolve(response)
-      } else if (response.data.type === 'Failure') {
-        resolve(response)
-      }
+      resolve(response)
+    })
+  })
+}
+export const joinTeam = ({ commit }, data) => {
+  return new Promise((resolve) => {
+    Api.joinTeam(data).then(function (response) {
+      resolve(response)
     })
   })
 }

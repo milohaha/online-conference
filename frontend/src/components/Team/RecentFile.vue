@@ -1,11 +1,11 @@
 <template>
-  <div id="recentfile">
+  <div class="recent-file">
       <h2 class="title">最近文件</h2>
-      <div class="button">
-        <b-button variant="outline-primary" id="delete" @click="deletefile">删除</b-button>
-        <b-button variant="outline-primary" id="share">共享</b-button>
+      <div class="file-operation">
+        <b-button variant="outline-primary" class="delete" @click="deleteFile">删除</b-button>
+        <b-button variant="outline-primary" class="share">共享</b-button>
       </div>
-      <b-form-checkbox-group id="selectfile" v-model="selectedFiles">
+      <b-form-checkbox-group class="select-file" v-model="selectedFiles">
         <b-form-checkbox v-for="(file,index) in files" :key="index" :value="file.value" size="lg" class="file">
           <b-link :to="file.value">{{ file.text }}</b-link>
         </b-form-checkbox>
@@ -26,7 +26,7 @@ export default {
     }
   },
   methods: {
-    deletefile () {
+    deleteFile () {
       for (const selectFile of this.selectedFiles) {
         for (const index in this.files) {
           if (this.files[index].value === selectFile) {
@@ -41,16 +41,16 @@ export default {
 }
 </script>
 <style scoped>
-#recentfile {
+.recent-file {
   margin: 0;
 }
-.button {
+.file-operation {
   margin-top: 20px;
 }
-#share {
+.share {
   margin-left: 20px;
 }
-#selectfile {
+.select-file {
   margin-top: 20px;
 }
 .file {

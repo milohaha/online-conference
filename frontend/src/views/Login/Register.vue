@@ -35,9 +35,9 @@
             符合要求
           </b-form-valid-feedback>
         </b-form-group>
-        <b-form-group class="input-group-userName" label="用户名:" label-for="input-userName">
+        <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
           <b-form-input
-            id="input-userName"
+            id="input-user-name"
             ref="inputUserName"
             v-model="user.userName"
             :state="validationUsername"

@@ -1,7 +1,9 @@
 <template>
 <div id="team-page">
   <header class="logo">
-    <img alt="logo" src="../../assets/picture/fmtOrange.png">
+    <b-link to="/">
+      <img alt="logo" src="../../assets/picture/fmtOrange.png">
+    </b-link>
     <notification id="notification"></notification>
   </header>
   <body>
@@ -58,6 +60,9 @@ export default {
 * {
   font-family: MicrosoftYaHei, Serif, Sans-serif, cursive, fantasy, Monospace;
 }
+body {
+  display: flex;
+}
 #team-page {
   margin: 0;
 }
@@ -65,9 +70,6 @@ export default {
   padding: 20px;
   display: flex;
   background-color:#04294f;
-}
-body {
-  display: flex;
 }
 .nav {
   width: 115px;

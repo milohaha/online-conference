@@ -8,9 +8,9 @@
 >
         用户名不存在或密码错误
 </b-alert>
-        <b-form-group class="input-group-userName" label="用户名:" label-for="input-userName">
+        <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
           <b-form-input
-            id="input-userName"
+            id="input-user-name"
             ref="inputUserName"
             v-model="user.userName"
             :state="validationUsername"
@@ -35,11 +35,9 @@
             你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
           </b-form-invalid-feedback>
         </b-form-group>
-
         <b-button type="submit" variant="primary">登录</b-button>
         <b-button variant="danger" to="/">返回</b-button>
       </b-form>
-
     </div>
   </div>
 </template>
