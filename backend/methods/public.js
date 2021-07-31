@@ -1,7 +1,7 @@
-const crypto = require('crypto')
 const database = require('../db/models/index')
 const models = database.sequelize.models
-const { IS_CONFERENCE, IS_TEAM } = require('../utils/constant')
+const crypto = require('crypto')
+const { IS_TEAM, IS_CONFERENCE } = require('../utils/constant')
 module.exports = {
   sha512: (password) => {
     if (password === undefined) {
@@ -54,5 +54,18 @@ module.exports = {
       group = await this.getObjects(models.Conference, { id: conferenceOrTeamID })
     }
     return group
+  },
+  findGroupUserIDs: async function (conferenceOrTeam, conferenceOrTeamID) {
+    let objects
+    if (conferenceOrTeamID === IS_TEAM) {
+      objects = await this.getObjects(models.UserTeam, {})
+    } else {
+      objects = await this.getObjects(models.UserConference, {})
+    }
+    const userIDs = []
+    for (const object of objects) {
+      userIDs.push(object.userID)
+    }
+    return userIDs
   }
 }

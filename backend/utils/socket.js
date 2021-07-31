@@ -13,6 +13,15 @@ const sendUniqueNotice = function (toWhom, title, content) {
   }
 }
 
+const broadcastGroupNotice = function (conferenceOrTeam, conferenceOrTeamID, title, content) {
+  const toWhoms = publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
+  if (toWhoms && toWhoms.length !== 0) {
+    for (const toWhom of toWhoms) {
+      sendUniqueNotice(toWhom, title, content)
+    }
+  }
+}
+
 const verificationHandler = async function (acceptOrReject, userID, verificationID) {
   try {
     const title = '系统通知'
@@ -111,6 +120,43 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
   }
 }
 
+const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
+  const group = await publicMethods.findGroup(conferenceOrTeam, conferenceOrTeamID)
+  if (group && group.length !== 0) {
+    const groupName = conferenceOrTeamID === IS_TEAM ? group.teamName : group.conferenceName
+    const title = '系统通知'
+    const content = groupName + '已被解散'
+    broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
+  }
+  try {
+    if (conferenceOrTeam === IS_TEAM) {
+      await models.Team.destroy({
+        where: {
+          id: conferenceOrTeamID
+        }
+      })
+      await models.UserTeam.destroy({
+        where: {
+          teamID: conferenceOrTeamID
+        }
+      })
+    } else if (conferenceOrTeam === IS_CONFERENCE) {
+      await models.Conference.destroy({
+        where: {
+          id: conferenceOrTeamID
+        }
+      })
+      await models.UserTeam.destroy({
+        where: {
+          conferenceID: conferenceOrTeamID
+        }
+      })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
 
@@ -126,6 +172,8 @@ module.exports = function (server) {
     socket.on('acceptNotice', acceptGroupHandler)
 
     socket.on('leaveNotice', leaveGroupHandler)
+
+    socket.on('dismissNotice', dismissHandler)
 
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)
