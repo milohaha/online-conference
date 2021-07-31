@@ -1,7 +1,7 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Verifications', {
+    await queryInterface.createTable('Verification', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,13 +12,32 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      applicantID: {
+      senderID: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'User',
+          key: 'id',
+          as: 'userID'
+        }
       },
-      conferenceOrTeamID: {
+      receiverID: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'User',
+          key: 'id',
+          as: 'userID'
+        }
+      },
+      teamID: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Team',
+          key: 'id',
+          as: 'teamID'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +50,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Verifications')
+    await queryInterface.dropTable('Verification')
   }
 }

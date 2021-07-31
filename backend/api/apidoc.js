@@ -192,12 +192,12 @@
  * @apiParamExample {json} Request-Example:
  *     {
  *       "model": "Team"
- *       "condition": { teamname:'123' }
+ *       "condition": { teamName:'123' }
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "objects": [{ id: 1, teamname: '123', founderid: '1', createdAt:'1111-11-11 11:11:11' updatedAt:'1111-11-11 11:11:11' }]
+ *       "objects": [{ id: 1, teamName: '123', founderID: '1', createdAt:'1111-11-11 11:11:11' updatedAt:'1111-11-11 11:11:11' }]
  *     }
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 401 Unauthorized

@@ -1,6 +1,6 @@
 const publicMethods = require('../methods/public')
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
+
 module.exports = {
   // 未传入teamID时创建team,传入teamID时创建conference
   createGroup: async function (groupName, userID, teamID) {
@@ -23,7 +23,7 @@ module.exports = {
     const createTeam = !publicMethods.checkString(teamID)
     let objectID
     if (createTeam) {
-      objectID = await publicMethods.getObjectID(models.Team, { teamname: groupName })
+      objectID = await publicMethods.getObjectID(models.Team, { teamName: groupName })
     } else {
       const teamExistResult = await models.Team.findAll({ where: { id: teamID } })
       if (!(teamExistResult && teamExistResult.length !== 0)) {
@@ -34,7 +34,7 @@ module.exports = {
     }
     if (objectID === '') {
       if (createTeam) {
-        await models.Team.create({ teamname: groupName, founderid: userID })
+        await models.Team.create({ teamName: groupName, founderID: userID })
       } else {
         await models.Conference.create({ conferenceName: groupName, founderID: userID, teamID: teamID })
       }

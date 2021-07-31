@@ -1,7 +1,7 @@
 const publicMethods = require('../methods/public')
-const database = require('../db/models/index')
-const sequelize = database.sequelize
-const User = sequelize.models.User
+const { models } = require('../utils/database')
+const User = models.User
+
 describe('sha512', () => {
   test('no paras should return cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"', () => {
     expect(publicMethods.sha512()).toBe('cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e')
@@ -40,39 +40,39 @@ describe('getObjects', () => {
     expect(objects).toEqual({})
   })
   test('find one object ', async () => {
-    await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-    const objects = await publicMethods.getObjects(User, { username: 'testname' })
+    await User.create({ userName: 'testname_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const objects = await publicMethods.getObjects(User, { userName: 'testname_publicMethods' })
     const expectResult = await User.findAll({
-      where: { username: 'testname' }
+      where: { userName: 'testname_publicMethods' }
     })
     await User.destroy({
       where: {
-        username: 'testname',
-        password: 'testpassword',
-        email: 'testemail'
+        userName: 'testname_publicMethods',
+        password: 'testpassword_publicMethods',
+        email: 'testemail_publicMethods'
       }
     })
     expect(objects).toEqual(expectResult)
   })
   test('find many objects ', async () => {
-    await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-    await User.create({ username: 'testname2', password: 'testpassword', email: 'testemail' })
-    const objects = await publicMethods.getObjects(User, { username: 'testname' })
+    await User.create({ userName: 'testname_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    await User.create({ userName: 'testname2_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const objects = await publicMethods.getObjects(User, { userName: 'testname_publicMethods' })
     expect(objects).toEqual(await User.findAll({
-      where: { username: 'testname' }
+      where: { userName: 'testname_publicMethods' }
     }))
     await User.destroy({
       where: {
-        username: 'testname',
-        password: 'testpassword',
-        email: 'testemail'
+        userName: 'testname_publicMethods',
+        password: 'testpassword_publicMethods',
+        email: 'testemail_publicMethods'
       }
     })
     await User.destroy({
       where: {
-        username: 'testname2',
-        password: 'testpassword',
-        email: 'testemail'
+        userName: 'testname2_publicMethods',
+        password: 'testpassword_publicMethods',
+        email: 'testemail_publicMethods'
       }
     })
   })
@@ -80,18 +80,18 @@ describe('getObjects', () => {
 
 describe('getObjectID', () => {
   test('find objectID that exists', async () => {
-    await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-    const actualID = await publicMethods.getObjectID(User, { username: 'testname' })
+    await User.create({ userName: 'testname_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const actualID = await publicMethods.getObjectID(User, { userName: 'testname_publicMethods' })
     const expectedObject = await User.findAll({
       where: {
-        username: 'testname'
+        userName: 'testname_publicMethods'
       }
     })
     await User.destroy({
       where: {
-        username: 'testname',
-        password: 'testpassword',
-        email: 'testemail'
+        userName: 'testname_publicMethods',
+        password: 'testpassword_publicMethods',
+        email: 'testemail_publicMethods'
       }
     })
     expect(actualID).toBe(expectedObject[0].id)
@@ -101,11 +101,11 @@ describe('getObjectID', () => {
     expect(actualID).toBe('')
   })
   test('no Model para should return ""', async () => {
-    const actualID = await publicMethods.getObjectID({ username: 'testname' })
+    const actualID = await publicMethods.getObjectID({ userName: 'testname_publicMethods' })
     expect(actualID).toBe('')
   })
   test('find objectID that doesnt exist', async () => {
-    const actualID = await publicMethods.getObjectID(User, { username: 'dontExistName' })
+    const actualID = await publicMethods.getObjectID(User, { userName: 'dontExistName_publicMethods' })
     expect(actualID).toBe('')
   })
 })

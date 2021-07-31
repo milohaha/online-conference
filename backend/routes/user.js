@@ -4,8 +4,7 @@ const publicMethods = require('../methods/public')
 const userMethods = require('../methods/user')
 const constant = require('../utils/constant')
 const jsonwebtoken = require('jsonwebtoken')
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
 
 /* GET home page. */
 router.get('/', async (request, response, next) => {
@@ -19,7 +18,7 @@ router.post('/login', async (request, response, next) => {
     password = publicMethods.sha512(`${password}`)
     const user = await models.User.findAll({
       where: {
-        username: userName,
+        userName: userName,
         password: password
       }
     })
@@ -55,7 +54,7 @@ router.post('/register', async (request, response, next) => {
   try {
     const user = await models.User.findAll({
       where: {
-        username: userName
+        userName: userName
       }
     })
     if (user && user.length !== 0) {

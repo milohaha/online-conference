@@ -1,5 +1,4 @@
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
 const crypto = require('crypto')
 const { IS_TEAM, IS_CONFERENCE } = require('../utils/constant')
 module.exports = {
@@ -41,7 +40,7 @@ module.exports = {
   getUserNameByID: async function (userID) {
     const user = await this.getObjects(models.User, { id: userID })
     try {
-      return user[0].username
+      return user[0].userName
     } catch (error) {
       return ''
     }

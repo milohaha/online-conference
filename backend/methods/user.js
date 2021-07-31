@@ -1,6 +1,6 @@
 const publicMethods = require('../methods/public')
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
+
 module.exports = {
   createUser: async function (userName, password, email) {
     if (!publicMethods.checkString(userName)) {
@@ -14,14 +14,14 @@ module.exports = {
     }
     const user = await models.User.findAll({
       where: {
-        username: userName
+        userName: userName
       }
     })
     if (!(user === undefined || user.length === 0)) {
       return 'USER_EXIST'
     }
     await models.User.create({
-      username: userName,
+      userName: userName,
       password: password,
       email: email
     })

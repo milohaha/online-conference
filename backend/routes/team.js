@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
+
 const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
@@ -58,7 +58,7 @@ router.post('/getMembers', async function (request, response, next) {
     const inGroupResult = await publicMethods.getObjects(model, condition)
     const isInGroup = (inGroupResult) && (inGroupResult.length !== 0)
     if (isInGroup.toString() === inGroup.toString()) {
-      members.push({ id: user.id, userName: user.username, email: user.email })
+      members.push({ id: user.id, userName: user.userName, email: user.email })
     }
   }
   response.json({ members: members })

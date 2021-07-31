@@ -1,36 +1,36 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('UserVerification', {
+    await queryInterface.createTable('Conference', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
-        allowNull: false,
+      conferenceName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      founderID: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         onDelete: 'CASCADE',
         references: {
           model: 'User',
           key: 'id',
-          as: 'userID'
+          as: 'founderID'
         }
       },
-      verificationID: {
-        allowNull: false,
+      teamID: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         onDelete: 'CASCADE',
         references: {
-          model: 'Verification',
+          model: 'Team',
           key: 'id',
-          as: 'verificationID'
+          as: 'teamID'
         }
-      },
-      hasSolved: {
-        allowNull: false,
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +43,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('UserVerification')
+    await queryInterface.dropTable('Conference')
   }
 }

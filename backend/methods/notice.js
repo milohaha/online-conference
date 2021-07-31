@@ -1,5 +1,5 @@
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
+
 const socketMap = new Map()
 module.exports = {
   storeOnlineUsers: function (userID, socket) {

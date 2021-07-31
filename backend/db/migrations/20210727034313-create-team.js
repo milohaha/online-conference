@@ -1,25 +1,25 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('teams', {
+    await queryInterface.createTable('Team', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      teamname: {
+      teamName: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      founderid: {
+      founderID: {
         type: Sequelize.INTEGER,
         allowNull: false,
         onDelete: 'CASCADE',
         references: {
-          model: 'users',
+          model: 'User',
           key: 'id',
-          as: 'founderid'
+          as: 'founderID'
         }
       },
       createdAt: {
@@ -33,6 +33,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('teams')
+    await queryInterface.dropTable('Team')
   }
 }

@@ -1,9 +1,8 @@
 const teamMethods = require('../methods/team')
-const database = require('../db/models/index')
-const sequelize = database.sequelize
-const Team = sequelize.models.Team
-const User = sequelize.models.User
-const Conference = sequelize.models.Conference
+const { models } = require('../utils/database')
+const Team = models.Team
+const User = models.User
+const Conference = models.Conference
 
 describe('createGroup', () => {
   describe('createTeam', () => {
@@ -16,18 +15,18 @@ describe('createGroup', () => {
       expect(result).toBe('USER_ERROR')
     })
     test('if team created, return created', async () => {
-      const user = await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-      const result = await teamMethods.createGroup('testteam', user.id)
+      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
+      const result = await teamMethods.createGroup('testteam_teamMethods', user.id)
       await Team.destroy({
         where: {
-          teamname: 'testteam'
+          teamName: 'testteam_teamMethods'
         }
       })
       await User.destroy({
         where: {
-          username: 'testname',
-          password: 'testpassword',
-          email: 'testemail'
+          userName: 'testname_teamMethods',
+          password: 'testpassword_teamMethods',
+          email: 'testemail_teamMethods'
         }
       })
       expect(result).toBe('CREATED')
@@ -39,34 +38,35 @@ describe('createGroup', () => {
   })
   describe('createConference', () => {
     test('if teamID not found,return Team Not Found', async () => {
-      const user = await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
+      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
       const result = await teamMethods.createGroup('hello', user.id, 2)
       await User.destroy({
         where: {
-          username: 'testname',
-          password: 'testpassword',
-          email: 'testemail'
+          userName: 'testname_teamMethods',
+          password: 'testpassword_teamMethods',
+          email: 'testemail_teamMethods'
         }
       })
       expect(result).toEqual('TEAM_NOT_FOUND')
     })
     test('if Conference created,return Created', async () => {
-      const user = await User.create({ username: 'testname', password: 'testpassword', email: 'testemail' })
-      const team = await teamMethods.createGroup('testteam', user.id)
+      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
+      await teamMethods.createGroup('testteam_teamMethods', user.id)
+      const team = await Team.findAll({ where: { teamName: 'testteam_teamMethods', founderID: user.id } })
+      const result = await teamMethods.createGroup('hello', user.id, team[0].id)
+      await Conference.destroy({ where: { conferenceName: 'hello', founderID: user.id, teamID: team[0].id } })
       await Team.destroy({
         where: {
-          teamname: 'testteam'
+          teamName: 'testteam_teamMethods'
         }
       })
       await User.destroy({
         where: {
-          username: 'testname',
-          password: 'testpassword',
-          email: 'testemail'
+          userName: 'testname_teamMethods',
+          password: 'testpassword_teamMethods',
+          email: 'testemail_teamMethods'
         }
       })
-      const result = await teamMethods.createGroup('hello', user.id, team.id)
-      await Conference.destroy({ where: { conferenceName: 'hello', userID: user.id, teamID: team.id } })
       expect(result).toEqual('CREATED')
     })
   })

@@ -1,7 +1,6 @@
 const noticeMethods = require('../methods/notice')
 const publicMethods = require('../methods/public')
-const database = require('../db/models/index')
-const models = database.sequelize.models
+const { models } = require('../utils/database')
 const { NOT_READ, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE } = require('../utils/constant')
 
 const sendUniqueNotice = function (toWhom, title, content) {
