@@ -5,7 +5,7 @@ const models = database.sequelize.models
 const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
-router.post('/createteam', async (request, response, next) => {
+router.post('/createTeam', async (request, response, next) => {
   let userID
   let teamName
   try {
@@ -14,24 +14,50 @@ router.post('/createteam', async (request, response, next) => {
   } catch (error) {
     response.json({ message: 'PARAS_ERROR' })
   }
-  const result = await teamMethods.createTeam(teamName, userID)
+  const result = await teamMethods.createGroup(teamName, userID)
+  return response.json({ message: result })
+})
+
+router.post('/createConference', async (request, response, next) => {
+  let userID, teamID, conferenceName
+  try {
+    userID = request.user.userID
+    teamID = request.body.teamID
+    conferenceName = request.body.conferenceName
+  } catch (error) {
+    response.json({ message: 'PARAS_ERROR' })
+  }
+  const result = await teamMethods.createGroup(conferenceName, userID, teamID)
   return response.json({ message: result })
 })
 
 router.post('/getMembers', async function (request, response, next) {
-  let teamID, inTeam
+  let groupID, inGroup, groupType
   try {
-    teamID = request.body.teamID
-    inTeam = request.body.inTeam
+    groupID = request.body.groupID
+    inGroup = request.body.inGroup
+    groupType = request.body.groupType
   } catch (error) {
     response.json({ members: [] })
   }
-  const allUsers = publicMethods.getObjects(models.User, {})
+  const allUsers = await publicMethods.getObjects(models.User, {})
   const members = []
+  let model, condition
+  switch (groupType) {
+    case 'Team':
+      model = models.UserTeam
+      condition = { teamID: groupID }
+      break
+    case 'Conference':
+      model = models.UserConference
+      condition = { conferenceID: groupID }
+      break
+    default: response.json({ members: {} })
+  }
   for (const user of allUsers) {
-    const inTeamResult = publicMethods.getObjects(models.UserTeam, { userID: user.id, teamID: teamID })
-    const isInTeam = (inTeamResult) && (inTeamResult.length !== 0)
-    if (isInTeam.toString() === inTeam.toString()) {
+    const inGroupResult = await publicMethods.getObjects(model, condition)
+    const isInGroup = (inGroupResult) && (inGroupResult.length !== 0)
+    if (isInGroup.toString() === inGroup.toString()) {
       members.push({ id: user.id, userName: user.username, email: user.email })
     }
   }
@@ -61,6 +87,27 @@ router.post('/checkTeam', async function (request, response, next) {
   } else {
     return response.json({ message: 'NOT_JOINED' })
   }
+})
+
+router.post('/getObjects', async function (request, response, next) {
+  let model, condition
+  try {
+    model = request.body.model.toString()
+    condition = request.body.condition
+  } catch (error) {
+    response.json({ message: 'PARAS_ERROR' })
+  }
+  let objects
+  switch (model) {
+    case 'Team':
+      objects = await publicMethods.getObjects(models.Team, condition)
+      break
+    case 'Conference':
+      objects = await publicMethods.getObjects(models.Conference, condition)
+      break
+    default: response.json({})
+  }
+  response.json({ objects: objects })
 })
 
 module.exports = router

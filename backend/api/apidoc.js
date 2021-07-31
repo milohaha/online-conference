@@ -68,15 +68,44 @@
  * @apiName CreateTeam
  * @apiDescription 用户创建团队的接口
  * @apiPermission user
- * @api {post} /team/createteam CreateTeam
- * @apiParam {String} teamName        团队名称
+ * @api {post} /team/createTeam CreateTeam
+ * @apiParam {String} groupName        team的名称
  * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "teamName": "EpTeamName"
+ *       "groupName": "EpGroupName"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": "CREATED"
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
+ * @apiName CreateConference
+ * @apiDescription 用户创建会议室的接口
+ * @apiPermission user
+ * @api {post} /team/createConference CreateConference
+ * @apiParam {String} groupName        会议室的名称
+ * @apiParam {int} teamID        team的ID
+ * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "groupName": "EpConferenceName",
+ *       "teamID": 2
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -93,19 +122,21 @@
 
 /**
  * @apiName getMembers
- * @apiDescription 获取在团队里成员或不在团队里的成员的接口
+ * @apiDescription 获取成员或非成员的接口
  * @apiPermission user
  * @api {get} /team/getMembers getMembers
- * @apiParam {int} teamID        团队ID
- * @apiParam {Boolean} inTeam        是否在团队里
+ * @apiParam {int} groupID        查询的group的ID
+ * @apiParam {String} groupType        查询的group的类型，"Team"或“Conference"
+ * @apiParam {Boolean} inGroup        是否在团队里,true或false
  * @apiSuccess {Object[]} teamMembers       一个包含所需用户的列表.
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "teamID": 3
- *       “inTeam”: true
+ *       "groupID": 3
+ *       "groupType": "Team"
+ *       “inGroup”: true
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -138,6 +169,35 @@
  *     HTTP/1.1 200 OK
  *     {
  *       "message": 'NOT_JOINED'
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
+ * @apiName getObjects
+ * @apiDescription 请求团队或者会议室列表的接口
+ * @apiPermission user
+ * @api {post} /team/getObjects getObjects
+ * @apiParam {String} model        请求的类型"Team"或"Conference"
+ * @apiParam {Object} condition        对该列表的限制条件
+ * @apiSuccess {Object[]} objects       列表结果
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "model": "Team"
+ *       "condition": { teamname:'123' }
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "objects": [{ id: 1, teamname: '123', founderid: '1', createdAt:'1111-11-11 11:11:11' updatedAt:'1111-11-11 11:11:11' }]
  *     }
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 401 Unauthorized

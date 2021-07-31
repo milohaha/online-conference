@@ -2,13 +2,16 @@ const publicMethods = require('../methods/public')
 const database = require('../db/models/index')
 const models = database.sequelize.models
 module.exports = {
-  createTeam: async function (teamName, userID) {
-    if (!publicMethods.checkString(teamName)) {
-      return 'TEAMNAME_ERROR'
+  // 未传入teamID时创建team,传入teamID时创建conference
+  createGroup: async function (groupName, userID, teamID) {
+    if (!publicMethods.checkString(groupName)) {
+      return 'GROUPNAME_ERROR'
     }
+    groupName = groupName.toString()
     if (!publicMethods.checkString(userID)) {
       return 'USER_ERROR'
     }
+    userID = userID.toString()
     const user = await models.User.findAll({
       where: {
         id: userID
@@ -17,9 +20,24 @@ module.exports = {
     if (user === undefined || user.length === 0) {
       return 'FOUNDERID_ERROR'
     }
-    const objectID = await publicMethods.getObjectID(models.Team, { teamname: teamName })
+    const createTeam = !publicMethods.checkString(teamID)
+    let objectID
+    if (createTeam) {
+      objectID = await publicMethods.getObjectID(models.Team, { teamname: groupName })
+    } else {
+      const teamExistResult = await models.Team.findAll({ where: { id: teamID } })
+      if (!(teamExistResult && teamExistResult.length !== 0)) {
+        return 'TEAM_NOT_FOUND'
+      }
+      teamID = teamID.toString()
+      objectID = await publicMethods.getObjectID(models.Conference, { conferenceName: groupName, teamID: teamID })
+    }
     if (objectID === '') {
-      await models.Team.create({ teamname: teamName, founderid: userID })
+      if (createTeam) {
+        await models.Team.create({ teamname: groupName, founderid: userID })
+      } else {
+        await models.Conference.create({ conferenceName: groupName, founderID: userID, teamID: teamID })
+      }
       return 'CREATED'
     } else {
       return 'EXISTS'
