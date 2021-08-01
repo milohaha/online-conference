@@ -73,6 +73,7 @@ export default {
   justify-content: space-between;
   align-content: center;
 }
+
 .enter-meetingroom {
   border-style: none;
   border-radius: 4px;
@@ -81,6 +82,7 @@ export default {
   line-height: 5px;
   padding: 5px 8px;
 }
+
 .function-button {
   display: flex;
   justify-content: space-between;

@@ -98,10 +98,12 @@ export default {
   position: absolute;
   left: 400px;
 }
-.create-team-button{
+
+.create-team-button {
   margin-top: 20px;
 }
-.modal-close-button{
+
+.modal-close-button {
   margin-left: 188px;
   margin-top: 10px;
 }

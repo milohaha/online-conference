@@ -30,17 +30,20 @@ export default {
 strong {
   padding-left: 15px;
 }
+
 .message-card {
-  background-color:#cedfe8;
+  background-color: #cedfe8;
   padding: 15px;
   margin: 5px 10px;
   color: #594b67;
   border-radius: 4px;
 }
+
 p {
   margin: 0;
   width: 465px;
 }
+
 .message-content {
   display: flex;
   align-items: center;

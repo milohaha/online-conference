@@ -1,0 +1,19 @@
+{
+  "name": "conferenceroom",
+  "version": "1.0.0",
+  "description": "Online Conference",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@se.jisuanke.com:Rich_Media_Platform/FingerUniverse/conferenceroom.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^7.0.0"
+  }
+}

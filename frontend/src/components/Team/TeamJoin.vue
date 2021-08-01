@@ -80,11 +80,13 @@ export default {
 .team-join {
   margin: 0;
 }
+
 .title,
 .get-team-id {
   margin-bottom: 20px;
 }
-.modal-close-button{
+
+.modal-close-button {
   margin-left: 188px;
   margin-top: 10px;
 }

@@ -39,19 +39,22 @@ export default {
 }
 </script>
 <style>
-.person-page{
+.person-page {
   position: absolute;
   top: 5px;
   right: 40px;
 }
-.person-page-icon{
+
+.person-page-icon {
   width: 20px;
   height: 20px;
 }
-.enter-team-button{
-  text-align: center
+
+.enter-team-button {
+  text-align: center;
 }
-.sign-out-button{
-  text-align: center
+
+.sign-out-button {
+  text-align: center;
 }
 </style>

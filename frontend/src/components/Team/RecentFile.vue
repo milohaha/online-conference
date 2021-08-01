@@ -39,18 +39,23 @@ export default {
 .recent-file {
   margin: 0;
 }
+
 .funcbutton {
   margin-top: 20px;
 }
+
 .share-button {
   margin-left: 20px;
 }
+
 .select-file {
   margin-top: 20px;
 }
+
 .file {
   margin: 10px;
 }
+
 h2 {
   margin-bottom: 20px;
 }

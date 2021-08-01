@@ -32,26 +32,30 @@ export default {
 </script>
 <style scoped>
 .verification-card {
-  background-color:#cedfe8;
+  background-color: #cedfe8;
   color: #594b67;
   border-radius: 4px;
   margin: 5px 10px;
 }
+
 .verification-content {
   display: flex;
   align-items: center;
   padding: 5px 15px;
   padding-top: 0;
 }
+
 .verification-time,
 .verification-title {
   padding-top: 10px;
   padding-left: 15px;
 }
+
 .agree-btn,
 .reject-btn {
   margin: 5px 5px;
 }
+
 p {
   width: 400px;
   text-align: left;

@@ -27,6 +27,7 @@ export default {
   top: 20px;
   right: 6px;
 }
+
 p {
   font-size: 3px;
   margin: 0;

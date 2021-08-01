@@ -26,3 +26,4 @@ pnpm-debug.log*
 # Files During Test
 coverage
 test-report.xml
+__snapshots__

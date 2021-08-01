@@ -78,14 +78,16 @@ export default {
 <style scoped>
 .team-manage {
   padding: 15px;
-  background-color: #CDDCEE;
+  background-color: #cddcee;
   border-radius: 4px;
 }
+
 .create-join-button {
   padding: 10px;
   padding-left: 0;
 }
+
 .create-button {
- margin-right: 20px;
+  margin-right: 20px;
 }
 </style>

@@ -77,6 +77,7 @@ export default {
   justify-content: space-between;
   align-content: center;
 }
+
 button {
   border-style: none;
   border-radius: 4px;
@@ -85,6 +86,7 @@ button {
   line-height: 5px;
   padding: 0 8px;
 }
+
 .function-button {
   display: flex;
   justify-content: space-between;

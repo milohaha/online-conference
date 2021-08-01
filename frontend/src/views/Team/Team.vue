@@ -38,39 +38,46 @@ export default {
 </script>
 <style scoped>
 * {
-  font-family: Simsun, Serif, Sans-serif, cursive, fantasy, Monospace;
+  font-family: Simsun, serif, sans-serif, cursive, fantasy, monospace;
 }
+
 .team-page {
   margin: 0;
 }
+
 .logo {
   padding: 10px;
   height: 10vh;
   display: flex;
-  background-color:#04294f;
+  background-color: #04294f;
   align-items: center;
   justify-content: space-between;
 }
+
 .notice-user {
   display: flex;
   align-items: center;
 }
+
 .nav {
   width: 10vw;
   height: 90vh;
-  background-color: #FAF5F0;
+  background-color: #faf5f0;
   font-size: 17px;
   font-weight: 500;
 }
+
 .changing-part {
   padding: 60px;
   width: 90vw;
-  background-color:#FFF;
+  background-color: #fff;
 }
+
 .recent-file,
 .team-manage {
   padding: 10px;
 }
+
 .team-page-main-part {
   display: flex;
 }

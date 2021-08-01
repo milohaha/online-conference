@@ -18,6 +18,7 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 .noNewNotification img {
   width: 300px;
 }

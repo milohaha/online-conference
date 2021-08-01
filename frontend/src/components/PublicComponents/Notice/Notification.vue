@@ -130,6 +130,7 @@ export default {
 .notification-box {
   width: 595px;
 }
+
 .notification {
   overflow-y: scroll;
   max-height: 270px;

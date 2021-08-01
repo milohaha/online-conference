@@ -6,7 +6,7 @@
       <b-nav-item to="/team">to team</b-nav-item>
       <b-nav-item>Another Link</b-nav-item>
     </b-nav>
-    <b-jumbotron class="title" style="text-align: center">
+    <b-jumbotron class="title" style="text-align: center;">
       <template v-slot:header>富媒体实时协作平台</template>
       <template v-slot:lead>
         让线上会议室成为可能
@@ -46,20 +46,24 @@ export default {
   color: #fff;
   font-family: 字魂27号-布丁体, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }
+
 .title {
   margin-left: auto;
   margin-right: 100px;
   margin-top: 200px;
   width: fit-content;
 }
+
 div + div {
   display: flex;
 }
+
 .login-btn {
   margin-left: auto;
   margin-right: 350px;
   margin-top: 20px;
 }
+
 .register-btn {
   margin-left: auto;
   margin-right: 332px;

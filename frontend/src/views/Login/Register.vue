@@ -183,11 +183,12 @@ export default {
 }
 </script>
 <style scoped>
-.register-father{
+.register-father {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .register {
   width: 400px;
   height: 700px;

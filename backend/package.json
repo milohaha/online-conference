@@ -11,7 +11,8 @@
   "scripts": {
     "start": "nodemon -L ./bin/www",
     "test": "export NODE_ENV=test && cd db && npx sequelize-cli db:migrate && cd ../ && jest && cd db && npx sequelize db:migrate:undo:all && export NODE_ENV=development",
-    "api": "apidoc -i api/ -o public/apidoc/"
+    "api": "apidoc -i api/ -o public/apidoc/",
+    "lint": "npx eslint ."
   },
   "dependencies": {
     "@admin-bro/express": "^3.1.0",

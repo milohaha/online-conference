@@ -92,12 +92,13 @@ export default {
 }
 </script>
 <style scoped>
-.login-father{
+.login-father {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.login{
+
+.login {
   width: 400px;
   height: 700px;
 }

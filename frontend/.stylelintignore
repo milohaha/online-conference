@@ -1,0 +1,6 @@
+cypress
+coverage
+assets
+**/*.js
+**/*.otf
+**/*.ttf
