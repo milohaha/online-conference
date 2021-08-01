@@ -3,7 +3,7 @@
     <person-page></person-page>
     <b-nav tabs align="center">
       <b-nav-item active>Home</b-nav-item>
-      <b-nav-item>Link</b-nav-item>
+      <b-nav-item to="/team">to team</b-nav-item>
       <b-nav-item>Another Link</b-nav-item>
     </b-nav>
     <b-jumbotron class="title" style="text-align: center">
@@ -29,7 +29,6 @@ export default {
       userInfo: 'userInfo'
     }),
     isLogin () {
-      console.log(this.userInfo)
       return this.userInfo
     }
   },

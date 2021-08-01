@@ -95,6 +95,7 @@ export default {
 }
 </script>
 <style scoped>
+
 .team-create {
   position: absolute;
   left: 400px;

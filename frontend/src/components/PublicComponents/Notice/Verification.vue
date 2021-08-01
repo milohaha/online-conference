@@ -1,32 +1,60 @@
 <template>
   <div>
-    <div id="verification-part">
-      <p>{{ msg }}</p>
-      <b-button variant="outline-primary" id="agree-btn" size="sm">同意</b-button>
-      <b-button variant="outline-primary" id="reject-btn" size="sm">拒绝</b-button>
+    <strong class="verification-title">{{ title }}</strong>
+    <div class="verification-card">
+      <p class="verification-time">{{ time }}</p>
+      <div class="verification-content">
+        <p>{{ message }}</p>
+        <b-button variant="outline-primary" class="agree-btn" size="sm" @click="agree">同意</b-button>
+        <b-button variant="outline-primary" class="reject-btn" size="sm" @click="reject">拒绝</b-button>
+      </div>
     </div>
   </div>
 </template>
 <script>
+// import Api from '../../../api/index.js'
 export default {
   name: 'Verification',
   props: {
-    msg: { String, default: '验证消息：xxx邀请您加入会议室xxxx' },
-    id: Number
+    title: String,
+    message: String,
+    id: Number,
+    time: String
   },
-  methods: {}
+  methods: {
+    agree () {
+      this.$emit('solved', this.id)
+      // Api.respondVerification({ userId: this.$store.state.token, noticeId: this.id, hadSolved: 1 })
+      //   .catch((error) => console.log(error))
+    },
+    reject () {
+      this.$emit('solved', this.id)
+      // Api.respondVerification({ userId: this.$store.state.token, noticeId: this.id, hadSolved: 2 })
+      //   .catch((error) => console.log(error))
+    }
+  }
 }
 </script>
 <style scoped>
-#verification-part {
-  display: flex;
-  align-items: center;
+.verification-card {
   background-color:#cedfe8;
   color: #594b67;
-  padding: 15px;
+  border-radius: 4px;
   margin: 5px 10px;
 }
-#agree-btn, #reject-btn {
+.verification-content {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  padding-top: 0;
+}
+.verification-time,
+.verification-title {
+  padding-top: 10px;
+  padding-left: 15px;
+}
+.agree-btn,
+.reject-btn {
   margin: 5px 5px;
 }
 p {
@@ -34,5 +62,6 @@ p {
   text-align: left;
   margin: 0;
   margin-right: 5px;
+  margin-left: 5px;
 }
 </style>

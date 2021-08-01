@@ -30,7 +30,6 @@ export const userLogout = ({ commit }) => {
   commit(USER_LOGOUT)
   window.location = '/'
 }
-
 export const createTeam = ({ commit }, data) => {
   return new Promise((resolve) => {
     Api.createTeam(data).then(function (response) {

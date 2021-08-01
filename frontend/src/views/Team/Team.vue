@@ -58,7 +58,7 @@ export default {
 </script>
 <style scoped>
 * {
-  font-family: MicrosoftYaHei, Serif, Sans-serif, cursive, fantasy, Monospace;
+  font-family: Simsun, Serif, Sans-serif, cursive, fantasy, Monospace;
 }
 body {
   display: flex;

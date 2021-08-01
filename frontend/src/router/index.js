@@ -52,7 +52,6 @@ const router = new VueRouter({
   saveScrollPosition: true,
   routes
 })
-
 router.beforeEach(({ meta, path }, from, next) => {
   const { auth = true } = meta
   const isLogin = Boolean(Store.state.Login.isLogin)
@@ -67,5 +66,4 @@ router.beforeEach(({ meta, path }, from, next) => {
   }
   next()
 })
-
 export default router

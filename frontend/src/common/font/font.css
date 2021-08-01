@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'BuDingTi';
+    src: url('布丁体.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'ZhongGuYin';
+    src: url('超世纪中古印.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'KaiTi';
+    src: url('华文楷体.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'XingKai';
+    src: url('华文行楷.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'XinWei';
+    src: url('华文新魏.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'JianBoQing';
+    src: url('迷你简柏青.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'QingKai';
+    src: url('清楷体.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
