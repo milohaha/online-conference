@@ -11,7 +11,6 @@
   </div>
 </template>
 <script>
-// import Api from '../../../api/index.js'
 export default {
   name: 'message',
   props: {
@@ -23,8 +22,6 @@ export default {
   methods: {
     read () {
       this.$emit('read', this.id)
-      // Api.readMessage({ userId: this.$store.state.token, noticeId: this.id })
-      //   .catch((error) => console.log(error))
     }
   }
 }

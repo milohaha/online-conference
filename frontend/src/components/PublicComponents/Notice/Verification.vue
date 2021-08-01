@@ -12,7 +12,6 @@
   </div>
 </template>
 <script>
-// import Api from '../../../api/index.js'
 export default {
   name: 'Verification',
   props: {
@@ -24,13 +23,9 @@ export default {
   methods: {
     agree () {
       this.$emit('solved', this.id)
-      // Api.respondVerification({ userId: this.$store.state.token, noticeId: this.id, hadSolved: 1 })
-      //   .catch((error) => console.log(error))
     },
     reject () {
       this.$emit('solved', this.id)
-      // Api.respondVerification({ userId: this.$store.state.token, noticeId: this.id, hadSolved: 2 })
-      //   .catch((error) => console.log(error))
     }
   }
 }

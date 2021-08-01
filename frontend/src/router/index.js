@@ -42,6 +42,21 @@ const routes = [
         path: 'teamjoin',
         name: 'teamjoin',
         component: () => import('../../src/components/Team/TeamJoin.vue')
+      },
+      {
+        path: 'teammanage',
+        name: 'teammanage',
+        component: () => import('../../src/components/Team/TeamManage.vue')
+      },
+      {
+        path: 'teammyjoin',
+        name: 'teammyjoin',
+        component: () => import('../components/Team/TeamMyJoin.vue')
+      },
+      {
+        path: 'teammybuild',
+        name: 'teammybuild',
+        component: () => import('../components/Team/TeamMyBuild.vue')
       }
     ]
   }

@@ -2,20 +2,18 @@
   <div class="team-create">
     <b-jumbotron >
       <template #header>创建团队</template>
-
       <template #lead>
         一个响亮的团队名称是走向成功的开端
       </template>
-
       <hr class="divider">
-<b-alert
+      <b-alert
         :show="dismissCountDown"
         variant="warning"
         @dismissed="dismissCountDown=0"
         @dismiss-count-down="countDownChanged"
->
+      >
         该名称已被注册！
-</b-alert>
+      </b-alert>
       <b-modal id="bv-modal-create-team" ref="modal-create-team" hide-backdrop centered hide-footer>
         <template #modal-title>
           创建团队

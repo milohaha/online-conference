@@ -22,16 +22,4 @@ export default {
   joinTeam: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/checkTeam', data)
   }
-  // getVerification: function (userId) {
-  //   return instance.get(process.env.VUE_APP_API_BASE + '/notification', userId)
-  // },
-  // respondVerification: function (data) {
-  //   return instance.post(process.env.VUE_APP_API_BASE + '/verification', data)
-  // },
-  // getMessage: function (userId) {
-  //   return instance.get(process.env.VUE_APP_API_BASE + '/message', userId)
-  // },
-  // readMessage: function (data) {
-  //   return instance.post(process.env.VUE_APP_API_BASE + '/message', data)
-  // }
 }

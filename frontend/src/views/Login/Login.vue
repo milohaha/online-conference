@@ -2,12 +2,12 @@
   <div class="login-father">
     <div class="login">
       <b-form @submit.prevent="onSubmit" v-if="isFormVisible">
-<b-alert
+      <b-alert
         :show="isAlertVisible"
         variant="danger"
->
+      >
         用户名不存在或密码错误
-</b-alert>
+      </b-alert>
         <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
           <b-form-input
             id="input-user-name"
@@ -17,9 +17,9 @@
             required
             placeholder="输入用户名"
           ></b-form-input>
-          <b-form-invalid-feedback :state="validationUsername">
-            你的用户名长度必须在5-12个字符之间
-          </b-form-invalid-feedback>
+        <b-form-invalid-feedback :state="validationUsername">
+          你的用户名长度必须在5-12个字符之间
+        </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group class="input-group-password" label="密码:" label-for="input-password">
           <b-form-input

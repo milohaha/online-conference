@@ -16,7 +16,7 @@ export default {
 </script>
 <style scoped>
 .notification-num {
-  background-color:#ffc90e;
+  background-color: #ffc90e;
   border-radius: 20px;
   width: 18px;
   height: 18px;
@@ -32,8 +32,5 @@ p {
   margin: 0;
   padding: 0;
   color: darkblue;
-}
-b-icon {
-  color: #fff;
 }
 </style>

@@ -40,7 +40,6 @@ import Verification from './Verification.vue'
 import Message from './Message.vue'
 import NewNotificationIcon from './NewNotificationIcon.vue'
 import NoNewMessage from './noNewNotification.vue'
-// import Api from '../../../api/index.js'
 export default {
   name: 'Notification',
   data: function () {
@@ -94,14 +93,6 @@ export default {
         bvEvent.preventDefault()
       })
     },
-    // readNotifications () {
-    //   Api.getVerification(this.$store.state.token).then(function (response) {
-    //     this.verifications = response.data
-    //   })
-    //   Api.getMessage(this.$store.state.token).then(function (response) {
-    //     this.messages = response.data
-    //   })
-    // },
     readMessage (noticeId) {
       this.messages.splice(this.messages.findIndex((message) => message.noticeId === noticeId), 1)
       this.preventDefaultCloseOfDropdown()
@@ -132,9 +123,6 @@ export default {
     this.$io.on('noticeEvent', () => {
       this.messages.length += 1
     })
-  },
-  mounted: function () {
-    // this.readNotifications()
   }
 }
 </script>
