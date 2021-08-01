@@ -206,3 +206,50 @@
  *       ”message“: 'INVALID_TOKEN'
  *     }
  */
+
+/**
+ * @apiName getNotice
+ * @apiDescription 请求未读消息/未处理验证消息的接口
+ * @apiPermission user
+ * @api {get} /getNotice getNotice
+ * @apiParam {String} type 请求的消息类型"notice"或"verification"
+ * @apiParam {Integer} userID 用户ID
+ * @apiSuccess {Object[]} data 消息列表
+ * @apiError 401 未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "type": 'notice'
+ *       "userID": 1234567
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *      "data": [
+ *          {  id: 1,
+ *             title: '系统通知',
+ *             content: '您已被移出团队：指尖宇宙',
+ *             createdAt:'1111-11-11 11:11:11',
+ *             updatedAt:'1111-11-11 11:11:11'
+ *          }
+ *        ]
+ *     }
+ *     HTTP/1.1 200 OK
+ *     {
+ *      "data": [
+ *          {  id: 1,
+ *             type: 'application',
+ *             content: '张三申请加入团队：指尖宇宙',
+ *             createdAt:'1111-11-11 11:11:11',
+ *             updatedAt:'1111-11-11 11:11:11'
+ *          }
+ *        ]
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "code": -1,
+ *       "message": 'INVALID_TOKEN'
+ *     }
+ */

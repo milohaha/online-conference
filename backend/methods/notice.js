@@ -1,6 +1,6 @@
 const { models } = require('../utils/database')
-
 const socketMap = new Map()
+const { NOT_READ, NOT_SOLVED } = require('../utils/constant')
 module.exports = {
   storeOnlineUsers: function (userID, socket) {
     socketMap.set(userID, socket)
@@ -39,5 +39,37 @@ module.exports = {
       noticeID: userNotice.noticeID,
       hasRead: userNotice.hasRead
     })
+  },
+  getNoticeOrVerification: async function (type, userID) {
+    let objects, result
+    const results = []
+    if (type === 'notice') {
+      objects = await this.getObjetcs(models.UserNotice, {
+        userID: userID,
+        hasRead: NOT_READ
+      })
+      for (const object of objects) {
+        result = await this.getObjetcs(models.Notice, {
+          id: object.noticeID
+        })
+        if (result && result.length !== 0) {
+          results.push(result[0])
+        }
+      }
+    } else if (type === 'verification') {
+      objects = await this.getObjetcs(models.UserVerification, {
+        userID: userID,
+        hasSolved: NOT_SOLVED
+      })
+      for (const object of objects) {
+        result = await this.getObjetcs(models.Verification, {
+          id: object.verificationID
+        })
+        if (result && result.length !== 0) {
+          results.push(result[0])
+        }
+      }
+    }
+    return results
   }
 }

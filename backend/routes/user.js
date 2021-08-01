@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const publicMethods = require('../methods/public')
 const userMethods = require('../methods/user')
+const noticeMethods = require('../methods/notice')
 const constant = require('../utils/constant')
 const jsonwebtoken = require('jsonwebtoken')
 const { models } = require('../utils/database')
@@ -74,6 +75,36 @@ router.post('/register', async (request, response, next) => {
     console.log(error)
     next(error)
   }
+})
+
+// check notices and verifications
+router.get('/getNotice', async (request, response, next) => {
+  let type, userID, data
+  try {
+    type = request.query.type
+    userID = request.query.userID
+  } catch (error) {
+    response.json({ message: 'PARAS_ERROR' })
+  }
+  data = await noticeMethods.getNoticeOrVerification(type, userID)
+  if (type === 'verification') {
+    const results = []
+    for (const datum of data) {
+      const senderName = await publicMethods.getUserNameByID(datum.senderID)
+      const teamName = await publicMethods.getTeamNameByID(datum.teamID)
+      const typeString = datum.type === 'application' ? '申请' : '邀请您'
+      const content = senderName + typeString + '加入团队：' + teamName
+      results.push({
+        id: datum.id,
+        type: datum.type,
+        content: content,
+        createdAt: datum.createdAt,
+        updatedAt: datum.updatedAt
+      })
+    }
+    data = results
+  }
+  response.json({ data: data })
 })
 
 module.exports = router

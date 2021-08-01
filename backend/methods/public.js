@@ -45,6 +45,14 @@ module.exports = {
       return ''
     }
   },
+  getTeamNameByID: async function (teamID) {
+    const team = await this.getObjects(models.Team, { id: teamID })
+    try {
+      return team[0].teamName
+    } catch (error) {
+      return ''
+    }
+  },
   findGroup: async function (conferenceOrTeam, conferenceOrTeamID) {
     let group
     if (conferenceOrTeam === IS_TEAM) {

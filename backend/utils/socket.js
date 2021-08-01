@@ -1,7 +1,7 @@
 const noticeMethods = require('../methods/notice')
 const publicMethods = require('../methods/public')
 const { models } = require('../utils/database')
-const { NOT_READ, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE } = require('../utils/constant')
+const { NOT_READ, NOT_SOLVED, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE } = require('../utils/constant')
 
 const sendUniqueNotice = function (toWhom, title, content) {
   const noticeID = noticeMethods.storeNotice({ title: title, content: content })
@@ -156,6 +156,15 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
   }
 }
 
+const sendVerification = function (senderID, receiverID, teamID, type) {
+  const verificationID = noticeMethods.storeVerification({ type: type, senderID: senderID, receiverID: receiverID, teamID: teamID })
+  noticeMethods.storeUserVerification({ userID: receiverID, verificationID: verificationID, hasSolved: NOT_SOLVED })
+  const toSocket = noticeMethods.findOnlineSocket(receiverID)
+  if (toSocket) {
+    toSocket.emit('verificationEvent')
+  }
+}
+
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
 
@@ -173,6 +182,8 @@ module.exports = function (server) {
     socket.on('leaveNotice', leaveGroupHandler)
 
     socket.on('dismissNotice', dismissHandler)
+
+    socket.on('sendVerification', sendVerification)
 
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)
