@@ -34,9 +34,11 @@ module.exports = {
     }
     if (objectID === '') {
       if (createTeam) {
-        await models.Team.create({ teamName: groupName, founderID: userID })
+        const newTeam = await models.Team.create({ teamName: groupName, founderID: userID })
+        await models.UserTeam.create({ userID: userID, teamID: newTeam.id })
       } else {
-        await models.Conference.create({ conferenceName: groupName, founderID: userID, teamID: teamID })
+        const newConference = await models.Conference.create({ conferenceName: groupName, founderID: userID, teamID: teamID })
+        await models.UserConference.create({ userID: userID, conferenceID: newConference.id })
       }
       return 'CREATED'
     } else {

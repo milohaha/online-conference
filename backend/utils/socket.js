@@ -1,7 +1,7 @@
 const noticeMethods = require('../methods/notice')
 const publicMethods = require('../methods/public')
 const { models } = require('../utils/database')
-const { NOT_READ, NOT_SOLVED, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE } = require('../utils/constant')
+const { NOT_READ, NOT_SOLVED, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE, ALREADY_READ } = require('../utils/constant')
 
 const sendUniqueNotice = function (toWhom, title, content) {
   const noticeID = noticeMethods.storeNotice({ title: title, content: content })
@@ -24,7 +24,7 @@ const broadcastGroupNotice = function (conferenceOrTeam, conferenceOrTeamID, tit
 const verificationHandler = async function (acceptOrReject, userID, verificationID) {
   try {
     const title = '系统通知'
-    const userName = await publicMethods.getUserNameByID(userID)
+    const userName = await publicMethods.getNameByID(models.User, userID)
     let content
     // 给发出邀请/申请的人发消息
     const solvedVerification = await models.Verification.findAll({
@@ -87,7 +87,7 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
     // 成员主动退出，需通知会议室/团队创建者
     if (removedOrLeave === LEAVE) {
       receiverID = founderID
-      userName = publicMethods.getUserNameByID(userID)
+      userName = await publicMethods.getNameByID(models.User, userID)
       content = userName + '已退出' + groupType + ':' + groupName
     } else {
       receiverID = userID
@@ -156,13 +156,27 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
   }
 }
 
-const sendVerification = function (senderID, receiverID, teamID, type) {
-  const verificationID = noticeMethods.storeVerification({ type: type, senderID: senderID, receiverID: receiverID, teamID: teamID })
-  noticeMethods.storeUserVerification({ userID: receiverID, verificationID: verificationID, hasSolved: NOT_SOLVED })
-  const toSocket = noticeMethods.findOnlineSocket(receiverID)
-  if (toSocket) {
-    toSocket.emit('verificationEvent')
+const sendVerification = function (senderID, receiverIDs, teamID, type) {
+  for (const receiverID of receiverIDs) {
+    const verificationID = noticeMethods.storeVerification({ type: type, senderID: senderID, receiverID: receiverID, teamID: teamID })
+    noticeMethods.storeUserVerification({ userID: receiverID, verificationID: verificationID, hasSolved: NOT_SOLVED })
+    const toSocket = noticeMethods.findOnlineSocket(receiverID)
+    if (toSocket) {
+      toSocket.emit('verificationEvent')
+    }
   }
+}
+
+const readNotice = async function (userID, noticeID) {
+  await models.UserNotice.update(
+    { hasRead: ALREADY_READ },
+    {
+      where: {
+        userID: userID,
+        noticeID: noticeID
+      }
+    }
+  )
 }
 
 module.exports = function (server) {
@@ -184,6 +198,8 @@ module.exports = function (server) {
     socket.on('dismissNotice', dismissHandler)
 
     socket.on('sendVerification', sendVerification)
+
+    socket.on('redNotice', readNotice)
 
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)

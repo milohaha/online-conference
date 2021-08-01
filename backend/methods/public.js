@@ -37,37 +37,47 @@ module.exports = {
       return ''
     }
   },
-  getUserNameByID: async function (userID) {
-    const user = await this.getObjects(models.User, { id: userID })
+  getNameByID: async function (model, id) {
+    const object = await this.getObjects(model, { id: id })
     try {
-      return user[0].userName
-    } catch (error) {
-      return ''
-    }
-  },
-  getTeamNameByID: async function (teamID) {
-    const team = await this.getObjects(models.Team, { id: teamID })
-    try {
-      return team[0].teamName
+      if (model === models.User) {
+        return object[0].userName
+      } else if (model === models.Team) {
+        return object[0].teamName
+      } else if (model === models.Conference) {
+        return object[0].conferenceName
+      } else {
+        return ''
+      }
     } catch (error) {
       return ''
     }
   },
   findGroup: async function (conferenceOrTeam, conferenceOrTeamID) {
     let group
+    if (conferenceOrTeam === undefined || conferenceOrTeamID === undefined) {
+      return []
+    }
     if (conferenceOrTeam === IS_TEAM) {
       group = await this.getObjects(models.Team, { id: conferenceOrTeamID })
     } else if (conferenceOrTeam === IS_CONFERENCE) {
       group = await this.getObjects(models.Conference, { id: conferenceOrTeamID })
+    } else {
+      return []
     }
     return group
   },
   findGroupUserIDs: async function (conferenceOrTeam, conferenceOrTeamID) {
     let objects
-    if (conferenceOrTeamID === IS_TEAM) {
-      objects = await this.getObjects(models.UserTeam, {})
+    if (conferenceOrTeam === undefined || conferenceOrTeamID === undefined) {
+      return []
+    }
+    if (conferenceOrTeam === IS_TEAM) {
+      objects = await this.getObjects(models.UserTeam, { teamID: conferenceOrTeamID })
+    } else if (conferenceOrTeam === IS_CONFERENCE) {
+      objects = await this.getObjects(models.UserConference, { conferenceID: conferenceOrTeamID })
     } else {
-      objects = await this.getObjects(models.UserConference, {})
+      return []
     }
     const userIDs = []
     for (const object of objects) {

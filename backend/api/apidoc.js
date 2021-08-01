@@ -20,6 +20,7 @@
  * @apiParam {String} password        用户密码
  * @apiSuccess {int} code        结果码，登录成功为0，登录失败为-1。(此码与服务器返回的状态码不同)
  * @apiSuccess {String} message        登录成功：USER_LOGIN 登录失败：WRONG_USERNAME_OR_PASSWORD
+ * @apiSuccess {Integer} userID 返回用户ID
  * @apiSuccess {String} token        如果登录成功，返回token用于用户验证
  * @apiSuccess {String} expireTime        如果登录成功，返回token过期时刻的时间戳
  * @apiGroup User
@@ -34,6 +35,7 @@
  *     {
  *       "code": 0,
  *       "message": "USER_LOGIN",
+ *       "userID": 123
  *       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
  *       "expireTime": "1627493571504"
  *     }
@@ -124,7 +126,7 @@
  * @apiName getMembers
  * @apiDescription 获取成员或非成员的接口
  * @apiPermission user
- * @api {get} /team/getMembers getMembers
+ * @api {post} /team/getMembers getMembers
  * @apiParam {int} groupID        查询的group的ID
  * @apiParam {String} groupType        查询的group的类型，"Team"或“Conference"
  * @apiParam {Boolean} inGroup        是否在团队里,true或false
@@ -211,7 +213,7 @@
  * @apiName getNotice
  * @apiDescription 请求未读消息/未处理验证消息的接口
  * @apiPermission user
- * @api {get} /getNotice getNotice
+ * @api {post} /getNotice getNotice
  * @apiParam {String} type 请求的消息类型"notice"或"verification"
  * @apiParam {Integer} userID 用户ID
  * @apiSuccess {Object[]} data 消息列表

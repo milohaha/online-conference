@@ -30,6 +30,7 @@ router.post('/login', async (request, response, next) => {
       response.json({
         code: constant.CODE_SUCCESS,
         message: 'USER_LOGIN',
+        userID: userID,
         token: token,
         expireTime: expireTime
       })
@@ -78,11 +79,11 @@ router.post('/register', async (request, response, next) => {
 })
 
 // check notices and verifications
-router.get('/getNotice', async (request, response, next) => {
+router.post('/getNotice', async (request, response, next) => {
   let type, userID, data
   try {
-    type = request.query.type
-    userID = request.query.userID
+    type = request.body.type
+    userID = request.body.userID
   } catch (error) {
     response.json({ message: 'PARAS_ERROR' })
   }
@@ -90,8 +91,8 @@ router.get('/getNotice', async (request, response, next) => {
   if (type === 'verification') {
     const results = []
     for (const datum of data) {
-      const senderName = await publicMethods.getUserNameByID(datum.senderID)
-      const teamName = await publicMethods.getTeamNameByID(datum.teamID)
+      const senderName = await publicMethods.getNameByID(models.User, datum.senderID)
+      const teamName = await publicMethods.getNameByID(models.Team, datum.teamID)
       const typeString = datum.type === 'application' ? '申请' : '邀请您'
       const content = senderName + typeString + '加入团队：' + teamName
       results.push({
