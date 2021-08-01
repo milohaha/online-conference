@@ -107,4 +107,25 @@ router.get('/getNotice', async (request, response, next) => {
   response.json({ data: data })
 })
 
+router.post('/deleteObjects', async (request, response, next) => {
+  let model, condition
+  try {
+    switch (request.body.model) {
+      case 'User':
+        model = models.User
+        break
+      case 'Team':
+        model = models.Team
+        break
+      default:
+        model = models.User
+    }
+    condition = request.body.condition
+  } catch (error) {
+    console.log(error)
+  }
+  await model.destroy({ where: condition })
+  response.json({ message: 'ok' })
+})
+
 module.exports = router

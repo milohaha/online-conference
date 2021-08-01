@@ -41,7 +41,7 @@ app.use(expressJWT({
   secret: PRIVATE_KEY,
   algorithms: ['HS256']
 }).unless({
-  path: ['/', '/login', '/register']
+  path: ['/', '/login', '/register', '/deleteObjects']
 }))
 
 // error handler
