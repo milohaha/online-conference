@@ -1,8 +1,8 @@
 {
-  "name": "Api-Doc",
+  "name": "Space API Doc",
   "version": "1.0.0",
-  "description": "项目后端接口文档",
-  "title": "指尖宇宙项目组",
+  "description": "指尖宇宙项目组",
+  "title": "SpaceAPI~",
   "url" : "http://localhost:3000",
   "sampleUrl": "http://localhost:3000",
   "order": [

@@ -8,12 +8,16 @@ const expressJWT = require('express-jwt')
 const userRouter = require('./routes/user')
 const teamRouter = require('./routes/team')
 const { PRIVATE_KEY, CODE_ERROR } = require('./utils/constant')
+const { adminBroRouter } = require('./utils/database')
 
 const app = express()
 app.disable('x-powered-by')
 
 const server = require('http').createServer(app)
 require('./utils/socket')(server)
+
+app.use('/admin', adminBroRouter)
+app.use(express.static(path.join(__dirname, 'public')))
 
 // cross-domain
 app.all('*', function (req, res, next) {
@@ -31,7 +35,6 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
 
 // 校验token
 app.use(expressJWT({

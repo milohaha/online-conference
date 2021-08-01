@@ -34,7 +34,6 @@ services:
         && npx sequelize-cli db:migrate
         && cd ../
         && npm run api
-        && npx sequelize-auto -h mariadb -p 3306 -d database_development -u root -x password -e mariadb -o "./models"
         && DEBUG=backend:* npm start"
 
 networks:
