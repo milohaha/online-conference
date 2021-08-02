@@ -12,12 +12,13 @@
         邀请成员加入团队
       </template>
       <div class="d-block text-center member-to-invite">
-        <b-list-group >
+        <b-list-group>
           <member-to-invite
             v-for="memberToInvite in membersToInvite"
             :key="memberToInvite.id"
             :member-to-invite="memberToInvite"
-            @selectMember="selectMember"></member-to-invite>
+            @selectMember="selectMember"
+          ></member-to-invite>
         </b-list-group>
       </div>
       <div class="d-flex justify-content-center">
@@ -70,6 +71,7 @@ export default {
       })
         .then(response => {
           this.membersToInvite = response.data.members
+          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
     },
     selectMember (memberID) {

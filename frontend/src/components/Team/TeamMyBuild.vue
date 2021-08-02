@@ -1,5 +1,6 @@
 <template>
   <div>
+    <create-new-meeting-room></create-new-meeting-room>
     <div class="function-button">
       <div>
         <h2>{{ teamName }}</h2>
@@ -10,7 +11,7 @@
           <b-icon icon="justify"></b-icon>
         </template>
         <invite-team-member></invite-team-member>
-        <b-dropdown-item>新建会议室</b-dropdown-item>
+        <b-dropdown-item v-b-modal.create-new-meeting-room>新建会议室</b-dropdown-item>
         <b-dropdown-item>解散团队</b-dropdown-item>
       </b-dropdown>
     </div>
@@ -33,6 +34,7 @@
 <script>
 import InviteTeamMember from '../../components/Team/InviteTeamMember'
 import MeetingRoomList from '../Team/MeetingRoomList.vue'
+import CreateNewMeetingRoom from '../Team/CreateNewMeetingRoom.vue'
 export default {
   name: 'TeamMyBuild',
   data: function () {
@@ -52,7 +54,8 @@ export default {
   },
   components: {
     InviteTeamMember,
-    MeetingRoomList
+    MeetingRoomList,
+    CreateNewMeetingRoom
   }
 }
 </script>

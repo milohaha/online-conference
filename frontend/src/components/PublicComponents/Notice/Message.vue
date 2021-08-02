@@ -4,7 +4,7 @@
     <div class="message-card">
       <p>{{ sendTime }}:</p>
     <div class="message-content">
-      <p>{{ message }}</p>
+      <p><strong>{{ message }}</strong></p>
       <b-button variant="outline-primary" size="sm" @click="read">已读</b-button>
     </div>
     </div>
@@ -32,10 +32,10 @@ strong {
 }
 
 .message-card {
-  background-color: #cedfe8;
+  background-color: #d3e8e1;
   padding: 15px;
   margin: 5px 10px;
-  color: #594b67;
+  color: #e44a66;
   border-radius: 4px;
 }
 
