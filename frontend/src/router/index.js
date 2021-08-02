@@ -59,6 +59,11 @@ const routes = [
         component: () => import('../components/Team/TeamMyBuild.vue')
       }
     ]
+  },
+  {
+    path: '/canvas',
+    name: 'canvas',
+    component: () => import('../components/Conference/Canvas')
   }
 ]
 
