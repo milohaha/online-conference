@@ -110,4 +110,45 @@ router.post('/getObjects', async function (request, response, next) {
   response.json({ objects: objects })
 })
 
+router.post('/getTeamBuiltByMe', async function (request, response, next) {
+  const userID = request.body.userID
+  const teams = await publicMethods.getObjects(models.Team, {
+    founderID: userID
+  })
+  const result = []
+  for (const team of teams) {
+    result.push({ id: team.id, teamName: team.teamName })
+  }
+  response.json({ teams: result })
+})
+
+router.post('/getTeamJoined', async function (request, response, next) {
+  const userID = request.body.userID
+  const teamsJoined = await models.UserTeam.findAll({
+    attributes: [['teamID', 'id']],
+    where: {
+      userID: userID
+    }
+  })
+  const teamsBuilt = await models.Team.findAll({
+    attributes: ['id'],
+    where: {
+      founderID: userID
+    }
+  })
+  const teams = []
+  teamsJoined.forEach((teamJoined) => {
+    const index = teamsBuilt.findIndex(teamBuilt => JSON.stringify(teamJoined) === JSON.stringify(teamBuilt))
+    if (index === -1) {
+      teams.push(teamJoined.id)
+    }
+  })
+  const result = []
+  for (const teamID of teams) {
+    const teamName = publicMethods.getNameByID(models.Team, teamID)
+    result.push({ teamID: teamID, teamName: teamName })
+  }
+  response.json({ teams: result })
+})
+
 module.exports = router

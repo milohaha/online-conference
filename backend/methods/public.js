@@ -14,7 +14,7 @@ module.exports = {
   },
   getObjects: async function (Model, condition) {
     if (Model === undefined || condition === undefined) {
-      return {}
+      return []
     }
     let objects
     try {
@@ -25,7 +25,7 @@ module.exports = {
         where: condition
       })
     } catch (error) {
-      return {}
+      return []
     }
     return objects
   },

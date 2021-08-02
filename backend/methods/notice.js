@@ -14,7 +14,8 @@ module.exports = {
   storeVerification: async function (verification) {
     const newVerification = await models.Verifications.create({
       type: verification.type,
-      applicantID: verification.applicantID,
+      senderID: verification.senderID,
+      receiverID: verification.receiverID,
       conferenceOrTeamID: verification.conferenceOrTeamID
     })
     return newVerification.id

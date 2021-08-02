@@ -79,7 +79,7 @@ router.post('/register', async (request, response, next) => {
 })
 
 // check notices and verifications
-router.post('/getNotice', async (request, response, next) => {
+router.post('/getMessage', async (request, response, next) => {
   let type, userID, data
   try {
     type = request.body.type

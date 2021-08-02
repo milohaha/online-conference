@@ -68,3 +68,14 @@
  * @apiExample Example usage:
  * this.$io.emit('readNotice', userID, noticeID)
  */
+/**
+ * @api {socket} / readNotice
+ * @apiName readNotice
+ * @apiGroup Socket
+ * @apiParam { Integer } userID
+ * @apiParam { Integer } noticeID
+ * @apiDescription 监听到'readNotice'的处理函数，当成员点击消息的“已读”按钮时调用
+ * @apiSampleRequest off
+ * @apiExample Example usage:
+ * this.$io.emit('readNotice', userID, noticeID)
+ */
