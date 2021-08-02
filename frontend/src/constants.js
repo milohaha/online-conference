@@ -1,0 +1,11 @@
+export default {
+  LEAVE: 2,
+  REMOVED: 1,
+  IS_TEAM: 2,
+  IS_CONFERENCE: 1,
+  NOT_READ: 0,
+  ALREADY_READ: 1,
+  NOT_SOLVED: 0,
+  ACCEPTED: 1,
+  REJECTED: 2
+}

@@ -1,14 +1,15 @@
 @font-face {
-    font-family: Logo;
-    src: url('Anurati-Regular.otf');
-    font-weight: normal;
-    font-style: normal;
+  font-family: Logo;
+  src: url('Anurati-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
 }
+
 @font-face {
-    font-family: 'BuDingTi';
-    src: url('布丁体.ttf');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'BuDingTi';
+  src: url('布丁体.ttf');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {

@@ -9,7 +9,8 @@ export const userLogin = ({ commit }, data) => {
       } else if (response.data.message === 'USER_LOGIN') {
         commit(USER_SIGNIN, {
           expireTime: response.data.expireTime,
-          token: response.data.token
+          token: response.data.token,
+          userID: response.data.userID
         })
         window.location = '/team'
       }

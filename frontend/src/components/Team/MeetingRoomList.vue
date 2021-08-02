@@ -55,17 +55,20 @@ export default {
   line-height: 5px;
   padding: 5px 8px;
 }
+
 .meeting-rooms {
   display: flex;
   justify-content: space-between;
   align-content: center;
 }
+
 .no-meeting-room {
   margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 img {
   margin-top: 20px;
   height: 350px;
