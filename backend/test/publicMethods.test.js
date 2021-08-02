@@ -32,17 +32,17 @@ describe('checkString', () => {
 })
 
 describe('getObjects', () => {
-  test('zero paras should return {}', async () => {
+  test('zero paras should return []', async () => {
     const object = await publicMethods.getObjects()
-    expect(object).toEqual({})
+    expect(object).toEqual([])
   })
-  test('one paras should return {}', async () => {
+  test('one paras should return []', async () => {
     const objects = await publicMethods.getObjects(User)
-    expect(objects).toEqual({})
+    expect(objects).toEqual([])
   })
-  test('paras type error should return {}', async () => {
+  test('paras type error should return []', async () => {
     const objects = await publicMethods.getObjects(User, 'name')
-    expect(objects).toEqual({})
+    expect(objects).toEqual([])
   })
   test('find one object ', async () => {
     await User.create({ userName: 'testname_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })

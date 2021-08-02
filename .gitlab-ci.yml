@@ -43,7 +43,7 @@ lint:
       stylelint-config-standard
     # Run eslint
     - node_modules/.bin/eslint src
-    - node_modules/.bin/stylelint src
+    - node_modules/.bin/stylelint src --fix
     - cd ../backend
     - |
       npm install --ignore-scripts --save-dev \

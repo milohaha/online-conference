@@ -1,6 +1,7 @@
 const { models } = require('../utils/database')
 const socketMap = new Map()
 const { NOT_READ, NOT_SOLVED } = require('../utils/constant')
+const publicMethods = require('../methods/public')
 module.exports = {
   storeOnlineUsers: function (userID, socket) {
     socketMap.set(userID, socket)
@@ -12,11 +13,11 @@ module.exports = {
     return socketMap.get(userID)
   },
   storeVerification: async function (verification) {
-    const newVerification = await models.Verifications.create({
+    const newVerification = await models.Verification.create({
       type: verification.type,
       senderID: verification.senderID,
       receiverID: verification.receiverID,
-      conferenceOrTeamID: verification.conferenceOrTeamID
+      teamID: verification.teamID
     })
     return newVerification.id
   },
@@ -45,12 +46,12 @@ module.exports = {
     let objects, result
     const results = []
     if (type === 'notice') {
-      objects = await this.getObjetcs(models.UserNotice, {
+      objects = await publicMethods.getObjects(models.UserNotice, {
         userID: userID,
         hasRead: NOT_READ
       })
       for (const object of objects) {
-        result = await this.getObjetcs(models.Notice, {
+        result = await publicMethods.getObjects(models.Notice, {
           id: object.noticeID
         })
         if (result && result.length !== 0) {
@@ -58,12 +59,12 @@ module.exports = {
         }
       }
     } else if (type === 'verification') {
-      objects = await this.getObjetcs(models.UserVerification, {
+      objects = await publicMethods.getObjects(models.UserVerification, {
         userID: userID,
         hasSolved: NOT_SOLVED
       })
       for (const object of objects) {
-        result = await this.getObjetcs(models.Verification, {
+        result = await publicMethods.getObjects(models.Verification, {
           id: object.verificationID
         })
         if (result && result.length !== 0) {

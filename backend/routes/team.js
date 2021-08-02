@@ -6,40 +6,21 @@ const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
 router.post('/createTeam', async (request, response, next) => {
-  let userID
-  let teamName
-  try {
-    userID = request.user.userID
-    teamName = request.body.teamName
-  } catch (error) {
-    response.json({ message: 'PARAS_ERROR' })
-  }
+  const userID = request.user.userID
+  const teamName = request.body.teamName
   const result = await teamMethods.createGroup(teamName, userID)
   return response.json({ message: result })
 })
 
 router.post('/createConference', async (request, response, next) => {
-  let userID, teamID, conferenceName
-  try {
-    userID = request.user.userID
-    teamID = request.body.teamID
-    conferenceName = request.body.conferenceName
-  } catch (error) {
-    response.json({ message: 'PARAS_ERROR' })
-  }
+  const userID = request.user.userID
+  const { teamID, conferenceName } = request.body
   const result = await teamMethods.createGroup(conferenceName, userID, teamID)
   return response.json({ message: result })
 })
 
 router.post('/getMembers', async function (request, response, next) {
-  let groupID, inGroup, groupType
-  try {
-    groupID = request.body.groupID
-    inGroup = request.body.inGroup
-    groupType = request.body.groupType
-  } catch (error) {
-    response.json({ members: [] })
-  }
+  const { groupID, inGroup, groupType } = request.body
   const allUsers = await publicMethods.getObjects(models.User, {})
   const members = []
   let model, condition
@@ -65,23 +46,13 @@ router.post('/getMembers', async function (request, response, next) {
 })
 
 router.post('/checkTeam', async function (request, response, next) {
-  let teamID, userID
-  try {
-    teamID = request.body.teamID
-    userID = request.user.userID
-  } catch (error) {
-    response.json({ message: 'PARAS_ERROR' })
-  }
+  const userID = request.user.userID
+  const teamID = request.body.teamID
   const teamExistResult = await publicMethods.getObjectID(models.Team, { id: teamID })
   if (!publicMethods.checkString(teamExistResult)) {
     return response.json({ message: 'NOT_EXIST' })
   }
-  const existResult = await models.UserTeam.findAll({
-    where: {
-      userID: userID,
-      teamID: teamID
-    }
-  })
+  const existResult = await publicMethods.getObjects(models.UserTeam, { userID: userID, teamID: teamID })
   if (existResult && existResult.length !== 0) {
     return response.json({ message: 'HAS_JOINED' })
   } else {
@@ -90,13 +61,7 @@ router.post('/checkTeam', async function (request, response, next) {
 })
 
 router.post('/getObjects', async function (request, response, next) {
-  let model, condition
-  try {
-    model = request.body.model.toString()
-    condition = request.body.condition
-  } catch (error) {
-    response.json({ message: 'PARAS_ERROR' })
-  }
+  const { model, condition } = request.body
   let objects
   switch (model) {
     case 'Team':
@@ -109,12 +74,22 @@ router.post('/getObjects', async function (request, response, next) {
   }
   response.json({ objects: objects })
 })
-
+router.post('/getConferences', async function (request, response, next) {
+  const userID = request.user.userID
+  const teamID = request.body.teamID
+  const conferenceIDs = await publicMethods.getObjects(models.UserConference, { teamID: teamID, userID: userID })
+  const result = []
+  for (const conferenceID of conferenceIDs) {
+    const conference = await publicMethods.getObjects(models.Conference, { id: conferenceID.conferenceID })
+    if (conference && conference.length !== 0) {
+      result.push({ id: conference[0].id, conferenceName: conference[0].conferenceName })
+    }
+  }
+  response.json({ conferences: result })
+})
 router.post('/getTeamBuiltByMe', async function (request, response, next) {
   const userID = request.body.userID
-  const teams = await publicMethods.getObjects(models.Team, {
-    founderID: userID
-  })
+  const teams = await publicMethods.getObjects(models.Team, { founderID: userID })
   const result = []
   for (const team of teams) {
     result.push({ id: team.id, teamName: team.teamName })
@@ -124,6 +99,9 @@ router.post('/getTeamBuiltByMe', async function (request, response, next) {
 
 router.post('/getTeamJoined', async function (request, response, next) {
   const userID = request.body.userID
+  if (userID === undefined) {
+    response.json({ teams: [] })
+  }
   const teamsJoined = await models.UserTeam.findAll({
     attributes: [['teamID', 'id']],
     where: {

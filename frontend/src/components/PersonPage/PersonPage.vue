@@ -39,7 +39,7 @@ export default {
 }
 </script>
 <style>
-#person-page{
+#person-page {
   position: absolute;
   top: 5px;
   right: 40px;

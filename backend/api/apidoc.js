@@ -257,6 +257,33 @@
  */
 
 /**
+ * @apiName getConferences
+ * @apiDescription 请求可加入会议室的接口
+ * @apiPermission user
+ * @api {post} /team/getConferences getConferences
+ * @apiParam {int} teamID        所要查看能加入会议室的所属团队
+ * @apiSuccess {Object[]} conferences       可加入会议室的列表
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "teamID": 123
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "conferences": [{id: 1, conferenceName: "团队一号"}]
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
  * @apiName getTeamBuiltByMe
  * @apiDescription 请求我创建的团队的接口
  * @apiPermission user
