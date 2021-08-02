@@ -50,17 +50,17 @@ export default {
     return {
       teamsCreate: [
         {
-          teamID: 111,
+          teamID: 1,
           teamName: '团队1'
         },
         {
-          teamID: 222,
+          teamID: 2,
           teamName: '团队2'
         }
       ],
       teamsJoined: [
         {
-          teamID: 333,
+          teamID: 3,
           teamName: '团队3'
         },
         {

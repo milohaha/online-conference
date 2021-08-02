@@ -1,7 +1,7 @@
 <template>
   <div class="noNewNotification">
     <strong>没有新消息哦</strong>
-    <img src="../../../assets/picture/noNewMessage.png" alt="图片加载失败">
+    <img src="../../../assets/picture/nomessage.png" alt="图片加载失败">
   </div>
 </template>
 <script>
@@ -20,6 +20,7 @@ export default {
 }
 
 .noNewNotification img {
-  width: 300px;
+  margin-top: 10px;
+  width: 390px;
 }
 </style>

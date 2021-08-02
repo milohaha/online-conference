@@ -4,7 +4,7 @@
   </div>
 </template>
 <style lang="scss">
-@import './common/font.css';
+@import './common/font/font.css';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

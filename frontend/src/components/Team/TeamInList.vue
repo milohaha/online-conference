@@ -20,9 +20,11 @@ export default {
       }
     },
     enterTeamJoined () {
+      this.$store.commit('ENTER_TEAM', this.teamID)
       this.$router.push({ path: '/team/teammyjoin' })
     },
     enterTeamBulit () {
+      this.$store.commit('ENTER_TEAM', this.teamID)
       this.$router.push({ path: '/team/teammybuild' })
     }
   }

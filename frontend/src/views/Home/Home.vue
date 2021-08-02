@@ -44,7 +44,7 @@ export default {
   background-color: #04294f;
   height: 100vh;
   color: #fff;
-  font-family: BuDingTi, Helvetica, Arial, Verdana, Tahoma, sans-serif;
+  font-family: XinWei, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }
 
 .title {

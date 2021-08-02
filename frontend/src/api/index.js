@@ -15,7 +15,6 @@ export default {
   register: function (data) {
     return Vue.axios.post(process.env.VUE_APP_API_BASE + '/register', data)
   },
-
   createTeam: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/createteam', data)
   },
@@ -26,6 +25,9 @@ export default {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getMembers', data)
   },
   getObjects: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/getObjects', data)
+  },
+  checkMeetingRoom: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getObjects', data)
   }
 }

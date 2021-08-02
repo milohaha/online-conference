@@ -23,21 +23,12 @@
           </b-list-group-item>
         </b-list-group>
       </b-tab>
-      <b-tab title="会议室列表">
-        <b-list-group>
-          <b-list-group-item v-for="meetingRoom in meetingRooms" :key="meetingRoom.ID" class="meetingroom-item">
-            <div>
-              <b-avatar variant="success" icon="tags"></b-avatar>
-              <span>{{ meetingRoom.title }}</span>
-            </div>
-            <button class="enter-meetingroom">进入</button>
-          </b-list-group-item>
-        </b-list-group>
-      </b-tab>
+      <meeting-room-list></meeting-room-list>
     </b-tabs>
   </div>
 </template>
 <script>
+import MeetingRoomList from '../Team/MeetingRoomList.vue'
 export default {
   name: 'TeamMyBuild',
   data: function () {
@@ -52,18 +43,11 @@ export default {
           userID: 123,
           userName: 'Tom'
         }
-      ],
-      meetingRooms: [
-        {
-          ID: 123154,
-          title: '讨论关于xx'
-        },
-        {
-          ID: 45685,
-          title: '讨论关于yy'
-        }
       ]
     }
+  },
+  components: {
+    MeetingRoomList
   }
 }
 </script>
@@ -86,6 +70,7 @@ export default {
 .function-button {
   display: flex;
   justify-content: space-between;
+  align-content: center;
   margin-bottom: 20px;
 }
 </style>
