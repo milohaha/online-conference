@@ -14,8 +14,15 @@ router.post('/createTeam', async (request, response, next) => {
 
 router.post('/createConference', async (request, response, next) => {
   const userID = request.user.userID
-  const { teamID, conferenceName } = request.body
+  const { teamID, conferenceName, memberIDs } = request.body
   const result = await teamMethods.createGroup(conferenceName, userID, teamID)
+  const newConference = publicMethods.getObjects(models.Conference, { conferenceName: conferenceName })
+  for (const memberID of memberIDs) {
+    models.UserConference.create({
+      userID: memberID,
+      conferenceID: newConference.id
+    })
+  }
   return response.json({ message: result })
 })
 
