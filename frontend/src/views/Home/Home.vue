@@ -22,11 +22,11 @@
 </template>
 <script>
 import PersonPage from '../../components/PersonPage/PersonPage'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   computed: {
-    ...mapGetters({
-      isUserLogin: 'isUserLogin'
+    ...mapState({
+      isUserLogin: (state) => state.Login.isUserLogin
     }),
     isLogin () {
       return this.isUserLogin

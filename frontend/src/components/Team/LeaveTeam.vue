@@ -59,12 +59,12 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   computed: {
-    ...mapGetters({
-      userID: 'userID',
-      teamID: 'teamID'
+    ...mapState({
+      userID: (state) => state.Login.userID,
+      teamID: (state) => state.Team.teamID
     })
   },
   methods: {

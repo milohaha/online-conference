@@ -7,16 +7,16 @@
     <div class="teams">
       <b-card>
         <b-card-header>
-          <b-button v-b-toggle.team-built class="team-built-button" variant="light">我创建的团队</b-button>
+          <b-button v-b-toggle.team-created class="team-created-button" variant="light">我创建的团队</b-button>
         </b-card-header>
-        <b-collapse id="team-built">
+        <b-collapse id="team-created">
             <b-list-group>
-              <b-list-group-item v-for="team in teamsCreate"
-              :key="team.teamID">
+              <b-list-group-item v-for="team in teamsCreated"
+              :key="team.id">
                 <team-in-list
-                  :teamID="team.teamID"
+                  :teamID="team.id"
                   :teamName="team.teamName"
-                  type="built">
+                  type="created">
                 </team-in-list>
               </b-list-group-item>
             </b-list-group>
@@ -29,9 +29,9 @@
         <b-collapse id="team-joined">
           <b-list-group>
             <b-list-group-item v-for="team in teamsJoined"
-            :key="team.teamID">
+            :key="team.id">
               <team-in-list
-                :teamID="team.teamID"
+                :teamID="team.id"
                 :teamName="team.teamName"
                 type="joined">
               </team-in-list>
@@ -44,34 +44,31 @@
 </template>
 <script>
 import TeamInList from '../Team/TeamInList.vue'
+import Api from '../../api'
+import { mapState } from 'vuex'
 export default {
   name: 'TeamManage',
   data: function () {
     return {
-      teamsCreate: [
-        {
-          teamID: 1,
-          teamName: '团队1'
-        },
-        {
-          teamID: 2,
-          teamName: '团队2'
-        }
-      ],
-      teamsJoined: [
-        {
-          teamID: 3,
-          teamName: '团队3'
-        },
-        {
-          teamID: 444,
-          teamName: '团队4'
-        }
-      ]
+      teamsCreated: [],
+      teamsJoined: []
     }
   },
   components: {
     TeamInList
+  },
+  computed: {
+    ...mapState({
+      userID: (state) => state.Login.userID
+    })
+  },
+  created: function () {
+    Api.getTeamCreatedByMe({ userID: this.userID }).then(response => {
+      this.teamsCreated = response.data.teams
+    })
+    Api.getTeamJoined({ userID: this.userID }).then(response => {
+      this.teamsJoined = response.data.teams
+    })
   }
 }
 </script>

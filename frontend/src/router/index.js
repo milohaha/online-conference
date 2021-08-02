@@ -34,9 +34,9 @@ const routes = [
         component: () => import('../../src/components/Team/RecentFile.vue')
       },
       {
-        path: 'teambuild',
-        name: 'teambuild',
-        component: () => import('../../src/components/Team/TeamBuild.vue')
+        path: 'teamcreate',
+        name: 'teamcreate',
+        component: () => import('../../src/components/Team/TeamCreate.vue')
       },
       {
         path: 'teamjoin',
@@ -54,9 +54,9 @@ const routes = [
         component: () => import('../components/Team/TeamMyJoin.vue')
       },
       {
-        path: 'teammybuild',
-        name: 'teammybuild',
-        component: () => import('../components/Team/TeamMyBuild.vue')
+        path: 'teammycreate',
+        name: 'teammycreate',
+        component: () => import('../components/Team/TeamMyCreate.vue')
       }
     ]
   },
@@ -74,7 +74,7 @@ const router = new VueRouter({
 })
 router.beforeEach(({ meta, path }, from, next) => {
   const { auth = true } = meta
-  const isLogin = Boolean(Store.state.Login.isLogin)
+  const isLogin = Boolean(Store.state.Login.isUserLogin)
   if (path === '/') {
     return next()
   }

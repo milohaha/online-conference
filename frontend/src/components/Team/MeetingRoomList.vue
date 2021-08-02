@@ -16,7 +16,7 @@
   </b-tab>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import Api from '../../api'
 export default {
   name: 'MeetingRoomList',
@@ -27,8 +27,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      teamID: 'teamID'
+    ...mapState({
+      teamID: (state) => state.Team.teamID
     })
   },
   methods: {

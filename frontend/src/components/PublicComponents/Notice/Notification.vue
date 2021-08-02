@@ -39,7 +39,7 @@
 import Verification from './Verification.vue'
 import Message from './Message.vue'
 import NewNotificationIcon from './NewNotificationIcon.vue'
-import NoNewMessage from './NoNewNotification.vue'
+import NoNewMessage from './NoNewNotification'
 export default {
   name: 'Notification',
   data: function () {

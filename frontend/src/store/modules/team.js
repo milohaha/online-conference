@@ -1,12 +1,13 @@
 import { ENTER_TEAM } from '../types'
 
 const state = {
-  teamID: 0
+  teamID: parseInt(localStorage.teamID)
 }
 
 const mutations = {
   [ENTER_TEAM] (stateLocal, value) {
     stateLocal.teamID = value
+    localStorage.setItem('teamID', value)
   }
 }
 

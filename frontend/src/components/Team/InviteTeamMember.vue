@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import MemberToInvite from './MemberToInvite.vue'
 export default {
   data () {
@@ -54,9 +54,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      userID: 'userID',
-      teamID: 'teamID'
+    ...mapState({
+      userID: (state) => state.Login.userID,
+      teamID: (state) => state.Team.teamID
     }),
     ...mapActions({
       getMembers: 'getMembers'

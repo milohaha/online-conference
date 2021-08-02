@@ -31,7 +31,7 @@
 </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   data: function () {
     return {
@@ -43,8 +43,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      userID: 'userID'
+    ...mapState({
+      userID: (state) => state.Login.userID,
+      teamID: (state) => state.Team.teamID
     }),
     ...mapActions({
       joinTeam: 'joinTeam',

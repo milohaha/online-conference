@@ -50,7 +50,7 @@
 </template>
 <script>
 import MemberToInvite from '../Team/MemberToInvite.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   data: function () {
     return {
@@ -66,9 +66,9 @@ export default {
     ...mapActions({
       getMembers: 'getMembers'
     }),
-    ...mapGetters({
-      userID: 'userID',
-      teamID: 'teamID'
+    ...mapState({
+      userID: (state) => state.Login.userID,
+      teamID: (state) => state.Team.teamID
     })
   },
   methods: {
@@ -113,16 +113,20 @@ export default {
 .input-button {
   width: inherit;
 }
+
 .get-meeting-room-name {
   margin-top: 20px;
 }
+
 img {
   width: 350px;
   align-self: center;
 }
+
 #create-success {
   text-align: center;
 }
+
 .create-new-meeting-room-content {
   display: flex;
   flex-wrap: wrap;

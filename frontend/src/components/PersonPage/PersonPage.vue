@@ -15,11 +15,11 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   computed: {
-    ...mapGetters({
-      isUserLogin: 'isUserLogin'
+    ...mapState({
+      isUserLogin: (state) => state.Login.isUserLogin
     }),
     ...mapActions({
       userLogout: 'userLogout'

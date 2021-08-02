@@ -2,8 +2,8 @@
   <div>
     <div class="function-button">
       <div>
-        <h2>{{ teamName }}</h2>
-        <small>ID:123456</small>
+        <h2>{{ $route.query.teamName }}</h2>
+        <small>ID:{{ teamID }}</small>
       </div>
       <b-dropdown variant="link" right>
         <template #button-content>
@@ -31,6 +31,7 @@
 import InviteTeamMember from '../../components/Team/InviteTeamMember'
 import MeetingRoomList from '../Team/MeetingRoomList.vue'
 import LeaveTeam from '../../components/Team/LeaveTeam'
+import { mapState } from 'vuex'
 export default {
   name: 'TeamMyBuild',
   data: function () {
@@ -47,6 +48,11 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState({
+      teamID: (state) => state.Team.teamID
+    })
   },
   components: {
     MeetingRoomList,

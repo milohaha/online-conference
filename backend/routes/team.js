@@ -130,8 +130,8 @@ router.post('/getTeamJoined', async function (request, response, next) {
   })
   const result = []
   for (const teamID of teams) {
-    const teamName = publicMethods.getNameByID(models.Team, teamID)
-    result.push({ teamID: teamID, teamName: teamName })
+    const teamName = await publicMethods.getNameByID(models.Team, teamID)
+    result.push({ id: teamID, teamName: teamName })
   }
   response.json({ teams: result })
 })
