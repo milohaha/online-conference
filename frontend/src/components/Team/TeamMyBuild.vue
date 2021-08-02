@@ -9,7 +9,7 @@
         <template #button-content>
           <b-icon icon="justify"></b-icon>
         </template>
-        <b-dropdown-item>邀请新成员</b-dropdown-item>
+        <invite-team-member></invite-team-member>
         <b-dropdown-item>新建会议室</b-dropdown-item>
         <b-dropdown-item>解散团队</b-dropdown-item>
       </b-dropdown>
@@ -41,6 +41,7 @@
   </div>
 </template>
 <script>
+import InviteTeamMember from '../../components/Team/InviteTeamMember'
 export default {
   name: 'TeamMyBuild',
   data: function () {
@@ -67,6 +68,9 @@ export default {
         }
       ]
     }
+  },
+  components: {
+    InviteTeamMember
   }
 }
 </script>

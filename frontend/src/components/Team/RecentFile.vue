@@ -39,8 +39,7 @@ export default {
 .recent-file {
   margin: 0;
 }
-
-.funcbutton {
+.func-button {
   margin-top: 20px;
 }
 

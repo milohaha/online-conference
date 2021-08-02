@@ -26,10 +26,10 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      userInfo: 'userInfo'
+      isUserLogin: 'isUserLogin'
     }),
     isLogin () {
-      return this.userInfo
+      return this.isUserLogin
     }
   },
   components: {
@@ -44,7 +44,7 @@ export default {
   background-color: #04294f;
   height: 100vh;
   color: #fff;
-  font-family: 字魂27号-布丁体, Helvetica, Arial, Verdana, Tahoma, sans-serif;
+  font-family: BuDingTi, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }
 
 .title {

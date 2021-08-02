@@ -1,6 +1,8 @@
 <template>
   <div>
-    <img src="../../../assets/picture/planet.png" alt="logo">
+    <b-link to="/">
+      <img src="../../../assets/picture/planet.png" alt="logo">
+    </b-link>
     <span>FMT</span>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-dropdown offset="2em" variant="primary" class="person-page" v-if="isLogin" right>
+    <b-dropdown offset="2em" variant="primary" id="person-page" v-if="isLogin" right>
       <template #button-content>
         <b-icon icon="person-circle" class="person-page-icon"></b-icon>
       </template>
@@ -19,13 +19,13 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      userInfo: 'userInfo'
+      isUserLogin: 'isUserLogin'
     }),
     ...mapActions({
       userLogout: 'userLogout'
     }),
     isLogin () {
-      return this.userInfo
+      return this.isUserLogin
     }
   },
   methods: {
@@ -39,7 +39,7 @@ export default {
 }
 </script>
 <style>
-.person-page {
+#person-page{
   position: absolute;
   top: 5px;
   right: 40px;

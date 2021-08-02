@@ -11,7 +11,7 @@
         </b-card-header>
         <b-collapse id="team-built">
             <b-list-group>
-              <b-list-group-item v-for="team in teamsBuilt"
+              <b-list-group-item v-for="team in teamsCreate"
               :key="team.teamID">
                 <team-in-list
                   :teamID="team.teamID"
@@ -48,7 +48,7 @@ export default {
   name: 'TeamManage',
   data: function () {
     return {
-      teamsBuilt: [
+      teamsCreate: [
         {
           teamID: 111,
           teamName: '团队1'
@@ -83,8 +83,7 @@ export default {
 }
 
 .create-join-button {
-  padding: 10px;
-  padding-left: 0;
+  padding: 10px 10px 10px 0;
 }
 
 .create-button {

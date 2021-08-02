@@ -3,7 +3,7 @@ import { USER_LOGOUT, USER_SIGNIN } from '../types'
 const isLoginIn = function () {
   const expireTime = localStorage.getItem('expireTime')
   if (expireTime) {
-    if (expireTime > Date.now()) {
+    if (Number(expireTime) > Date.now()) {
       return true
     }
   }
@@ -11,7 +11,8 @@ const isLoginIn = function () {
 }
 
 const state = {
-  isLogin: isLoginIn()
+  isLogin: isLoginIn(),
+  userID: 0
 }
 
 const mutations = {

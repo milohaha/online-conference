@@ -44,3 +44,17 @@ export const joinTeam = ({ commit }, data) => {
     })
   })
 }
+export const getMembers = ({ commit }, data) => {
+  return new Promise((resolve) => {
+    Api.getMembers(data).then(function (response) {
+      resolve(response)
+    })
+  })
+}
+export const getObjects = ({ commit }, data) => {
+  return new Promise((resolve) => {
+    Api.getObjects(data).then(function (response) {
+      resolve(response)
+    })
+  })
+}

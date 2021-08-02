@@ -31,33 +31,50 @@
 </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data: function () {
     return {
       teamID: '',
       dismissCountDown: 0,
       dismissTime: 5,
-      alertMessage: ''
+      alertMessage: '',
+      founderID: ''
     }
   },
   computed: {
+    ...mapGetters({
+      userID: 'userID'
+    }),
     ...mapActions({
-      joinTeam: 'joinTeam'
+      joinTeam: 'joinTeam',
+      getObjects: 'getObjects'
     })
   },
   methods: {
     teamJoin () {
       this.$store.dispatch('joinTeam', {
-        teamID: parseInt(this.teamID)
+        teamID: this.teamID
       })
-        .then(response => {
-          if (response.data.message === 'NOT_JOINED') {
+        .then(outerResponse => {
+          if (outerResponse.data.message === 'NOT_JOINED') {
             this.showModal()
-          } else if (response.data.message === 'NOT_EXIST ') {
+            this.$store.dispatch('getObjects', {
+              model: 'Team',
+              condition: { teamID: this.teamID }
+            })
+              .then(innerResponse => {
+                this.founderID = innerResponse.data().objects[0].founderID
+              })
+            this.$io.emit('sendVerification',
+              parseInt(this.userID),
+              parseInt(this.founderID),
+              parseInt(this.teamID),
+              'application')
+          } else if (outerResponse.data.message === 'NOT_EXIST') {
             this.alertMessage = '查询不到团队ID'
             this.showAlert()
-          } else if (response.data.message === 'HAS_JOINED') {
+          } else if (outerResponse.data.message === 'HAS_JOINED') {
             this.alertMessage = '您已加入该团队'
             this.showAlert()
           }

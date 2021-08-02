@@ -21,12 +21,12 @@
     <div class="changing-part">
       <router-view></router-view>
     </div>
-  </div>
+</div>
 </div>
 </template>
 <script>
 import Notification from '../../components/PublicComponents/Notice/Notification.vue'
-import Logo from '../../components/PublicComponents/Logos/logo.vue'
+import Logo from '../../components/PublicComponents/Logos/Logo.vue'
 import UserLogo from '../../components/PublicComponents/Logos/UserLogo.vue'
 export default {
   components: {
