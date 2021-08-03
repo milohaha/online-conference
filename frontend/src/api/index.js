@@ -27,13 +27,13 @@ export default {
   getObjects: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getObjects', data)
   },
-  checkMeetingRoom: function (data) {
-    return instance.post(process.env.VUE_APP_API_BASE + '/team/getObjects', data)
-  },
   getTeamCreatedByMe: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getTeamBuiltByMe', data)
   },
   getTeamJoined: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getTeamJoined', data)
+  },
+  checkConference: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/getConferences', data)
   }
 }

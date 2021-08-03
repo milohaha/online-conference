@@ -1,18 +1,18 @@
 <template>
   <div>
-    <b-modal id="create-new-meeting-room"
+    <b-modal id="create-new-conference"
       title="新建会议室"
       button-size="sm"
       no-stacking
     >
       <template #modal-footer>
         <b-button v-b-modal.create-success @click="checkInput">确定</b-button>
-        <b-button @click="$bvModal.hide('create-new-meeting-room')">取消</b-button>
+        <b-button @click="$bvModal.hide('create-new-conference')">取消</b-button>
       </template>
-      <div class="create-new-meeting-room-content">
+      <div class="create-new-conference-content">
         <b-form-input
-          class="get-meeting-room-name"
-          v-model="meetingRoomName"
+          class="get-conference-name"
+          v-model="conferenceName"
           placeholder="输入会议室名称"
           :state='nameState'
           aria-describedby="wrong-feedback"
@@ -21,7 +21,7 @@
         <b-form-invalid-feedback id='wrong-feedback'>
           请输入名称
         </b-form-invalid-feedback>
-        <img src="../../assets/picture/meetingroom.png" alt="meetingRoom">
+        <img src="../../assets/picture/conference.png" alt="conference">
       </div>
     </b-modal>
     <b-modal id="create-success" ok-only>
@@ -54,14 +54,14 @@ import { mapActions, mapState } from 'vuex'
 export default {
   data: function () {
     return {
-      meetingRoomName: '',
+      conferenceName: '',
       teamMembers: [],
       membersSelected: []
     }
   },
   computed: {
     nameState () {
-      return this.meetingRoomName.length > 0
+      return this.conferenceName.length > 0
     },
     ...mapActions({
       getMembers: 'getMembers'
@@ -81,7 +81,7 @@ export default {
           bvEvent.preventDefault()
         })
       }
-      this.meetingRoomName = ''
+      this.conferenceName = ''
     },
     getMemberToInvite () {
       this.$store.dispatch('getMembers', {
@@ -114,7 +114,7 @@ export default {
   width: inherit;
 }
 
-.get-meeting-room-name {
+.get-conference-name {
   margin-top: 20px;
 }
 
@@ -127,7 +127,7 @@ img {
   text-align: center;
 }
 
-.create-new-meeting-room-content {
+.create-new-conference-content {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

@@ -1,16 +1,16 @@
 <template>
-  <b-tab title="会议室列表" @click="checkMeetingRoom">
+  <b-tab title="会议室列表" @click="checkConference">
     <b-list-group>
-      <b-list-group-item v-for="meetingRoom in meetingRooms" :key="meetingRoom.id" class="meeting-rooms">
+      <b-list-group-item v-for="conference in conferences" :key="conference.id" class="conferences">
         <div>
           <b-avatar variant="success" icon="tags"></b-avatar>
-          <span>{{ meetingRoom.conferenceName }}</span>
+          <span>{{ conference.conferenceName }}</span>
         </div>
-        <button class="enter-meetingroom">进入</button>
+        <button class="enter-conference">进入</button>
       </b-list-group-item>
     </b-list-group>
-    <div v-if="!hasMeetingRoom" class="no-meeting-room">
-      <h5>当前团队暂无会议室</h5>
+    <div v-if="!hasConference" class="no-conference">
+      <h5>您尚未加入任何会议室</h5>
       <img src="../../assets/picture/list.png" alt="当前无会议">
     </div>
   </b-tab>
@@ -19,27 +19,28 @@
 import { mapState } from 'vuex'
 import Api from '../../api'
 export default {
-  name: 'MeetingRoomList',
+  name: 'ConferenceList',
   data: function () {
     return {
-      hasMeetingRoom: true,
-      meetingRooms: []
+      hasConference: true,
+      conferences: []
     }
   },
   computed: {
     ...mapState({
-      teamID: (state) => state.Team.teamID
+      teamID: (state) => state.Team.teamID,
+      userID: (state) => state.Login.userID
     })
   },
   methods: {
-    checkMeetingRoom () {
-      Api.checkMeetingRoom({
-        model: 'Conference',
-        condition: { teamID: this.teamID }
+    checkConference () {
+      Api.checkConference({
+        userID: this.userID,
+        teamID: this.teamID
       }).then((response) => {
-        this.meetingRooms = response.data.objects
-        if (this.meetingRooms.length === 0) {
-          this.hasMeetingRoom = false
+        this.conferences = response.data.conferences
+        if (this.conferences.length === 0) {
+          this.hasConference = false
         }
       })
     }
@@ -47,7 +48,7 @@ export default {
 }
 </script>
 <style scoped>
-.enter-meetingroom {
+.enter-conference {
   border-style: none;
   border-radius: 4px;
   background-color: #3c465d;
@@ -56,13 +57,13 @@ export default {
   padding: 5px 8px;
 }
 
-.meeting-rooms {
+.conferences {
   display: flex;
   justify-content: space-between;
   align-content: center;
 }
 
-.no-meeting-room {
+.no-conference {
   margin-top: 40px;
   display: flex;
   flex-direction: column;

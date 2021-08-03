@@ -82,12 +82,12 @@ router.post('/getObjects', async function (request, response, next) {
   response.json({ objects: objects })
 })
 router.post('/getConferences', async function (request, response, next) {
-  const userID = request.user.userID
+  const userID = request.body.userID
   const teamID = request.body.teamID
-  const conferenceIDs = await publicMethods.getObjects(models.UserConference, { teamID: teamID, userID: userID })
+  const conferenceIDs = await publicMethods.getObjects(models.UserConference, { userID: userID })
   const result = []
   for (const conferenceID of conferenceIDs) {
-    const conference = await publicMethods.getObjects(models.Conference, { id: conferenceID.conferenceID })
+    const conference = await publicMethods.getObjects(models.Conference, { id: conferenceID.conferenceID, teamID: teamID })
     if (conference && conference.length !== 0) {
       result.push({ id: conference[0].id, conferenceName: conference[0].conferenceName })
     }

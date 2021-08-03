@@ -1,6 +1,6 @@
 <template>
   <div>
-    <create-new-meeting-room></create-new-meeting-room>
+    <create-new-conference></create-new-conference>
     <div class="function-button">
       <div>
         <h2>{{ $route.query.teamName }}</h2>
@@ -11,7 +11,7 @@
           <b-icon icon="justify"></b-icon>
         </template>
         <invite-team-member></invite-team-member>
-        <b-button @click="bvModal.show('create-new-meeting-room')">新建会议室</b-button>
+        <b-dropdown-item v-b-modal.create-new-conference>新建会议室</b-dropdown-item>
         <b-dropdown-item>解散团队</b-dropdown-item>
       </b-dropdown>
     </div>
@@ -27,15 +27,15 @@
           </b-list-group-item>
         </b-list-group>
       </b-tab>
-      <meeting-room-list></meeting-room-list>
+      <conference-list></conference-list>
     </b-tabs>
   </div>
 </template>
 <script>
-import InviteTeamMember from '../../components/Team/InviteTeamMember'
-import MeetingRoomList from '../Team/MeetingRoomList.vue'
-import CreateNewMeetingRoom from '../Team/CreateNewMeetingRoom.vue'
 import { mapState } from 'vuex'
+import InviteTeamMember from '../../components/Team/InviteTeamMember'
+import ConferenceList from '../Team/ConferenceList'
+import CreateNewConference from '../Team/CreateNewConference.vue'
 export default {
   name: 'TeamMyBuild',
   props: {
@@ -62,13 +62,13 @@ export default {
   },
   components: {
     InviteTeamMember,
-    MeetingRoomList,
-    CreateNewMeetingRoom
+    ConferenceList,
+    CreateNewConference
   }
 }
 </script>
 <style scoped>
-.meetingroom-item,
+.Conference-item,
 .member-item {
   display: flex;
   justify-content: space-between;

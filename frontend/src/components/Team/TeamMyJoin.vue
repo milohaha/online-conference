@@ -23,13 +23,13 @@
           </b-list-group-item>
         </b-list-group>
       </b-tab>
-      <meeting-room-list></meeting-room-list>
+      <conference-list></conference-list>
     </b-tabs>
   </div>
 </template>
 <script>
 import InviteTeamMember from '../../components/Team/InviteTeamMember'
-import MeetingRoomList from '../Team/MeetingRoomList.vue'
+import ConferenceList from '../Team/ConferenceList.vue'
 import LeaveTeam from '../../components/Team/LeaveTeam'
 import { mapState } from 'vuex'
 export default {
@@ -55,7 +55,7 @@ export default {
     })
   },
   components: {
-    MeetingRoomList,
+    ConferenceList,
     InviteTeamMember,
     LeaveTeam
   }
