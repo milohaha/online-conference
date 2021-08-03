@@ -83,23 +83,13 @@ export default {
 }
 </script>
 <style scoped>
-.input-button {
-  width: inherit;
-}
-
 .get-conference-name {
   margin-top: 20px;
 }
-
 img {
   width: 350px;
   align-self: center;
 }
-
-#create-success {
-  text-align: center;
-}
-
 .create-new-conference-content {
   display: flex;
   flex-wrap: wrap;
