@@ -1,31 +1,40 @@
 <template>
   <div>
-    <strong class="verification-title">{{ title }}</strong>
+    <strong class="verification-title">{{ verification.title }}</strong>
     <div class="verification-card">
-      <p class="verification-time">{{ time }}</p>
+      <p class="verification-time">{{ verification.createdAt }}</p>
       <div class="verification-content">
-        <p>{{ message }}</p>
-        <b-button variant="outline-primary" class="agree-btn" size="sm" @click="agree">同意</b-button>
-        <b-button variant="outline-primary" class="reject-btn" size="sm" @click="reject">拒绝</b-button>
+        <p>{{ verification.content }}</p>
+        <b-button variant="outline-primary" class="agree-button" size="sm" @click="accept">同意</b-button>
+        <b-button variant="outline-primary" class="reject-button" size="sm" @click="reject">拒绝</b-button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'Verification',
   props: {
-    title: String,
-    message: String,
-    id: Number,
-    time: String
+    verification: {}
+  },
+  computed: {
+    ...mapState({
+      userID: (state) => state.Login.userID
+    })
   },
   methods: {
-    agree () {
-      this.$emit('solved', this.id)
+    accept () {
+      this.$io.emit('acceptNotice',
+        this.userID,
+        this.verification.id)
+      this.$emit('solvedVerification', this.verification.id)
     },
     reject () {
-      this.$emit('solved', this.id)
+      this.$io.emit('rejectNotice',
+        this.userID,
+        this.verification.id)
+      this.$emit('solvedVerification', this.verification.id)
     }
   }
 }
@@ -41,8 +50,7 @@ export default {
 .verification-content {
   display: flex;
   align-items: center;
-  padding: 5px 15px;
-  padding-top: 0;
+  padding: 0 15px 5px;
 }
 
 .verification-time,
@@ -51,16 +59,14 @@ export default {
   padding-left: 15px;
 }
 
-.agree-btn,
-.reject-btn {
+.agree-button,
+.reject-button {
   margin: 5px 5px;
 }
 
 p {
   width: 400px;
   text-align: left;
-  margin: 0;
-  margin-right: 5px;
-  margin-left: 5px;
+  margin: 0 5px;
 }
 </style>

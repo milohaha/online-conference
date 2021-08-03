@@ -72,8 +72,8 @@ export default {
       this.$io.emit(
         'leaveNotice',
         this.userID,
-        this.$constant.IS_TEAM,
         this.$constant.LEAVE,
+        this.$constant.IS_TEAM,
         this.teamID
       )
     },

@@ -59,3 +59,10 @@ export const getObjects = ({ commit }, data) => {
     })
   })
 }
+export const getMessages = ({ commit }, data) => {
+  return new Promise((resolve) => {
+    Api.getMessages(data).then(function (response) {
+      resolve(response)
+    })
+  })
+}

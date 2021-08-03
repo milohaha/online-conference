@@ -68,7 +68,6 @@ export default {
 }
 </script>
 <style scoped>
-.Conference-item,
 .member-item {
   display: flex;
   justify-content: space-between;

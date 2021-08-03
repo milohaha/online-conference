@@ -35,5 +35,8 @@ export default {
   },
   checkConference: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getConferences', data)
+  },
+  getMessages: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/getMessage', data)
   }
 }

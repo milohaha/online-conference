@@ -36,7 +36,7 @@ const routes = [
       {
         path: 'teamcreate',
         name: 'teamcreate',
-        component: () => import('../../src/components/Team/TeamCreate.vue')
+        component: () => import('../components/Team/TeamCreate.vue')
       },
       {
         path: 'teamjoin',

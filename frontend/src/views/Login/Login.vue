@@ -84,6 +84,8 @@ export default {
             if (response.data.message === 'WRONG_USERNAME_OR_PASSWORD') {
               this.isAlertVisible = true
             }
+          }).then(() => {
+            this.$io.emit('login', parseInt(localStorage.getItem('userID')))
           })
           .catch(error => console.log(error))
       }

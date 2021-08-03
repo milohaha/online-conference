@@ -39,13 +39,12 @@ export default {
       dismissCountDown: 0,
       dismissTime: 5,
       alertMessage: '',
-      founderID: ''
+      founderID: []
     }
   },
   computed: {
     ...mapState({
-      userID: (state) => state.Login.userID,
-      teamID: (state) => state.Team.teamID
+      userID: (state) => state.Login.userID
     }),
     ...mapActions({
       joinTeam: 'joinTeam',
@@ -55,23 +54,24 @@ export default {
   methods: {
     teamJoin () {
       this.$store.dispatch('joinTeam', {
-        teamID: this.teamID
+        teamID: Number(this.teamID)
       })
         .then(outerResponse => {
           if (outerResponse.data.message === 'NOT_JOINED') {
             this.showModal()
             this.$store.dispatch('getObjects', {
               model: 'Team',
-              condition: { teamID: this.teamID }
+              condition: { id: Number(this.teamID) }
             })
               .then(innerResponse => {
-                this.founderID = innerResponse.data().objects[0].founderID
+                this.founderID.push(Number(innerResponse.data.objects[0].founderID))
+              }).then(() => {
+                this.$io.emit('sendVerification',
+                  this.userID,
+                  this.founderID,
+                  Number(this.teamID),
+                  'application')
               })
-            this.$io.emit('sendVerification',
-              parseInt(this.userID),
-              parseInt(this.founderID),
-              parseInt(this.teamID),
-              'application')
           } else if (outerResponse.data.message === 'NOT_EXIST') {
             this.alertMessage = '查询不到团队ID'
             this.showAlert()

@@ -1,27 +1,33 @@
 <template>
   <div class="message">
-    <strong>{{ title }}</strong>
+    <strong>{{ notice.title }}</strong>
     <div class="message-card">
-      <p>{{ sendTime }}:</p>
+      <p>{{ notice.createdAt }}:</p>
     <div class="message-content">
-      <p><strong>{{ message }}</strong></p>
+      <p>{{ notice.content }}</p>
       <b-button variant="outline-primary" size="sm" @click="read">已读</b-button>
     </div>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'message',
   props: {
-    id: Number,
-    message: String,
-    sendTime: String,
-    title: String
+    notice: {}
+  },
+  computed: {
+    ...mapState({
+      userID: (state) => state.Login.userID
+    })
   },
   methods: {
     read () {
-      this.$emit('read', this.id)
+      this.$io.emit('readNotice',
+        this.userID,
+        this.notice.id)
+      this.$emit('read', this.notice.id)
     }
   }
 }

@@ -9,7 +9,6 @@ const isLoginIn = function () {
   }
   return false
 }
-
 const state = {
   isUserLogin: isLoginIn(),
   userID: parseInt(localStorage.getItem('userID'))
@@ -21,7 +20,7 @@ const mutations = {
     localStorage.setItem('token', userInfo.token)
     localStorage.setItem('userID', userInfo.userID)
     stateLocal.isLogin = true
-    stateLocal.userID = parseInt(userInfo.userID)
+    stateLocal.userID = Number(userInfo.userID)
   },
   [USER_LOGOUT] (stateLocal) {
     localStorage.removeItem('expireTime')

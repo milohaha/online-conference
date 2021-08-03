@@ -27,7 +27,7 @@
           pill
           variant="outline-success"
           class="modal-invite-button mt-2"
-          @click="inviteMember">
+          v-b-modal.bv-modal-invite-team-member-check>
           确认
         </b-button>
       </div>
@@ -39,6 +39,27 @@
       v-b-modal.bv-modal-invite-team-member>
       邀请新成员
     </b-dropdown-item>
+    <b-modal
+      id="bv-modal-invite-team-member-check"
+      ref="my-modal-invite-team-member-check"
+      hide-backdrop
+      centered
+      hide-footer
+      no-close-on-backdrop>
+      <template #modal-title>
+        邀请成员加入团队
+      </template>
+      <div class="d-block text-center member-to-invite">
+        您确认要邀请这些成员吗？
+      </div>
+      <b-button
+        @click="inviteMember">
+        确认
+      </b-button>
+      <b-button @click="$bvModal.hide('bv-modal-invite-team-member-check')">
+        取消
+      </b-button>
+    </b-modal>
   </div>
 </template>
 <script>
@@ -47,8 +68,6 @@ import MemberToInvite from './MemberToInvite.vue'
 export default {
   data () {
     return {
-      dismissCountDown: 0,
-      dismissTime: 5,
       membersToInvite: [],
       membersSelected: []
     }
@@ -71,7 +90,6 @@ export default {
       })
         .then(response => {
           this.membersToInvite = response.data.members
-          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
     },
     selectMember (memberID) {
@@ -89,12 +107,8 @@ export default {
         this.membersSelected,
         this.teamID,
         'invitation')
-    },
-    countDownChanged (dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    showAlert () {
-      this.dismissCountDown = this.dismissTime
+      this.$bvModal.hide('bv-modal-invite-team-member-check')
+      this.$bvModal.hide('bv-modal-invite-team-member')
     }
   },
   components: {

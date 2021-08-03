@@ -3,17 +3,17 @@ const publicMethods = require('../methods/public')
 const { models } = require('../utils/database')
 const { NOT_READ, NOT_SOLVED, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE, ALREADY_READ } = require('../utils/constant')
 
-const sendUniqueNotice = function (toWhom, title, content) {
-  const noticeID = noticeMethods.storeNotice({ title: title, content: content })
-  noticeMethods.storeUserNotice({ userID: toWhom, noticeID: noticeID, hasRead: NOT_READ })
+const sendUniqueNotice = async function (toWhom, title, content) {
+  const noticeID = await noticeMethods.storeNotice({ title: title, content: content })
+  await noticeMethods.storeUserNotice({ userID: toWhom, noticeID: noticeID, hasRead: NOT_READ })
   const toSocket = noticeMethods.findOnlineSocket(toWhom)
   if (toSocket) {
     toSocket.emit('noticeEvent')
   }
 }
 
-const broadcastGroupNotice = function (conferenceOrTeam, conferenceOrTeamID, title, content) {
-  const toWhoms = publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
+const broadcastGroupNotice = async function (conferenceOrTeam, conferenceOrTeamID, title, content) {
+  const toWhoms = await publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
   if (toWhoms && toWhoms.length !== 0) {
     for (const toWhom of toWhoms) {
       sendUniqueNotice(toWhom, title, content)
@@ -78,12 +78,12 @@ const acceptGroupHandler = async function (userID, verificationID) {
 
 const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTeam, conferenceOrTeamID) {
   const title = '系统通知'
-  const groupType = conferenceOrTeamID === IS_TEAM ? '团队' : '会议室'
+  const groupType = conferenceOrTeam === IS_TEAM ? '团队' : '会议室'
   let content, receiverID, founderID, groupName, userName
   const group = await publicMethods.findGroup(conferenceOrTeam, conferenceOrTeamID)
   if (group && group.length !== 0) {
-    founderID = group.founderID
-    groupName = conferenceOrTeamID === IS_TEAM ? group.teamName : group.conferenceName
+    founderID = group[0].founderID
+    groupName = conferenceOrTeam === IS_TEAM ? group[0].teamName : group[0].conferenceName
     // 成员主动退出，需通知会议室/团队创建者
     if (removedOrLeave === LEAVE) {
       receiverID = founderID
@@ -93,7 +93,7 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
       receiverID = userID
       content = '您已被移出' + groupType + ':' + groupName
     }
-    if (userName !== '') {
+    if (receiverID) {
       sendUniqueNotice(receiverID, title, content)
     }
   }
@@ -156,10 +156,10 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
   }
 }
 
-const sendVerification = function (senderID, receiverIDs, teamID, type) {
+const sendVerification = async function (senderID, receiverIDs, teamID, type) {
   for (const receiverID of receiverIDs) {
-    const verificationID = noticeMethods.storeVerification({ type: type, senderID: senderID, receiverID: receiverID, teamID: teamID })
-    noticeMethods.storeUserVerification({ userID: receiverID, verificationID: verificationID, hasSolved: NOT_SOLVED })
+    const verificationID = await noticeMethods.storeVerification({ type: type, senderID: senderID, receiverID: receiverID, teamID: teamID })
+    await noticeMethods.storeUserVerification({ userID: receiverID, verificationID: verificationID, hasSolved: NOT_SOLVED })
     const toSocket = noticeMethods.findOnlineSocket(receiverID)
     if (toSocket) {
       toSocket.emit('verificationEvent')
@@ -199,7 +199,7 @@ module.exports = function (server) {
 
     socket.on('sendVerification', sendVerification)
 
-    socket.on('redNotice', readNotice)
+    socket.on('readNotice', readNotice)
 
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)

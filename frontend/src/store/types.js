@@ -1,6 +1,6 @@
 export const USER_SIGNIN = 'USER_SIGNIN'
 export const USER_REGISTER = 'USER_REGISTER'
 export const USER_LOGOUT = 'USER_LOGOUT'
-export const CREATE_TEAM = 'CREATE_TEAM'
+export const BUILD_TEAM = 'BUILD_TEAM'
 export const ENTER_TEAM = 'ENTER_TEAM'
 export const CHECK_MEETING_ROOM = 'CHECK_MEETING_ROOM'

@@ -1,5 +1,5 @@
 <template>
-  <div class="noNewNotification">
+  <div class="no-new-message">
     <strong>没有新消息哦</strong>
     <img src="../../../assets/picture/nomessage.png" alt="图片加载失败">
   </div>
@@ -10,7 +10,7 @@ export default {
 }
 </script>
 <style scoped>
-.noNewNotification {
+.no-new-message {
   margin-top: 20px;
   margin-left: 15px;
   text-align: center;
@@ -19,7 +19,7 @@ export default {
   align-items: center;
 }
 
-.noNewNotification img {
+.no-new-message img {
   margin-top: 10px;
   width: 390px;
 }

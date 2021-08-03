@@ -263,6 +263,7 @@
  * @apiDescription 请求可加入会议室的接口
  * @apiPermission user
  * @api {post} /team/getConferences getConferences
+ * @apiParam {int} userID
  * @apiParam {int} teamID        所要查看能加入会议室的所属团队
  * @apiSuccess {Object[]} conferences       可加入会议室的列表
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
@@ -270,6 +271,7 @@
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
+ *       "userID": 123
  *       "teamID": 123
  *     }
  * @apiSuccessExample Success-Response:

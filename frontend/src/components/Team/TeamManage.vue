@@ -1,7 +1,7 @@
 <template>
   <div class="team-manage">
     <div class="create-join-button">
-      <b-button class="create-button" variant="light" to="/team/teambuild">创建团队</b-button>
+      <b-button class="create-button" variant="light" to="/team/teamcreate">创建团队</b-button>
       <b-button class="join-button" variant="light" to='/team/teamjoin'>加入团队</b-button>
     </div>
     <div class="teams">

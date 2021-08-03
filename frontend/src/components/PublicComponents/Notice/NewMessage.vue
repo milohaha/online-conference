@@ -1,21 +1,28 @@
 <template>
   <div>
-    <b-icon icon="bell"></b-icon>
-    <div class="notification-num" v-show="newNotificationNum > 0">
-      <p>{{ newNotificationNum }}</p>
+    <b-link  @click="updateMessages">
+      <b-icon icon="bell"></b-icon>
+    </b-link>
+    <div class="message-num" v-show="newMessageNum > 0">
+      <p>{{ newMessageNum }}</p>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'NewMsgIcon',
+  name: 'NewMessageIcon',
   props: {
-    newNotificationNum: Number
+    newMessageNum: Number
+  },
+  methods: {
+    updateMessages () {
+      this.$emit('click')
+    }
   }
 }
 </script>
 <style scoped>
-.notification-num {
+.message-num {
   background-color: #ffc90e;
   border-radius: 20px;
   width: 18px;

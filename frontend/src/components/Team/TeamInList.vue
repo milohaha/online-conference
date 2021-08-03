@@ -14,7 +14,7 @@ export default {
   methods: {
     enterTeam () {
       if (this.type === 'built') {
-        this.enterTeamBulit()
+        this.enterTeamCreated()
       } else {
         this.enterTeamJoined()
       }
@@ -23,9 +23,9 @@ export default {
       this.$store.commit('ENTER_TEAM', this.teamID)
       this.$router.push({ path: '/team/teammyjoin', query: { teamName: this.teamName } })
     },
-    enterTeamBulit () {
+    enterTeamCreated () {
       this.$store.commit('ENTER_TEAM', this.teamID)
-      this.$router.push({ path: '/team/teammybuild', query: { teamName: this.teamName } })
+      this.$router.push({ path: '/team/teammycreate', query: { teamName: this.teamName } })
     }
   }
 }
