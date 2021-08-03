@@ -1,12 +1,13 @@
 <template>
   <div>
-    <b-modal id="create-new-conference"
+    <b-modal
+      id="create-new-conference"
       title="新建会议室"
       button-size="sm"
       no-stacking
     >
       <template #modal-footer>
-        <b-button v-b-modal.create-success @click="checkInput">确定</b-button>
+        <b-button @click="checkInput">确定</b-button>
         <b-button @click="$bvModal.hide('create-new-conference')">取消</b-button>
       </template>
       <div class="create-new-conference-content">
@@ -24,88 +25,60 @@
         <img src="../../assets/picture/conference.png" alt="conference">
       </div>
     </b-modal>
-    <b-modal id="create-success" ok-only>
-      <p>创建成功</p>
+    <b-modal id="create-result-notice" ok-only>
+      <div class="text-center">
+        <p>{{ notice }}</p>
+      </div>
       <template #modal-ok>确定</template>
     </b-modal>
-    <b-modal id="exist">
-      <p>该会议室已存在</p>
-      <template #modal-ok>确定</template>
-    </b-modal>
-    <b-modal id="invite-members">
-      <template #modal-title>
-        请选择与会成员
-      </template>
-      <b-list-group>
-        <member-to-invite
-          v-for="teamMember in teamMembers"
-          :key="teamMember.id"
-          :memberToInvite="teamMembers"
-          @selectMember="selectMember"
-        >
-        </member-to-invite>
-      </b-list-group>
-    </b-modal>
+    <invite-member
+    inviteType="inviteConferenceMember"
+    :conferenceName="conferenceName"
+    @createResult='noticeResult'
+    >
+    </invite-member>
   </div>
 </template>
 <script>
-import MemberToInvite from '../Team/MemberToInvite.vue'
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import InviteMember from './InviteMember.vue'
 export default {
   data: function () {
     return {
       conferenceName: '',
-      teamMembers: [],
-      membersSelected: []
+      notice: ''
     }
   },
   computed: {
     nameState () {
       return this.conferenceName.length > 0
     },
-    ...mapActions({
-      getMembers: 'getMembers'
-    }),
     ...mapState({
       userID: (state) => state.Login.userID,
       teamID: (state) => state.Team.teamID
     })
   },
   methods: {
-    checkInput () {
-      if (!this.nameState) {
-        this.$root.$once('bv::modal::hide', (bvEvent) => {
-          bvEvent.preventDefault()
-        })
-        this.$root.$once('bv::modal::show', (bvEvent) => {
-          bvEvent.preventDefault()
-        })
+    noticeResult (result) {
+      if (result === 'success') {
+        this.notice = '创建成功'
+      } else if (result === 'exist') {
+        this.notice = '创建失败，该会议室已存在'
+      } else {
+        this.notice = '创建失败，请稍后再试'
       }
+      this.$bvModal.show('create-result-notice')
       this.conferenceName = ''
     },
-    getMemberToInvite () {
-      this.$store.dispatch('getMembers', {
-        groupID: this.teamID,
-        groupType: 'Team',
-        inGroup: true
-      })
-        .then(response => {
-          this.membersToInvite = response.data.members
-          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
-        })
-    },
-    selectMember (memberID) {
-      if (this.membersSelected.findIndex((memberSelected) => memberSelected === memberID) !== -1) {
-        this.membersSelected.splice(this.membersSelected.findIndex((memberSelected) => {
-          return memberSelected === memberID
-        }), 1)
-      } else {
-        this.membersSelected.push(memberID)
+    checkInput () {
+      if (this.nameState) {
+        this.$bvModal.hide('create-new-conference')
+        this.$bvModal.show('inviteConferenceMember')
       }
     }
   },
   components: {
-    MemberToInvite
+    InviteMember
   }
 }
 </script>

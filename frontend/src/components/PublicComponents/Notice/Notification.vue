@@ -16,7 +16,7 @@
         >
         </verification>
         <no-new-message v-if="newVerificationNum === 0"/>
-        </b-tab>
+      </b-tab>
       <b-tab title="通知消息" class="notification">
         <notice v-for="notice in notices"
           :key="notice.id"
@@ -121,7 +121,8 @@ export default {
   width: 595px;
 }
 
-.message {
+.message,
+.notification {
   overflow-y: scroll;
   max-height: 270px;
 }

@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     enterTeam () {
-      if (this.type === 'built') {
+      if (this.type === 'created') {
         this.enterTeamCreated()
       } else {
         this.enterTeamJoined()

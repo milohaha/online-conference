@@ -5,7 +5,7 @@
       <b-button class="join-button" variant="light" to='/team/teamjoin'>加入团队</b-button>
     </div>
     <div class="teams">
-      <b-card>
+      <b-card class="m-0 p-0">
         <b-card-header>
           <b-button v-b-toggle.team-created class="team-created-button" variant="light">我创建的团队</b-button>
         </b-card-header>

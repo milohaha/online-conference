@@ -1,6 +1,7 @@
 <template>
   <div>
     <create-new-conference></create-new-conference>
+    <invite-member inviteType='inviteTeamMember'></invite-member>
     <div class="function-button">
       <div>
         <h2>{{ $route.query.teamName }}</h2>
@@ -10,7 +11,7 @@
         <template #button-content>
           <b-icon icon="justify"></b-icon>
         </template>
-        <invite-team-member></invite-team-member>
+        <b-dropdown-item v-b-modal.inviteTeamMember>邀请新成员</b-dropdown-item>
         <b-dropdown-item v-b-modal.create-new-conference>新建会议室</b-dropdown-item>
         <b-dropdown-item>解散团队</b-dropdown-item>
       </b-dropdown>
@@ -23,7 +24,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import InviteTeamMember from '../../components/Team/InviteTeamMember'
+import InviteMember from '../../components/Team/InviteMember'
 import ConferenceList from '../Team/ConferenceList'
 import CreateNewConference from '../Team/CreateNewConference.vue'
 import TeamMemberList from '../Team/TeamMemberList'
@@ -54,7 +55,7 @@ export default {
     }
   },
   components: {
-    InviteTeamMember,
+    InviteMember,
     ConferenceList,
     CreateNewConference,
     TeamMemberList

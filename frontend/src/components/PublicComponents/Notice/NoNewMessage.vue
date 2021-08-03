@@ -11,15 +11,15 @@ export default {
 </script>
 <style scoped>
 .no-new-message {
-  margin-top: 20px;
-  margin-left: 15px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #fcf0e3;
 }
-
-.no-new-message img {
+.no-new-message
+img,
+strong {
   margin-top: 10px;
   width: 390px;
 }

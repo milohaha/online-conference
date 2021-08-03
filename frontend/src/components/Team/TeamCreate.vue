@@ -44,7 +44,7 @@
           最少输入4个字
         </b-form-invalid-feedback>
       </div>
-      <b-button variant="outline-primary" class="create-team-button" @click="teamBuild">创建团队</b-button>
+      <b-button variant="outline-primary" class="create-team-button" @click="teamCreate">创建团队</b-button>
     </b-jumbotron>
   </div>
 </template>
@@ -69,7 +69,7 @@ export default {
     }
   },
   methods: {
-    teamBuild () {
+    teamCreate () {
       this.$store.dispatch('createTeam', this.team)
         .then(response => {
           if (response.data.message === 'CREATED') {
