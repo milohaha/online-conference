@@ -15,14 +15,7 @@
       </b-dropdown>
     </div>
     <b-tabs>
-      <b-tab title="团队成员列表">
-        <b-list-group>
-          <b-list-group-item v-for="member in members" :key="member.userID">
-            <b-avatar variant="success" icon="person"></b-avatar>
-            <span>{{ member.userName }}</span>
-          </b-list-group-item>
-        </b-list-group>
-      </b-tab>
+      <team-member-list></team-member-list>
       <conference-list></conference-list>
     </b-tabs>
   </div>
@@ -31,22 +24,14 @@
 import InviteTeamMember from '../../components/Team/InviteTeamMember'
 import ConferenceList from '../Team/ConferenceList.vue'
 import LeaveTeam from '../../components/Team/LeaveTeam'
+import TeamMemberList from '../../components/Team/TeamMemberList'
 import { mapState } from 'vuex'
 export default {
   name: 'TeamMyBuild',
   data: function () {
     return {
       teamName: '指尖宇宙',
-      members: [
-        {
-          userID: 111,
-          userName: 'John'
-        },
-        {
-          userID: 123,
-          userName: 'Tom'
-        }
-      ]
+      members: []
     }
   },
   computed: {
@@ -57,7 +42,8 @@ export default {
   components: {
     ConferenceList,
     InviteTeamMember,
-    LeaveTeam
+    LeaveTeam,
+    TeamMemberList
   }
 }
 </script>

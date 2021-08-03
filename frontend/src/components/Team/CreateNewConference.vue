@@ -113,6 +113,7 @@ export default {
 .input-button {
   width: inherit;
 }
+
 .get-conference-name {
   margin-top: 20px;
 }
@@ -125,6 +126,7 @@ img {
 #create-success {
   text-align: center;
 }
+
 .create-new-conference-content {
   display: flex;
   flex-wrap: wrap;

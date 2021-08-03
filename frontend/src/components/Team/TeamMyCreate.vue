@@ -16,17 +16,7 @@
       </b-dropdown>
     </div>
     <b-tabs>
-      <b-tab title="团队成员列表">
-        <b-list-group>
-          <b-list-group-item v-for="member in members" :key="member.userID" class="member-item">
-            <div>
-              <b-avatar variant="success" icon="person"></b-avatar>
-              <span>{{ member.userName }}</span>
-            </div>
-            <button class="delete-member">移除</button>
-          </b-list-group-item>
-        </b-list-group>
-      </b-tab>
+      <team-member-list></team-member-list>
       <conference-list></conference-list>
     </b-tabs>
   </div>
@@ -36,34 +26,38 @@ import { mapState } from 'vuex'
 import InviteTeamMember from '../../components/Team/InviteTeamMember'
 import ConferenceList from '../Team/ConferenceList'
 import CreateNewConference from '../Team/CreateNewConference.vue'
+import TeamMemberList from '../Team/TeamMemberList'
 export default {
-  name: 'TeamMyBuild',
-  props: {
-    teamName: String
+  name: 'TeamMyCreate',
+  data: function () {
+    return {
+      teamName: ''
+    }
+  },
+  mounted () {
+    this.getTeamName()
   },
   computed: {
     ...mapState({
       teamID: (state) => state.Team.teamID
     })
   },
-  data: function () {
-    return {
-      members: [
-        {
-          userID: 111,
-          userName: 'John'
-        },
-        {
-          userID: 123,
-          userName: 'Tom'
-        }
-      ]
+  methods: {
+    getTeamName () {
+      this.$store.dispatch('getObjects', {
+        model: 'Team',
+        condition: { teamID: this.teamID }
+      })
+        .then(response => {
+          this.teamName = response.data.objects[0].teamName
+        })
     }
   },
   components: {
     InviteTeamMember,
     ConferenceList,
-    CreateNewConference
+    CreateNewConference,
+    TeamMemberList
   }
 }
 </script>
