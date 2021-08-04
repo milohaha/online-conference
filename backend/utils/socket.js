@@ -207,11 +207,20 @@ module.exports = function (server) {
 
     socket.on('readNotice', readNotice)
 
-    socket.on('sendObjectOfCanvas', (object, conferenceID, id) => {
-      io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, id)
+    socket.on('sendObjectOfCanvas', (object, conferenceID, uuid) => {
+      io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, uuid)
+      if (object.state === 'removed') {
+        models.ConferenceBoard.destroy({
+          where: {
+            conferenceID: conferenceID,
+            itemID: object.id
+          }
+        })
+        return
+      }
       publicMethods.createOrUpdateObject(models.ConferenceBoard, {
         conferenceID: conferenceID,
-        itemID: id
+        itemID: object.id
       }, { itemDetails: JSON.stringify(object) })
     })
 
@@ -219,8 +228,11 @@ module.exports = function (server) {
       noticeMethods.deleteOnlineSocket(userID)
     })
 
-    socket.on('enterConference', (conferenceID) => {
+    socket.on('enterCanvas', async (conferenceID) => {
       socket.join('conference' + conferenceID)
+      const objects = await publicMethods.getObjects(models.ConferenceBoard, { conferenceID: conferenceID })
+      const itemsOfCanvas = objects.map(object => { return Object.getOwnPropertyDescriptors(object).dataValues.value.itemDetails })
+      socket.emit('initCanvas', itemsOfCanvas)
     })
 
     socket.on('disconnect', () => {

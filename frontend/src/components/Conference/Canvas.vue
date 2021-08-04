@@ -23,37 +23,48 @@ export default {
   data: function () {
     return {
       canvas: undefined,
+      conferenceID: 1,
       uuid: undefined,
-      conferenceID: 1
+      remoteUUID: undefined
     }
   },
   mounted () {
-    this.$io.emit('enterConference', this.conferenceID)
     this.uuid = uuid()
+    this.remoteUUID = this.uuid
+    this.$io.emit('enterCanvas', this.conferenceID)
     this.canvas = new fabric.Canvas('canvas')
-    this.$io.on('receiveObjectOfCanvas', (object, id) => {
-      this.updateBoard(this.canvas, object, id)
+    this.$io.on('receiveObjectOfCanvas', (object, remoteUUID) => {
+      this.updateBoard(this.canvas, object, remoteUUID)
+    })
+    this.$io.on('initCanvas', (itemsOfCanvas) => {
+      for (const item of itemsOfCanvas) {
+        this.updateBoard(this.canvas, item, 0)
+      }
     })
     this.canvas.on('object:added', (option) => {
-      this.sendObjectToGroup(option, 'added')
+      this.objectChanged(option, 'added')
     })
     this.canvas.on('object:removed', (option) => {
-      this.sendObjectToGroup(option, 'removed')
+      this.objectChanged(option, 'removed')
     })
     this.canvas.on('object:modified', (option) => {
-      this.sendObjectToGroup(option, 'modified')
+      this.objectChanged(option, 'modified')
     })
-    document.onkeydown = (event) => {
-      if (event.keyCode === this.$constant.CONFERENCE_DELETE_KEY) {
-        const activeObjects = this.canvas.getActiveObjects()
-        if (activeObjects) {
-          for (const activeObject of activeObjects) {
-            this.canvas.remove(activeObject)
+    document.addEventListener('keydown', (event) => {
+      let activeObjects
+      switch (event.code) {
+        case 'Delete':
+        case 'Backspace':
+          activeObjects = this.canvas.getActiveObjects()
+          if (activeObjects) {
+            for (const activeObject of activeObjects) {
+              this.canvas.remove(activeObject)
+            }
+            this.canvas.renderAll()
           }
-          this.canvas.renderAll()
-        }
+          break
       }
-    }
+    })
   },
   methods: {
     getObjectById: function (canvas, id) {
@@ -69,22 +80,12 @@ export default {
       }
       return null
     },
-    updateBoard: function (canvas, object, uuid) {
-      let objectType, objectID
-      const objectStroke = object.stroke
-      if (object.id === undefined) {
-        object = object.path
-        let result = []
-        for (const smallPath of object) {
-          result = result.concat(smallPath)
-        }
-        object = result.join(' ')
-        objectID = uuid
-        objectType = 'path'
-      } else {
-        objectType = object.type
-        objectID = object.id
+    updateBoard: function (canvas, object, remoteUUID) {
+      if (remoteUUID === this.uuid) {
+        return
       }
+      const objectType = object.type
+      const objectID = object.id
       const existing = this.getObjectById(canvas, objectID)
       if (object.state === 'removed') {
         if (existing) {
@@ -93,46 +94,57 @@ export default {
         return
       }
       if (existing) {
+        this.remoteUUID = remoteUUID
         existing.set(object)
         existing.setCoords()
+        canvas.fire('object:modified', { target: object })
       } else {
-        let fabricItem
+        let fabricItem, path, pathResult
         switch (objectType) {
           case 'rect':
-            canvas.add(new fabric.Rect(object))
+            fabricItem = new fabric.Rect(object)
             break
           case 'circle':
-            canvas.add(new fabric.Circle(object))
+            fabricItem = new fabric.Circle(object)
             break
           case 'triangle':
-            canvas.add(new fabric.Triangle(object))
+            fabricItem = new fabric.Triangle(object)
             break
           case 'path':
-            if (object.id === undefined) {
-              fabricItem = new fabric.Path(object)
-              fabricItem.set({ id: objectID })
-              fabricItem.set({ fill: false })
-              fabricItem.set({ stroke: objectStroke })
-              canvas.add(fabricItem)
-            } else {
-              canvas.add(new fabric.Path(object))
+            path = object.path
+            pathResult = []
+            for (const smallPath of path) {
+              pathResult = pathResult.concat(smallPath)
             }
+            path = pathResult.join(' ')
+            fabricItem = new fabric.Path(path)
+            fabricItem.set({ fill: false })
+            fabricItem.set({ stroke: object.stroke })
             break
           case 'i-text':
-            canvas.add(new fabric.IText(object.text, object))
+            fabricItem = new fabric.IText(object.text, object)
             break
           default:break
         }
+        this.remoteUUID = remoteUUID
+        fabricItem.set({ id: objectID })
+        this.canvas.add(fabricItem)
       }
       canvas.renderAll()
     },
-    sendObjectToGroup: function (options, state) {
-      let id
+
+    objectChanged: function (options, state) {
       if (!options.target.id) {
-        id = uuid()
+        options.target.id = uuid()
       }
-      if (options.target) {
-        const object = options.target
+      if (this.remoteUUID === this.uuid) {
+        this.sendObjectToGroup(options.target, state)
+      } else {
+        this.remoteUUID = this.uuid
+      }
+    },
+    sendObjectToGroup: function (object, state) {
+      if (object) {
         object.toJSON = (function (toJSON) {
           return function () {
             return fabric.util.object.extend(toJSON.call(this), {
@@ -141,7 +153,7 @@ export default {
             })
           }
         })(object.toJSON)
-        this.$io.emit('sendObjectOfCanvas', object, this.conferenceID, id)
+        this.$io.emit('sendObjectOfCanvas', object, this.conferenceID, this.uuid)
       }
     },
     switchToCursor: function () {
@@ -180,7 +192,6 @@ export default {
       } else if (type === 'itext') {
         fabricItem = new fabric.IText('Tap and Type', { left: 100, top: 100 })
       }
-      fabricItem.set({ id: uuid() })
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
     }
