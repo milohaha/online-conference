@@ -1,12 +1,12 @@
 <template>
   <b-tab title="会议室列表" @click="checkConference">
     <b-list-group>
-      <b-list-group-item v-for="conference in conferences" :key="conference.id" class="conferences">
-        <div>
-          <b-avatar variant="success" icon="tags"></b-avatar>
-          <span>{{ conference.conferenceName }}</span>
-        </div>
-        <button class="enter-conference">进入</button>
+      <b-list-group-item v-for="conference in conferences" :key="conference.id">
+        <conference-in-list
+          :conferenceName="conference.conferenceName"
+          :conferenceID="conference.id"
+          @enterConference="enterConference"
+        ></conference-in-list>
       </b-list-group-item>
     </b-list-group>
     <div v-if="!hasConference" class="no-conference">
@@ -18,6 +18,7 @@
 <script>
 import { mapState } from 'vuex'
 import Api from '../../api'
+import ConferenceInList from './ConferenceInList.vue'
 export default {
   name: 'ConferenceList',
   data: function () {
@@ -33,6 +34,9 @@ export default {
     })
   },
   methods: {
+    enterConference (id) {
+      this.$router.push({ path: '/conference', query: { conferenceID: id } })
+    },
     checkConference () {
       Api.checkConference({
         userID: this.userID,
@@ -44,25 +48,13 @@ export default {
         }
       })
     }
+  },
+  components: {
+    ConferenceInList
   }
 }
 </script>
 <style scoped>
-.enter-conference {
-  border-style: none;
-  border-radius: 4px;
-  background-color: #3c465d;
-  color: #e9e8d4;
-  line-height: 5px;
-  padding: 5px 8px;
-}
-
-.conferences {
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
-}
-
 .no-conference {
   margin-top: 40px;
   display: flex;

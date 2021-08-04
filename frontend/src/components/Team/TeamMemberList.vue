@@ -30,7 +30,7 @@ export default {
   data () {
     return {
       members: [],
-      founderID: 0
+      founderID: ''
     }
   },
   computed: {
@@ -44,20 +44,10 @@ export default {
   },
   mounted () {
     this.getMembers()
-    this.getFounderID()
   },
   methods: {
     removeTeamMember (userID) {
       this.members.splice(this.members.findIndex((member) => member.id === userID), 1)
-    },
-    getFounderID () {
-      this.$store.dispatch('getObjects', {
-        model: 'Team',
-        condition: { id: this.teamID }
-      })
-        .then(Response => {
-          this.founderID = Number(Response.data.objects[0].founderID)
-        })
     },
     getMembers () {
       this.$store.dispatch('getMembers', {

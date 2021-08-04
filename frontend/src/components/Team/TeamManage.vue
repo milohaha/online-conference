@@ -16,7 +16,7 @@
                 <team-in-list
                   :teamID="team.id"
                   :teamName="team.teamName"
-                  type="created">
+                >
                 </team-in-list>
               </b-list-group-item>
             </b-list-group>
@@ -33,7 +33,7 @@
               <team-in-list
                 :teamID="team.id"
                 :teamName="team.teamName"
-                type="joined">
+              >
               </team-in-list>
             </b-list-group-item>
           </b-list-group>
@@ -70,15 +70,6 @@ export default {
       this.teamsJoined = response.data.teams
     })
   },
-  mounted: function () {
-    alert(2)
-
-    this.$io.emit('enter team', 1)
-
-    this.$io.on('in team', () => {
-      alert('in team')
-    })
-  }
 }
 </script>
 <style scoped>

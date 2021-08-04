@@ -49,14 +49,9 @@ const routes = [
         component: () => import('../../src/components/Team/TeamManage.vue')
       },
       {
-        path: 'teammyjoin',
-        name: 'teammyjoin',
-        component: () => import('../components/Team/TeamMyJoin.vue')
-      },
-      {
-        path: 'teammycreate',
-        name: 'teammycreate',
-        component: () => import('../components/Team/TeamMyCreate.vue')
+        path: 'teamofuser',
+        name: 'teamofuser',
+        component: () => import('../components/Team/TeamOfUser.vue')
       }
     ]
   },
@@ -69,6 +64,11 @@ const routes = [
     path: '/docDemo',
     name: 'docDemo',
     component: () => import('../components/Conference/DocDemo.vue')
+  },
+  {
+    path: '/conference',
+    name: 'conference',
+    component: () => import('../views/Conference/Conference.vue')
   }
 ]
 
