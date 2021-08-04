@@ -7,5 +7,6 @@ export default {
   ALREADY_READ: 1,
   NOT_SOLVED: 0,
   ACCEPTED: 1,
-  REJECTED: 2
+  REJECTED: 2,
+  CONFERENCE_DELETE_KEY: 13
 }

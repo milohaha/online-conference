@@ -7,7 +7,7 @@
       <b-button variant="outline-primary" name="rectangle" class="options-button" @click="addShape">矩形</b-button>
       <b-button variant="outline-primary" name="circle" class="options-button" @click="addShape">圆形</b-button>
       <b-button variant="outline-primary" name="triangle" class="options-button" @click="addShape">三角形</b-button>
-      <b-button variant="outline-primary" name="text" class="options-button" @click="addText">文本</b-button>
+      <b-button variant="outline-primary" name="itext" class="options-button" @click="addShape">文本</b-button>
     </div>
     <div class="canvas-container">
       <canvas id="canvas" width="1200" height="800"></canvas>
@@ -34,9 +34,26 @@ export default {
     this.$io.on('receiveObjectOfCanvas', (object, id) => {
       this.updateBoard(this.canvas, object, id)
     })
-    this.canvas.on('object:added', this.sendObjectToGroup)
-    this.canvas.on('object:removed', this.sendObjectToGroup)
-    this.canvas.on('object:modified', this.sendObjectToGroup)
+    this.canvas.on('object:added', (option) => {
+      this.sendObjectToGroup(option, 'added')
+    })
+    this.canvas.on('object:removed', (option) => {
+      this.sendObjectToGroup(option, 'removed')
+    })
+    this.canvas.on('object:modified', (option) => {
+      this.sendObjectToGroup(option, 'modified')
+    })
+    document.onkeydown = (event) => {
+      if (event.keyCode === this.$constant.CONFERENCE_DELETE_KEY) {
+        const activeObjects = this.canvas.getActiveObjects()
+        if (activeObjects) {
+          for (const activeObject of activeObjects) {
+            this.canvas.remove(activeObject)
+          }
+          this.canvas.renderAll()
+        }
+      }
+    }
   },
   methods: {
     getObjectById: function (canvas, id) {
@@ -69,7 +86,7 @@ export default {
         objectID = object.id
       }
       const existing = this.getObjectById(canvas, objectID)
-      if (object.removed) {
+      if (object.state === 'removed') {
         if (existing) {
           canvas.remove(existing)
         }
@@ -101,12 +118,15 @@ export default {
               canvas.add(new fabric.Path(object))
             }
             break
+          case 'i-text':
+            canvas.add(new fabric.IText(object.text, object))
+            break
           default:break
         }
       }
       canvas.renderAll()
     },
-    sendObjectToGroup: function (options) {
+    sendObjectToGroup: function (options, state) {
       let id
       if (!options.target.id) {
         id = uuid()
@@ -116,7 +136,8 @@ export default {
         object.toJSON = (function (toJSON) {
           return function () {
             return fabric.util.object.extend(toJSON.call(this), {
-              id: object.id
+              id: object.id,
+              state: state
             })
           }
         })(object.toJSON)
@@ -157,19 +178,10 @@ export default {
           fill: null
         })
       } else if (type === 'itext') {
-        fabricItem = new fabric.IText('Enter text here...',
-          { fontSize: 16, left: 20, top: 20, radius: 10 })
+        fabricItem = new fabric.IText('Tap and Type', { left: 100, top: 100 })
       }
       fabricItem.set({ id: uuid() })
       this.canvas.add(fabricItem)
-      this.canvas.renderAll()
-    },
-    addText: function () {
-      this.canvas.isDrawingMode = false
-      const text = new fabric.Text('hello world, u cant edit me', { left: 100, top: 100 })
-      const iText = new fabric.IText('Tap and Type', { left: 100, top: 300 })
-      this.canvas.add(text)
-      this.canvas.add(iText)
       this.canvas.renderAll()
     }
   }
