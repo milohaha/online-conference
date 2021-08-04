@@ -20,6 +20,7 @@
     "acorn": "^8.4.1",
     "admin-bro": "^4.0.1",
     "apidoc": "^0.28.1",
+    "codemirror": "^5.34.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -34,7 +35,7 @@
     "morgan": "~1.9.1",
     "sequelize": "^6.6.5",
     "sequelize-auto": "^0.8.3",
-    "socket.io": "^4.1.3",
+    "socket.io": "^2.0.4",
     "socketio": "^1.0.0",
     "tslib": "^2.3.0",
     "typescript": "^4.3.5"

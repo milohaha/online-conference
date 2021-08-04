@@ -122,7 +122,7 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
 const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
   const group = await publicMethods.findGroup(conferenceOrTeam, conferenceOrTeamID)
   if (group && group.length !== 0) {
-    const groupName = conferenceOrTeamID === IS_TEAM ? group.teamName : group.conferenceName
+    const groupName = conferenceOrTeam === IS_TEAM ? group[0].teamName : group[0].conferenceName
     const title = '系统通知'
     const content = groupName + '已被解散'
     broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
@@ -181,11 +181,17 @@ const readNotice = async function (userID, noticeID) {
 
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
+  const EditorSocketIOServer = require('../ot/editor-socketio-server.js')
+  const editorServer = new EditorSocketIOServer('', [], 1)
 
   io.on('connection', (socket) => {
     console.log('connected')
 
-    socket.on('login', async function (userID) {
+    socket.on('enterDocDemo', () => {
+      editorServer.addClient(socket)
+    })
+
+    socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
     })
 

@@ -64,6 +64,11 @@ const routes = [
     path: '/canvas',
     name: 'canvas',
     component: () => import('../components/Conference/Canvas')
+  },
+  {
+    path: '/docDemo',
+    name: 'docDemo',
+    component: () => import('../components/Conference/DocDemo.vue')
   }
 ]
 

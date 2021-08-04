@@ -53,12 +53,12 @@ describe('Login Page', () => {
       cy.get('.btn').contains('登录').click()
     })
   })
-  describe('DELETE RELATIVE DATA',()=>{
-    it('DELETE USERS',()=>{
+  describe('DELETE RELATIVE DATA', () => {
+    it('DELETE USERS', () => {
       cy.request({
         url: 'http://localhost:3000/deleteObjects',
-        method: "POST",
-        headers:"",
+        method: 'POST',
+        headers: '',
         body: { model: 'User', condition: {} }
       }).then(message => {
         cy.log(message)
