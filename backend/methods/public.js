@@ -29,6 +29,14 @@ module.exports = {
     }
     return objects
   },
+  createOrUpdateObject: async function (Model, condition, values) {
+    if (Model === undefined || condition === undefined || values === undefined) {
+      return null
+    }
+    const objects = await Model.findOne({ where: condition })
+    if (objects) { return objects.update(values) }
+    return Model.create({ ...values, ...condition })
+  },
   getObjectID: async function (Model, condition) {
     const objects = await this.getObjects(Model, condition)
     try {

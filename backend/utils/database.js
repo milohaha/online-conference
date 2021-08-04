@@ -38,6 +38,10 @@ const adminBro = new AdminBro({
   }, {
     resource: database.Verification,
     options: { properties: { id: { isTitle: true } } }
+  }, {
+    resource: database.ConferenceBoard,
+    options: { properties: { itemDetails: { type: 'json' } } }
+
   }
   ]
 })

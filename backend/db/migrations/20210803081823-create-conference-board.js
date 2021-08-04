@@ -1,22 +1,12 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('UserConference', {
+    await queryInterface.createTable('ConferenceBoard', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      userID: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'User',
-          key: 'id',
-          as: 'userID'
-        }
       },
       conferenceID: {
         allowNull: false,
@@ -26,6 +16,14 @@ module.exports = {
           model: 'Conference',
           key: 'id'
         }
+      },
+      itemID: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      itemDetails: {
+        allowNull: false,
+        type: Sequelize.JSON
       },
       createdAt: {
         allowNull: false,
@@ -38,6 +36,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('UserConference')
+    await queryInterface.dropTable('ConferenceBoard')
   }
 }

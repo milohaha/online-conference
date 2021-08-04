@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.UserVerification, { as: 'userVerifications', foreignKey: 'userID' })
       User.hasMany(models.Verification, { as: 'senderVerifications', foreignKey: 'senderID' })
       User.hasMany(models.Verification, { as: 'receiverVerifications', foreignKey: 'receiverID' })
+      User.hasMany(models.ActiveUserConference, { as: 'ActiveUserConferences', foreignKey: 'userID' })
     }
   }
   User.init({

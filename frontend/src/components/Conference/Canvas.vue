@@ -24,7 +24,7 @@ export default {
     return {
       canvas: undefined,
       uuid: undefined,
-      conferenceID: 0
+      conferenceID: 1
     }
   },
   mounted () {

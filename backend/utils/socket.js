@@ -203,6 +203,10 @@ module.exports = function (server) {
 
     socket.on('sendObjectOfCanvas', (object, conferenceID, id) => {
       io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, id)
+      publicMethods.createOrUpdateObject(models.ConferenceBoard, {
+        conferenceID: conferenceID,
+        itemID: id
+      }, { itemDetails: JSON.stringify(object) })
     })
 
     socket.on('logout', function (userID) {

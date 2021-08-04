@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate (models) {
       // define association here
       Conference.hasMany(models.UserConference, { as: 'conferenceUsers', foreignKey: 'conferenceID' })
+      Conference.hasMany(models.ConferenceBoard, { as: 'ConferenceBoard', foreignKey: 'conferenceID' })
+      Conference.hasMany(models.ActiveUserConference, { as: 'ActiveUserConference', foreignKey: 'conferenceID' })
       Conference.belongsTo(models.Team, { as: 'team', foreignKey: 'teamID' })
       Conference.belongsTo(models.User, { as: 'founder', foreignKey: 'founderID' })
     }

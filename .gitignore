@@ -3,6 +3,7 @@ node_modules
 data
 /dist
 apidoc
+backend/models
 
 # local env files
 .env.local
