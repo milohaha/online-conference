@@ -71,14 +71,14 @@
  * @apiDescription 用户创建团队的接口
  * @apiPermission user
  * @api {post} /team/createTeam CreateTeam
- * @apiParam {String} groupName        team的名称
+ * @apiParam {String} teamName        team的名称
  * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "groupName": "EpGroupName"
+ *       "teamName": "EpGroupName"
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -98,7 +98,7 @@
  * @apiDescription 用户创建会议室的接口
  * @apiPermission user
  * @api {post} /team/createConference CreateConference
- * @apiParam {String} groupName        会议室的名称
+ * @apiParam {String} conferenceName        会议室的名称
  * @apiParam {int} teamID        team的ID
  * @apiParam {Integer[]} memberIDs 初始创建会议室选中的成员ID
  * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
@@ -107,7 +107,7 @@
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "groupName": "EpConferenceName",
+ *       "conferenceName": "EpConferenceName",
  *       "teamID": 2
  *       "memberIDs": [1]
  *     }

@@ -3,6 +3,9 @@ const socketMap = new Map()
 const { NOT_READ, NOT_SOLVED } = require('../utils/constant')
 const publicMethods = require('../methods/public')
 module.exports = {
+  getSocketMap: function () {
+    return socketMap
+  },
   storeOnlineUsers: function (userID, socket) {
     socketMap.set(userID, socket)
   },

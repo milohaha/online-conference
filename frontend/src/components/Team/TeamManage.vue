@@ -69,6 +69,15 @@ export default {
     Api.getTeamJoined({ userID: this.userID }).then(response => {
       this.teamsJoined = response.data.teams
     })
+  },
+  mounted: function () {
+    alert(2)
+
+    this.$io.emit('enter team', 1)
+
+    this.$io.on('in team', () => {
+      alert('in team')
+    })
   }
 }
 </script>

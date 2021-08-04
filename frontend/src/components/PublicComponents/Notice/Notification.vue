@@ -45,6 +45,14 @@ export default {
       notices: []
     }
   },
+  created: function () {
+    this.$io.on('verificationEvent', () => {
+      this.verifications.length += 1
+    })
+    this.$io.on('noticeEvent', () => {
+      this.notices.length += 1
+    })
+  },
   computed: {
     ...mapState({
       userID: (state) => state.Login.userID,

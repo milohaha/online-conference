@@ -1,5 +1,6 @@
 import Api from '../api'
 import { USER_LOGOUT, USER_SIGNIN } from './types'
+import Vue from 'vue'
 
 export const userLogin = ({ commit }, data) => {
   return new Promise((resolve, reject) => {
@@ -12,6 +13,7 @@ export const userLogin = ({ commit }, data) => {
           token: response.data.token,
           userID: response.data.userID
         })
+        Vue.prototype.$io.emit('login', response.data.userID)
         window.location = '/team'
       }
     })

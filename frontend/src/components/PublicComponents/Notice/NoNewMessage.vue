@@ -17,6 +17,7 @@ export default {
   align-items: center;
   background-color: #fcf0e3;
 }
+
 .no-new-message img,
 strong {
   margin-top: 10px;

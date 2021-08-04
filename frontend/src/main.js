@@ -8,7 +8,7 @@ import store from './store/index.js'
 import socketio from 'socket.io-client'
 import Constants from './constants'
 
-Vue.prototype.$io = socketio.connect('ws://127.0.0.1:3000', { transports: ['websocket'] })
+Vue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
 Vue.prototype.$constant = Constants
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

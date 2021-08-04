@@ -75,6 +75,9 @@ const router = new VueRouter({
 router.beforeEach(({ meta, path }, from, next) => {
   const { auth = true } = meta
   const isLogin = Boolean(Store.state.Login.isUserLogin)
+  if (isLogin) {
+    Vue.prototype.$io.emit('login', localStorage.getItem('userID'))
+  }
   if (path === '/') {
     return next()
   }

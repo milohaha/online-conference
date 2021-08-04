@@ -185,7 +185,7 @@ module.exports = function (server) {
   io.on('connection', (socket) => {
     console.log('connected')
 
-    socket.on('login', function (userID) {
+    socket.on('login', async function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
     })
 
@@ -201,8 +201,16 @@ module.exports = function (server) {
 
     socket.on('readNotice', readNotice)
 
+    socket.on('sendObjectOfCanvas', (object, conferenceID, id) => {
+      io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, id)
+    })
+
     socket.on('logout', function (userID) {
       noticeMethods.deleteOnlineSocket(userID)
+    })
+
+    socket.on('enterConference', (conferenceID) => {
+      socket.join('conference' + conferenceID)
     })
 
     socket.on('disconnect', () => {

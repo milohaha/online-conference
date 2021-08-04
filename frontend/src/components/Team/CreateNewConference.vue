@@ -86,10 +86,12 @@ export default {
 .get-conference-name {
   margin-top: 20px;
 }
+
 img {
   width: 350px;
   align-self: center;
 }
+
 .create-new-conference-content {
   display: flex;
   flex-wrap: wrap;
