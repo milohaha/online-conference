@@ -32,6 +32,7 @@ services:
     command: sh -c "npm install
         && cd db
         && npx sequelize-cli db:migrate
+        && npx sequelize-cli db:seed:all
         && cd ../
         && npm run api
         && DEBUG=backend:* npm start"

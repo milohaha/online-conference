@@ -4,7 +4,8 @@
     "password": "password",
     "database": "database_development",
     "host": "mariadb",
-    "dialect": "mariadb"
+    "dialect": "mariadb",
+    "seederStorage": "sequelize"
   },
   "test": {
     "username": "root",

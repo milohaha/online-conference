@@ -4,8 +4,10 @@
 cd frontend
 node_modules/.bin/stylelint src --fix
 node_modules/.bin/eslint src
+node_modules/.bin/jest
 cd ../backend
 node_modules/.bin/eslint .
+docker exec MEVN-express npm run test
 # cd frontend
 # npm run test
 # cd ../backend

@@ -58,7 +58,9 @@ export default {
           activeObjects = this.canvas.getActiveObjects()
           if (activeObjects) {
             for (const activeObject of activeObjects) {
-              this.canvas.remove(activeObject)
+              if (!activeObject.isEditing) {
+                this.canvas.remove(activeObject)
+              }
             }
             this.canvas.renderAll()
           }
