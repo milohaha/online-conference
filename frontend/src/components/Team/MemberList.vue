@@ -1,18 +1,19 @@
 <template>
-  <b-tab title="团队成员列表">
+<div>
     <b-list-group>
       <b-list-group-item
         v-for="member in sortMembers"
         :key="member.userID"
-        class="member-item d-flex justify-content-around align-items-center">
+        class="member-item d-flex justify-content-around align-items-center h-auto">
         <b-avatar
+          class="mr-0"
           variant="primary"
           icon="people-fill"
-          size="6rem"></b-avatar>
+          size="3rem"></b-avatar>
         <div class="flex-column justify-content-start flex-grow-1">
-          <p class="text-lg-start">UserName: {{ member.userName }}</p>
-          <p class="text-lg-start">id: {{ member.id }}</p>
-          <p class="text-lg-start">email: {{ member.email }}</p>
+          <p class="text-lg-start m-0">UserName: {{ member.userName }}</p>
+          <p class="text-lg-start m-0" v-if="groupType === 'Team'">id: {{ member.id }}</p>
+          <p class="text-lg-start m-0" v-if="groupType === 'Team'">email: {{ member.email }}</p>
         </div>
         <remove-team-member
           :userID="member.id"
@@ -21,42 +22,56 @@
           @removeTeamMember="removeTeamMember"></remove-team-member>
       </b-list-group-item>
     </b-list-group>
-  </b-tab>
+    </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import RemoveTeamMember from '../../components/Team/RemoveTeamMember'
 export default {
-  data () {
+  props: {
+    groupType: String
+  },
+  data: function () {
     return {
-      members: [],
-      founderID: ''
+      sortMembers: [],
+      founderID: '',
+      conferenceID: '',
+      groupID: ''
     }
   },
   computed: {
     ...mapState({
       teamID: (state) => state.Team.teamID,
       userID: (state) => state.Login.userID
-    }),
-    sortMembers: function () {
-      return this.sortMemberByID(this.members, this.founderID)
-    }
+    })
   },
-  mounted () {
-    this.getMembers()
+  async created () {
+    await this.getGroupInformation()
+    await this.getMembers()
   },
   methods: {
     removeTeamMember (userID) {
       this.members.splice(this.members.findIndex((member) => member.id === userID), 1)
     },
-    getMembers () {
-      this.$store.dispatch('getMembers', {
-        groupID: this.teamID,
-        groupType: 'Team',
+    async getMembers () {
+      await this.$store.dispatch('getMembers', {
+        groupID: this.groupID,
+        groupType: this.groupType,
         inGroup: true
+      }).then((response) => {
+        this.members = response.data.members
+        this.sortMembers = this.sortMemberByID(this.members, this.founderID)
+      })
+    },
+    async getGroupInformation () {
+      this.conferenceID = this.$route.query.conferenceID
+      await this.$store.dispatch('getObjects', {
+        model: 'Conference',
+        condition: { id: this.conferenceID }
       })
         .then(response => {
-          this.members = response.data.members
+          this.founderID = response.data.objects[0].founderID
+          this.groupID = this.groupType === 'Team' ? this.teamID : this.conferenceID
         })
     },
     sortMemberByID (members, founderID) {

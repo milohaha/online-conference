@@ -5,7 +5,6 @@
         <conference-in-list
           :conferenceName="conference.conferenceName"
           :conferenceID="conference.id"
-          @enterConference="enterConference"
         ></conference-in-list>
       </b-list-group-item>
     </b-list-group>
@@ -34,9 +33,6 @@ export default {
     })
   },
   methods: {
-    enterConference (id) {
-      this.$router.push({ path: '/conference', query: { conferenceID: id } })
-    },
     checkConference () {
       Api.checkConference({
         userID: this.userID,

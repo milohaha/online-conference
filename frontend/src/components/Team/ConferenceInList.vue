@@ -16,7 +16,8 @@ export default {
   },
   methods: {
     enterConference () {
-      this.$emit('enterConference', this.conferenceID)
+      // TODO 向后端发送成员暂离会议室事件 以维护会议室在线成员列表
+      this.$router.push({ path: '/conference', query: { conferenceID: this.conferenceID } })
     }
   }
 }
@@ -27,6 +28,7 @@ export default {
   justify-content: space-between;
   align-content: center;
 }
+
 .enter-conference-button {
   border-style: none;
   border-radius: 4px;

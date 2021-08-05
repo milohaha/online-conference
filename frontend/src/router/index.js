@@ -69,6 +69,16 @@ const routes = [
     path: '/conference',
     name: 'conference',
     component: () => import('../views/Conference/Conference.vue')
+  },
+  {
+    path: '/docDemo',
+    name: 'docDemo',
+    component: () => import('../components/Conference/DocDemo.vue')
+  },
+  {
+    path: '/conference',
+    name: 'conference',
+    component: () => import('../views/Conference/Conference.vue')
   }
 ]
 

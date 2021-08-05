@@ -10,13 +10,39 @@
     </div>
     <div class="function-button"></div>
     <b-button class="video">视频</b-button>
-    <b-sidebar id="member-list">成员列表</b-sidebar>
+    <b-sidebar id="member-list">
+      <template #header>
+        成员列表
+      </template>
+      <member-list
+        groupType="Conference"
+      ></member-list>
+    </b-sidebar>
   </div>
 </template>
 <script>
 import Logo from '../../components/PublicComponents/Logos/Logo.vue'
 import Notification from '../../components/PublicComponents/Notice/Notification.vue'
+import MemberList from '../../components/Team/MemberList.vue'
+import Api from '../../api'
 export default {
+  data: function () {
+    return {
+      conferenceName: '',
+      conferenceID: '',
+      founderID: ''
+    }
+  },
+  created: function () {
+    this.conferenceID = this.$route.query.conferenceID
+    Api.getObjects({
+      model: 'Conference',
+      condition: { id: this.conferenceID }
+    })
+      .then(response => {
+        this.founderID = response.data.objects[0].founderID
+      })
+  },
   methods: {
     exitConference () {
       this.$router.push({ path: '/team/teamofuser' })
@@ -25,7 +51,8 @@ export default {
   },
   components: {
     Logo,
-    Notification
+    Notification,
+    MemberList
   }
 }
 </script>
@@ -38,13 +65,16 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
+
 .notice-exit {
   display: flex;
   align-items: center;
 }
+
 .check-member-button {
   margin-right: 15px;
 }
+
 .video {
   margin-top: 600px;
 }

@@ -18,7 +18,9 @@
       </b-dropdown>
     </div>
     <b-tabs>
-      <team-member-list :FounderID="founderID"></team-member-list>
+      <b-tab title="团队成员列表">
+        <member-list :FounderID="founderID" groupType="Team"></member-list>
+      </b-tab>
       <conference-list></conference-list>
     </b-tabs>
   </div>
@@ -28,7 +30,7 @@ import { mapState } from 'vuex'
 import InviteMember from '../../components/Team/InviteMember'
 import ConferenceList from '../Team/ConferenceList'
 import CreateNewConference from '../Team/CreateNewConference.vue'
-import TeamMemberList from '../Team/TeamMemberList'
+import MemberList from '../Team/MemberList'
 import LeaveTeam from '../../components/Team/LeaveTeam'
 export default {
   name: 'TeamOfUser',
@@ -74,7 +76,7 @@ export default {
     InviteMember,
     ConferenceList,
     CreateNewConference,
-    TeamMemberList,
+    MemberList,
     LeaveTeam
   }
 }

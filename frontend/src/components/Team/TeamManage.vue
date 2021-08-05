@@ -69,7 +69,7 @@ export default {
     Api.getTeamJoined({ userID: this.userID }).then(response => {
       this.teamsJoined = response.data.teams
     })
-  },
+  }
 }
 </script>
 <style scoped>
