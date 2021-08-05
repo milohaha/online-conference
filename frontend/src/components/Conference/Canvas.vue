@@ -17,6 +17,7 @@
 
 <script>
 import { fabric } from 'fabric'
+import './eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
 export default {
   name: 'Canvas',
@@ -95,6 +96,15 @@ export default {
         }
         return
       }
+      // 手动klass化clipPath
+      if (object.clipPath) {
+        const klass = fabric.util.getKlass(object.clipPath.type)
+        if (klass) {
+          klass.fromObject(object.clipPath, function (item) {
+            object.clipPath = item
+          })
+        }
+      }
       if (existing) {
         this.remoteUUID = remoteUUID
         existing.set(object)
@@ -163,9 +173,12 @@ export default {
     },
     switchToPen: function () {
       this.canvas.isDrawingMode = true
+      this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas)
     },
     switchToEraser: function () {
-      return null
+      this.canvas.isDrawingMode = true
+      this.canvas.freeDrawingBrush = new fabric.EraserBrush(this.canvas)
+      this.canvas.freeDrawingBrush.width = 4
     },
     addShape: function (event) {
       this.canvas.isDrawingMode = false
@@ -193,6 +206,7 @@ export default {
         })
       } else if (type === 'itext') {
         fabricItem = new fabric.IText('Tap and Type', { left: 100, top: 100 })
+        fabricItem.set({ erasable: false })
       }
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
