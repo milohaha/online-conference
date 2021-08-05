@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-dropdown offset="2em" variant="primary" id="person-page" v-if="isLogin" right>
-      <template #button-content>
-        <b-icon icon="person-circle" class="person-page-icon"></b-icon>
+    <b-dropdown no-caret right variant='link' size='sm' id="person-page" v-if="isLogin">
+      <template v-slot:button-content>
+        <img src="../../assets/picture/astronaut.png" alt="userLogo" class="user-logo">
       </template>
       <b-dropdown-item-button @click="enterTeam" class="enter-team-button">
           进入团队
@@ -41,13 +41,12 @@ export default {
 <style>
 #person-page {
   position: absolute;
-  top: 5px;
   right: 40px;
 }
 
-.person-page-icon {
-  width: 20px;
-  height: 20px;
+.user-logo {
+  width: 45px;
+  height: 45px;
 }
 
 .enter-team-button {

@@ -37,7 +37,7 @@
           pill
           variant="outline-success"
           class="modal-invite-button mt-2"
-          @click="cancleInviting">
+          @click="cancelInviting">
           取消
         </b-button>
       </div>
@@ -55,11 +55,29 @@
       <div class="d-block text-center member-to-invite">
         您确认要邀请这些成员吗？
       </div>
-      <b-button @click="inviteMember">
+      <b-button
+        @click="inviteMember"
+        v-b-modal.bv-modal-invite-member-notice>
         确认
       </b-button>
-      <b-button @click="cancleInvitingCheck">
+      <b-button @click="cancelInvitingCheck">
         取消
+      </b-button>
+    </b-modal>
+    <b-modal
+    id="bv-modal-invite-member-notice"
+    hide-backdrop
+    centered
+    hide-footer
+    no-close-on-backdrop>
+      <template #modal-title>
+        {{ inviteContent }}
+      </template>
+      <div class="d-block text-center">
+        邀请成功！
+      </div>
+      <b-button @click="inviteMemberSuccess">
+        确认
       </b-button>
     </b-modal>
   </div>
@@ -71,7 +89,7 @@ export default {
   props: {
     inviteType: {
       String,
-      default: 'inviteTeamMember'
+      default: 'invite-team-member'
     },
     conferenceName: {
       String,
@@ -93,21 +111,21 @@ export default {
       getMembers: 'getMembers'
     }),
     inviteContent: function () {
-      return this.inviteType === 'inviteTeamMember' ? '邀请成员加入团队' : '请选择与会成员'
+      return this.inviteType === 'invite-team-member' ? '邀请成员加入团队' : '请选择与会成员'
     },
     confirmNoticeID: function () {
-      return this.inviteType === 'inviteTeamMember' ? 'invite-team-member-check' : 'invite-conference-member-check'
+      return this.inviteType === 'invite-team-member' ? 'invite-team-member-check' : 'invite-conference-member-check'
     }
   },
   methods: {
     inviteCheck () {
       this.$bvModal.show(this.confirmNoticeID)
     },
-    cancleInviting () {
+    cancelInviting () {
       this.$bvModal.hide(this.inviteType)
       this.membersSelected = []
     },
-    cancleInvitingCheck () {
+    cancelInvitingCheck () {
       this.$bvModal.hide(this.confirmNoticeID)
     },
     getTeamMemberToInvite () {
@@ -128,7 +146,6 @@ export default {
       })
         .then(response => {
           this.membersToInvite = response.data.members
-          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
     },
     selectMember (memberID) {
@@ -165,23 +182,20 @@ export default {
         })
     },
     inviteMember () {
-      this.inviteType === 'inviteTeamMember' ? this.inviteTeamMember() : this.inviteConferenceMember()
+      this.inviteType === 'invite-team-member' ? this.inviteTeamMember() : this.inviteConferenceMember()
+    },
+    inviteMemberSuccess () {
       this.$bvModal.hide(this.inviteType)
       this.$bvModal.hide(this.confirmNoticeID)
+      this.$bvModal.hide('bv-modal-invite-member-notice')
       this.membersSelected.length = 0
-    },
-    countDownChanged (dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    showAlert () {
-      this.dismissCountDown = this.dismissTime
     }
   },
   components: {
     MemberToInvite
   },
   created: function () {
-    return this.inviteType === 'inviteTeamMember' ? this.getTeamMemberToInvite() : this.getConferenceMemberToInvite()
+    return this.inviteType === 'invite-team-member' ? this.getTeamMemberToInvite() : this.getConferenceMemberToInvite()
   }
 }
 </script>

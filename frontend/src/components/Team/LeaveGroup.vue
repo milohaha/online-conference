@@ -1,8 +1,8 @@
 <template>
-  <div class="leave-team">
+  <div class="leave-group">
     <b-modal
-      id="bv-modal-leave-team"
-      ref="my-modal-leave-team"
+      id="bv-modal-leave-group"
+      ref="my-modal-leave-group"
       scrollable
       hide-backdrop
       centered
@@ -10,10 +10,10 @@
       no-close-on-backdrop
       no-stacking>
       <template #modal-title>
-        离开团队
+        离开{{ typeName }}
       </template>
       <div class="d-block text-center">
-        你确定要离开团队吗？
+        你确定要离开{{ typeName }}吗？
       </div>
       <div class="d-flex justify-content-center">
         <b-button
@@ -21,36 +21,30 @@
           pill
           variant="outline-success"
           class="modal-confirm-button mt-2"
-          @click="leaveTeam"
-          v-b-modal.bv-modal-leave-team-notice>
+          @click="leaveGroup"
+          v-b-modal.bv-modal-leave-group-notice>
           确认
         </b-button>
         <b-button
         size="lg"
         pill
         variant="outline-warning"
-        class="modal-cancal-button mt-2"
-        @click="$bvModal.hide('bv-modal-leave-team')">
+        class="modal-cancel-button mt-2"
+        @click="$bvModal.hide('bv-modal-leave-group')">
           取消
         </b-button>
       </div>
     </b-modal>
-    <b-dropdown-item
-      variant="outline-primary"
-      class="join-team-button"
-      v-b-modal.bv-modal-leave-team>
-      离开团队
-    </b-dropdown-item>
     <b-modal
-      id="bv-modal-leave-team-notice"
-      ref="my-modal-leave-team-notice"
+      id="bv-modal-leave-group-notice"
+      ref="my-modal-leave-group-notice"
       hide-backdrop
       centered>
       <div class="d-block text-center">
-        离开团队成功！
+        离开{{ typeName }}成功！
       </div>
       <template #modal-footer>
-        <b-button @click="leaveTeamSuccess">
+        <b-button @click="leaveGroupSuccess">
           确定
         </b-button>
       </template>
@@ -61,11 +55,18 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  props: {
+    type: String
+  },
   computed: {
     ...mapState({
       userID: (state) => state.Login.userID,
-      teamID: (state) => state.Team.teamID
-    })
+      teamID: (state) => state.Team.teamID,
+      conferenceID: (state) => state.Team.conferenceID
+    }),
+    typeName () {
+      return this.type === 'Team' ? '团队' : '会议室'
+    }
   },
   methods: {
     leaveTeam () {
@@ -77,8 +78,20 @@ export default {
         this.teamID
       )
     },
-    leaveTeamSuccess () {
-      this.$bvModal.hide('bv-modal-leave-team-notice')
+    leaveConference () {
+      this.$io.emit(
+        'leaveNotice',
+        this.userID,
+        this.$constant.LEAVE,
+        this.$constant.IS_CONFERENCE,
+        this.conferenceID
+      )
+    },
+    leaveGroup () {
+      this.type === 'Team' ? this.leaveTeam() : this.leaveConference()
+    },
+    leaveGroupSuccess () {
+      this.$bvModal.hide('bv-modal-leave-group-notice')
       this.$router.push({ path: '/team/teammanage' })
     }
   }

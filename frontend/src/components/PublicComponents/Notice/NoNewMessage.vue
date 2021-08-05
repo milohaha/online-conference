@@ -1,7 +1,8 @@
 <template>
   <div class="no-new-message">
     <strong>没有新消息哦</strong>
-    <img src="../../../assets/picture/nomessage.png" alt="图片加载失败">
+    <img src="../../../assets/picture/nomessage.png"
+         alt="图片加载失败">
   </div>
 </template>
 <script>

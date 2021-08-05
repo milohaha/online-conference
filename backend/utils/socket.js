@@ -16,7 +16,7 @@ const broadcastGroupNotice = async function (conferenceOrTeam, conferenceOrTeamI
   const toWhoms = await publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
   if (toWhoms && toWhoms.length !== 0) {
     for (const toWhom of toWhoms) {
-      sendUniqueNotice(toWhom, title, content)
+      await sendUniqueNotice(toWhom, title, content)
     }
   }
 }
@@ -36,7 +36,7 @@ const verificationHandler = async function (acceptOrReject, userID, verification
       const typeName = solvedVerification[0].type === 'invitation' ? '邀请' : '申请'
       const responseName = acceptOrReject === REJECTED ? '拒绝' : '同意'
       content = userName + responseName + '了您的' + typeName
-      sendUniqueNotice(solvedVerification[0].senderID, title, content)
+      await sendUniqueNotice(solvedVerification[0].senderID, title, content)
     }
     // 处理该用户的消息记录
     await models.UserVerification.update(
@@ -70,7 +70,10 @@ const acceptGroupHandler = async function (userID, verificationID) {
         newMemberID = solvedVerification[0].senderID
       }
     }
-    await models.UserTeam.create({ userID: newMemberID, teamID: solvedVerification[0].teamID })
+    const result = await publicMethods.getObjects(models.UserTeam, { userID: newMemberID, teamID: solvedVerification[0].teamID })
+    if (!(result && result.length !== 0)) {
+      await models.UserTeam.create({ userID: newMemberID, teamID: solvedVerification[0].teamID })
+    }
   } catch (error) {
     console.log(error)
   }
@@ -94,7 +97,7 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
       content = '您已被移出' + groupType + ':' + groupName
     }
     if (receiverID) {
-      sendUniqueNotice(receiverID, title, content)
+      await sendUniqueNotice(receiverID, title, content)
     }
   }
   // 把用户从相应的表中删除
@@ -125,7 +128,7 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
     const groupName = conferenceOrTeam === IS_TEAM ? group[0].teamName : group[0].conferenceName
     const title = '系统通知'
     const content = groupName + '已被解散'
-    broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
+    await broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
   }
   try {
     if (conferenceOrTeam === IS_TEAM) {

@@ -11,9 +11,9 @@
           icon="people-fill"
           size="3rem"></b-avatar>
         <div class="flex-column justify-content-start flex-grow-1">
-          <p class="text-lg-start m-0">UserName: {{ member.userName }}</p>
-          <p class="text-lg-start m-0" v-if="groupType === 'Team'">id: {{ member.id }}</p>
-          <p class="text-lg-start m-0" v-if="groupType === 'Team'">email: {{ member.email }}</p>
+          <p class="text-lg-start">用户名: {{ member.userName }}</p>
+          <p class="text-lg-start">id: {{ member.id }}</p>
+          <p class="text-lg-start">邮箱: {{ member.email }}</p>
         </div>
         <remove-team-member
           :userID="member.id"
@@ -35,7 +35,6 @@ export default {
     return {
       sortMembers: [],
       founderID: '',
-      conferenceID: '',
       groupID: ''
     }
   },
@@ -45,16 +44,15 @@ export default {
       userID: (state) => state.Login.userID
     })
   },
-  async created () {
-    await this.getGroupInformation()
-    await this.getMembers()
+  created () {
+    this.getGroupInformation()
   },
   methods: {
     removeTeamMember (userID) {
       this.members.splice(this.members.findIndex((member) => member.id === userID), 1)
     },
-    async getMembers () {
-      await this.$store.dispatch('getMembers', {
+    getMembers () {
+      this.$store.dispatch('getMembers', {
         groupID: this.groupID,
         groupType: this.groupType,
         inGroup: true
@@ -63,15 +61,15 @@ export default {
         this.sortMembers = this.sortMemberByID(this.members, this.founderID)
       })
     },
-    async getGroupInformation () {
-      this.conferenceID = this.$route.query.conferenceID
-      await this.$store.dispatch('getObjects', {
-        model: 'Conference',
-        condition: { id: this.conferenceID }
+    getGroupInformation () {
+      this.groupID = this.groupType === 'Team' ? this.teamID : this.$route.query.conferenceID
+      this.$store.dispatch('getObjects', {
+        model: this.groupType,
+        condition: { id: this.groupID }
       })
         .then(response => {
           this.founderID = response.data.objects[0].founderID
-          this.groupID = this.groupType === 'Team' ? this.teamID : this.conferenceID
+          this.getMembers()
         })
     },
     sortMemberByID (members, founderID) {

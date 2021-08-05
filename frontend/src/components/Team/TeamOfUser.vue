@@ -1,7 +1,11 @@
 <template>
   <div>
     <create-new-conference></create-new-conference>
-    <invite-member inviteType='inviteTeamMember'></invite-member>
+    <dismiss-group
+      type="Team"
+      v-if="isFounder"></dismiss-group>
+    <leave-group  type="Team" v-else></leave-group>
+    <invite-new-member inviteType='invite-team-member'></invite-new-member>
     <div class="function-button">
       <div>
         <h2>{{ teamName }}</h2>
@@ -11,15 +15,23 @@
         <template #button-content>
           <b-icon icon="justify"></b-icon>
         </template>
-        <b-dropdown-item v-b-modal.inviteTeamMember>邀请新成员</b-dropdown-item>
+        <b-dropdown-item v-b-modal.invite-team-member>邀请新成员</b-dropdown-item>
         <b-dropdown-item v-b-modal.create-new-conference>新建会议室</b-dropdown-item>
-        <b-dropdown-item v-if="isFounder">解散团队</b-dropdown-item>
-        <leave-team v-if="!isFounder"></leave-team>
+        <b-dropdown-item
+          v-b-modal.bv-modal-dismiss-group
+          v-show="isFounder">
+          解散团队
+        </b-dropdown-item>
+        <b-dropdown-item
+          v-b-modal.bv-modal-leave-group
+          v-show="!isFounder">
+          离开团队
+        </b-dropdown-item>
       </b-dropdown>
     </div>
     <b-tabs>
       <b-tab title="团队成员列表">
-        <member-list :FounderID="founderID" groupType="Team"></member-list>
+        <member-list :founderID="founderID" groupType="Team"></member-list>
       </b-tab>
       <conference-list></conference-list>
     </b-tabs>
@@ -27,23 +39,23 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import InviteMember from '../../components/Team/InviteMember'
+import InviteNewMember from './InviteNewMember'
 import ConferenceList from '../Team/ConferenceList'
 import CreateNewConference from '../Team/CreateNewConference.vue'
 import MemberList from '../Team/MemberList'
-import LeaveTeam from '../../components/Team/LeaveTeam'
+import DismissGroup from '../Team/DismissGroup'
+import LeaveGroup from './LeaveGroup'
 export default {
   name: 'TeamOfUser',
   data: function () {
     return {
       teamName: '',
-      founderID: '',
-      isFounder: 0
+      founderID: 0,
+      isFounder: false
     }
   },
   mounted () {
-    this.getTeamName()
-    this.getFounderID()
+    this.getTeamInfo()
   },
   computed: {
     ...mapState({
@@ -52,42 +64,29 @@ export default {
     })
   },
   methods: {
-    getTeamName () {
+    getTeamInfo () {
       this.$store.dispatch('getObjects', {
         model: 'Team',
         condition: { id: this.teamID }
       })
         .then(response => {
           this.teamName = response.data.objects[0].teamName
+          this.founderID = Number(response.data.objects[0].founderID)
+          this.isFounder = (this.founderID === this.userID)
         })
-    },
-    getFounderID () {
-      this.$store.dispatch('getObjects', {
-        model: 'Team',
-        condition: { id: this.teamID }
-      })
-        .then(Response => {
-          this.founderID = Number(Response.data.objects[0].founderID)
-        })
-      this.isFounder = (this.founderID === this.userID)
     }
   },
   components: {
-    InviteMember,
+    InviteNewMember,
     ConferenceList,
     CreateNewConference,
     MemberList,
-    LeaveTeam
+    DismissGroup,
+    LeaveGroup
   }
 }
 </script>
 <style scoped>
-.member-item {
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
-}
-
 button {
   border-style: none;
   border-radius: 4px;

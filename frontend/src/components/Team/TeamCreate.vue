@@ -1,51 +1,70 @@
 <template>
   <div class="team-create">
-    <b-jumbotron >
-      <template #header>创建团队</template>
-      <template #lead>
-        一个响亮的团队名称是走向成功的开端
-      </template>
-      <hr class="divider">
-      <b-alert
-        :show="dismissCountDown"
-        variant="warning"
-        @dismissed="dismissCountDown=0"
-        @dismiss-count-down="countDownChanged"
-      >
-        该名称已被注册！
-      </b-alert>
-      <b-modal id="bv-modal-create-team" ref="modal-create-team" hide-backdrop centered hide-footer>
-        <template #modal-title>
-          创建团队
+    <b-modal
+    id="bv-modal-create-team"
+    hide-backdrop
+    centered
+    hide-footer
+    no-stacking
+    no-close-on-backdrop>
+      <template #modal-title>创建团队</template>
+      <b-jumbotron>
+        <template #lead>
+          一个响亮的团队名称是走向成功的开端
         </template>
-        <div class="d-block text-center create-team">
-          <h3>团队&quot;{{team.teamName}}&quot;创建成功</h3>
+        <hr class="divider">
+        <b-alert
+          :show="dismissCountDown"
+          variant="warning"
+          @dismissed="dismissCountDown=0"
+          @dismiss-count-down="countDownChanged"
+        >
+          该名称已被注册！
+        </b-alert>
+        <div role="group">
+          <label>你团队的名称：</label>
+          <b-form-input
+            class="input-team-tame"
+            v-model="team.teamName"
+            :state="validationTeamName"
+            aria-describedby="input-team-name-help input-team-name-feedback"
+            placeholder="请输入团队名称"
+            ref="inputTeamName"
+            trim
+          ></b-form-input>
+          <b-form-invalid-feedback id="input-team-name-feedback">
+            最少输入5个字
+          </b-form-invalid-feedback>
         </div>
-        <div>
-          <b-button
-            block variant="success"
-            class="modal-close-button"
-            @click="$bvModal.hide('bv-modal-create-team')">
-            点我关闭
-          </b-button>
-        </div>
-      </b-modal>
-      <div role="group">
-        <label>你团队的名称：</label>
-        <b-form-input
-          class="input-team-tame"
-          v-model="team.teamName"
-          :state="nameState"
-          aria-describedby="input-team-name-help input-team-name-feedback"
-          placeholder="请输入团队名称"
-          trim
-        ></b-form-input>
-        <b-form-invalid-feedback id="input-team-name-feedback">
-          最少输入4个字
-        </b-form-invalid-feedback>
+        <b-button
+          variant="outline-primary"
+          class="create-team-button"
+          @click="teamCreate">
+          创建团队
+        </b-button>
+      </b-jumbotron>
+    </b-modal>
+    <b-modal
+      id="bv-modal-create-team-notice"
+      ref="modal-create-team-notice"
+      hide-backdrop
+      centered
+      hide-footer>
+      <template #modal-title>
+        创建团队
+      </template>
+      <div class="d-block text-center">
+        <h3>团队&quot;{{team.teamName}}&quot;创建成功</h3>
       </div>
-      <b-button variant="outline-primary" class="create-team-button" @click="teamCreate">创建团队</b-button>
-    </b-jumbotron>
+      <div>
+        <b-button
+          block variant="success"
+          class="modal-close-button"
+          @click="$bvModal.hide('bv-modal-create-team-notice')">
+          点我关闭
+        </b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 <script>
@@ -55,8 +74,11 @@ export default {
     ...mapActions({
       createTeam: 'createTeam'
     }),
-    nameState () {
-      return this.team.teamName.length > 3
+    validationTeamName () {
+      return this.team.teamName.length > 4
+    },
+    isNameLegit () {
+      return this.$refs.inputTeamName.state
     }
   },
   data: function () {
@@ -70,15 +92,17 @@ export default {
   },
   methods: {
     teamCreate () {
-      this.$store.dispatch('createTeam', this.team)
-        .then(response => {
-          if (response.data.message === 'CREATED') {
-            this.showModal()
-          } else if (response.data.message === 'EXISTS') {
-            this.showAlert()
-          }
-        })
-        .catch(error => console.log(error))
+      if (this.isNameLegit) {
+        this.$store.dispatch('createTeam', this.team)
+          .then(response => {
+            if (response.data.message === 'CREATED') {
+              this.showModal()
+            } else if (response.data.message === 'EXISTS') {
+              this.showAlert()
+            }
+          })
+          .catch(error => console.log(error))
+      }
     },
     countDownChanged (dismissCountDown) {
       this.dismissCountDown = dismissCountDown
@@ -87,7 +111,7 @@ export default {
       this.dismissCountDown = this.dismissTime
     },
     showModal () {
-      this.$refs['modal-create-team'].show()
+      this.$refs['modal-create-team-notice'].show()
     }
   }
 }

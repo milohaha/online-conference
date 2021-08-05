@@ -1,15 +1,40 @@
 <template>
 <div class="team-join">
-  <h2 class="title">加入团队</h2>
+  <b-modal
+    id="bv-modal-join-team"
+    hide-footer
+    hide-backdrop
+    centered
+    no-stacking
+    no-close-on-backdrop>
+    <template #modal-title>加入团队</template>
 <b-alert
     :show="dismissCountDown"
     variant="warning"
     @dismissed="dismissCountDown=0"
     @dismiss-count-down="countDownChanged"
 >
-  {{ alertMessage }}
+    {{ alertMessage }}
 </b-alert>
-  <b-modal id="bv-modal-join-team" ref="modal-join-team" hide-backdrop centered hide-footer>
+    <h4>团队id：</h4>
+    <b-form-input
+      v-model="teamID"
+      class="get-team-id"
+      :state="validationTeamID"
+      required
+      ref="inputTeamID"
+    ></b-form-input>
+    <b-form-invalid-feedback :state="validationTeamID">
+      团队ID为数字
+    </b-form-invalid-feedback>
+    <b-button variant="outline-primary" class="join-team-btn" @click="teamJoin">加入团队</b-button>
+  </b-modal>
+  <b-modal
+    id="bv-modal-join-team-notice"
+    ref="modal-join-team-notice"
+    hide-backdrop
+    centered
+    hide-footer>
     <template #modal-title>
       加入团队
     </template>
@@ -20,14 +45,11 @@
       <b-button
         block variant="success"
         class="modal-close-button"
-        @click="$bvModal.hide('bv-modal-join-team')">
+        @click="$bvModal.hide('bv-modal-join-team-notice')">
         点我关闭
       </b-button>
     </div>
   </b-modal>
-  <h6>团队id：</h6>
-  <b-form-input v-model="teamID" class="get-team-id"></b-form-input>
-  <b-button variant="outline-primary" class="join-team-btn" @click="teamJoin">加入团队</b-button>
 </div>
 </template>
 <script>
@@ -49,38 +71,47 @@ export default {
     ...mapActions({
       joinTeam: 'joinTeam',
       getObjects: 'getObjects'
-    })
+    }),
+    validationTeamID () {
+      const reg = /^\d+$/
+      return !!reg.exec(this.teamID)
+    },
+    isIDLegit () {
+      return this.$refs.inputTeamID.state
+    }
   },
   methods: {
     teamJoin () {
-      this.$store.dispatch('joinTeam', {
-        teamID: Number(this.teamID)
-      })
-        .then(outerResponse => {
-          if (outerResponse.data.message === 'NOT_JOINED') {
-            this.showModal()
-            this.$store.dispatch('getObjects', {
-              model: 'Team',
-              condition: { id: Number(this.teamID) }
-            })
-              .then(innerResponse => {
-                this.founderID.push(Number(innerResponse.data.objects[0].founderID))
-              }).then(() => {
-                this.$io.emit('sendVerification',
-                  this.userID,
-                  this.founderID,
-                  Number(this.teamID),
-                  'application')
-              })
-          } else if (outerResponse.data.message === 'NOT_EXIST') {
-            this.alertMessage = '查询不到团队ID'
-            this.showAlert()
-          } else if (outerResponse.data.message === 'HAS_JOINED') {
-            this.alertMessage = '您已加入该团队'
-            this.showAlert()
-          }
+      if (this.isIDLegit) {
+        this.$store.dispatch('joinTeam', {
+          teamID: Number(this.teamID)
         })
-        .catch(error => console.log(error))
+          .then(outerResponse => {
+            if (outerResponse.data.message === 'NOT_JOINED') {
+              this.showModal()
+              this.$store.dispatch('getObjects', {
+                model: 'Team',
+                condition: { id: Number(this.teamID) }
+              })
+                .then(innerResponse => {
+                  this.founderID.push(Number(innerResponse.data.objects[0].founderID))
+                }).then(() => {
+                  this.$io.emit('sendVerification',
+                    this.userID,
+                    this.founderID,
+                    Number(this.teamID),
+                    'application')
+                })
+            } else if (outerResponse.data.message === 'NOT_EXIST') {
+              this.alertMessage = '查询不到团队ID'
+              this.showAlert()
+            } else if (outerResponse.data.message === 'HAS_JOINED') {
+              this.alertMessage = '您已加入该团队'
+              this.showAlert()
+            }
+          })
+          .catch(error => console.log(error))
+      }
     },
     countDownChanged (dismissCountDown) {
       this.dismissCountDown = dismissCountDown
@@ -89,7 +120,7 @@ export default {
       this.dismissCountDown = this.dismissTime
     },
     showModal () {
-      this.$refs['modal-join-team'].show()
+      this.$refs['modal-join-team-notice'].show()
     }
   }
 }
