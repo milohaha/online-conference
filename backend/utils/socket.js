@@ -16,7 +16,7 @@ const broadcastGroupNotice = async function (conferenceOrTeam, conferenceOrTeamI
   const toWhoms = await publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
   if (toWhoms && toWhoms.length !== 0) {
     for (const toWhom of toWhoms) {
-      await sendUniqueNotice(toWhom, title, content)
+      sendUniqueNotice(toWhom, title, content)
     }
   }
 }
@@ -36,7 +36,7 @@ const verificationHandler = async function (acceptOrReject, userID, verification
       const typeName = solvedVerification[0].type === 'invitation' ? '邀请' : '申请'
       const responseName = acceptOrReject === REJECTED ? '拒绝' : '同意'
       content = userName + responseName + '了您的' + typeName
-      await sendUniqueNotice(solvedVerification[0].senderID, title, content)
+      sendUniqueNotice(solvedVerification[0].senderID, title, content)
     }
     // 处理该用户的消息记录
     await models.UserVerification.update(
@@ -97,7 +97,7 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
       content = '您已被移出' + groupType + ':' + groupName
     }
     if (receiverID) {
-      await sendUniqueNotice(receiverID, title, content)
+      sendUniqueNotice(receiverID, title, content)
     }
   }
   // 把用户从相应的表中删除
@@ -128,7 +128,7 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
     const groupName = conferenceOrTeam === IS_TEAM ? group[0].teamName : group[0].conferenceName
     const title = '系统通知'
     const content = groupName + '已被解散'
-    await broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
+    broadcastGroupNotice(conferenceOrTeam, conferenceOrTeamID, title, content)
   }
   try {
     if (conferenceOrTeam === IS_TEAM) {
@@ -185,12 +185,16 @@ const readNotice = async function (userID, noticeID) {
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
   const EditorSocketIOServer = require('../ot/editor-socketio-server.js')
-  const editorServer = new EditorSocketIOServer('', [], 1)
+  const editorServer = new EditorSocketIOServer('', [], 1) // docId 分组
 
   io.on('connection', (socket) => {
     console.log('connected')
 
     socket.on('enterDocDemo', () => {
+      editorServer.addClient(socket)
+    })
+
+    socket.on('enterCodeBlock', () => {
       editorServer.addClient(socket)
     })
 
