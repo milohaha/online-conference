@@ -5,17 +5,17 @@ const { models } = require('../utils/database')
 const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
 
-router.post('/createTeam', async (request, response, next) => {
+router.post('/createGroup', async (request, response, next) => {
   const userID = request.user.userID
-  const teamName = request.body.teamName
-  const result = await teamMethods.createGroup(teamName, userID)
+  const groupName = request.body.groupName
+  const teamID = request.body.teamID
+  const result = await teamMethods.createGroup(groupName, userID, teamID)
   return response.json({ message: result })
 })
 
-router.post('/createConference', async (request, response, next) => {
-  const userID = request.user.userID
-  const { teamID, conferenceName, memberIDs } = request.body
-  const result = await teamMethods.createGroup(conferenceName, userID, teamID)
+router.post('/conferenceMembers', async (request, response, next) => {
+  const conferenceName = request.body.conferenceName
+  const memberIDs = request.body.memberIDs
   const newConference = await publicMethods.getObjects(models.Conference, { conferenceName: conferenceName })
   for (const memberID of memberIDs) {
     await models.UserConference.create({
@@ -23,7 +23,7 @@ router.post('/createConference', async (request, response, next) => {
       conferenceID: newConference[0].id
     })
   }
-  return response.json({ message: result })
+  return response.json({ message: 'SUCCESS' })
 })
 
 router.post('/getMembers', async function (request, response, next) {

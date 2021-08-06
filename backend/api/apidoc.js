@@ -67,18 +67,20 @@
  */
 
 /**
- * @apiName CreateTeam
- * @apiDescription 用户创建团队的接口
+ * @apiName CreateGroup
+ * @apiDescription 用户创建团队或会议室的接口
  * @apiPermission user
- * @api {post} /team/createTeam CreateTeam
- * @apiParam {String} teamName        team的名称
+ * @api {post} /team/createGroup CreateGroup
+ * @apiParam {String} GroupName        team/conference的名称
+ * @apiParam {Integer} teamID          不传此值表示创建team，传值表示创建该teamID表示的团队的会议室
  * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "teamName": "EpGroupName"
+ *       "groupName": "EpGroupName"
+ *       "teamID": 11
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -94,27 +96,25 @@
  */
 
 /**
- * @apiName CreateConference
- * @apiDescription 用户创建会议室的接口
+ * @apiName conferenceMembers
+ * @apiDescription 用户创建会议室邀请成员的接口
  * @apiPermission user
- * @api {post} /team/createConference CreateConference
- * @apiParam {String} conferenceName        会议室的名称
- * @apiParam {int} teamID        team的ID
- * @apiParam {Integer[]} memberIDs 初始创建会议室选中的成员ID
- * @apiSuccess {String} message        成功:CREATED, 已经存在:EXISTS
+ * @api {post} /team/conferenceMembers conferenceMembers
+ * @apiParam {String} conferenceName       新创建的conference的名称
+ * @apiParam {Integer[]} memberIDs        会议室成员列表
+ * @apiSuccess {String} message        成功:SUCCESS
  * @apiError 401        未授权，无token或token过期或非指定地址端口访问
  * @apiGroup Team
  * @apiVersion 1.0.0
  * @apiParamExample {json} Request-Example:
  *     {
- *       "conferenceName": "EpConferenceName",
- *       "teamID": 2
- *       "memberIDs": [1]
+ *       "conferenceName": "EpGroupName"
+ *       "memberIDs": [1,2]
  *     }
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "message": "CREATED"
+ *       "message": "SUCCESS"
  *     }
  * @apiErrorExample {json} Error-Response:
  *     HTTP/1.1 401 Unauthorized
