@@ -15,9 +15,6 @@ export default {
   register: function (data) {
     return Vue.axios.post(process.env.VUE_APP_API_BASE + '/register', data)
   },
-  createTeam: function (data) {
-    return instance.post(process.env.VUE_APP_API_BASE + '/team/createteam', data)
-  },
   joinTeam: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/checkTeam', data)
   },
@@ -39,7 +36,10 @@ export default {
   getMessages: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/getMessage', data)
   },
-  createConference: function (data) {
-    return instance.post(process.env.VUE_APP_API_BASE + '/team/createConference', data)
+  createGroup: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/createGroup', data)
+  },
+  inviteConferenceMember: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/conferenceMembers', data)
   }
 }

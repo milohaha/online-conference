@@ -1,11 +1,13 @@
 <template>
   <div class="team-manage">
     <team-join></team-join>
-    <team-create></team-create>
+    <create-new-group groupType="Team"></create-new-group>
     <div class="create-join-button">
-      <b-button class="create-button"
-                variant="light"
-                v-b-modal.bv-modal-create-team>
+      <b-button
+        class="create-button"
+        variant="light"
+        v-b-modal.create-new-group
+      >
         创建团队
       </b-button>
       <b-button class="join-button"
@@ -58,7 +60,7 @@
 </template>
 <script>
 import TeamInList from '../Team/TeamInList.vue'
-import TeamCreate from '../Team/TeamCreate'
+import CreateNewGroup from '../Team/CreateNewGroup'
 import TeamJoin from '../Team/TeamJoin'
 import Api from '../../api'
 import { mapState } from 'vuex'
@@ -72,7 +74,7 @@ export default {
   },
   components: {
     TeamInList,
-    TeamCreate,
+    CreateNewGroup,
     TeamJoin
   },
   computed: {

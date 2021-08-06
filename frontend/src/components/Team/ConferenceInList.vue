@@ -1,8 +1,8 @@
 <template>
   <div class="conference">
-    <div>
+    <div class="conference-content">
     <b-avatar variant="success" icon="tags"></b-avatar>
-    <span>{{ conferenceName }}</span>
+    <span class="conference-name">{{ conferenceName }}</span>
     </div>
     <button class="enter-conference-button" @click="enterConference">进入</button>
   </div>
@@ -26,7 +26,7 @@ export default {
 .conference {
   display: flex;
   justify-content: space-between;
-  align-content: center;
+  align-items: center;
 }
 
 .enter-conference-button {
@@ -36,5 +36,16 @@ export default {
   color: #e9e8d4;
   line-height: 5px;
   padding: 5px 8px;
+  height: 40px;
+}
+
+.conference-name {
+  display: inline-block;
+  max-width: 300px;
+}
+
+.conference-content {
+  display: flex;
+  align-items: center;
 }
 </style>

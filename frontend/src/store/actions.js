@@ -70,7 +70,7 @@ export const getMessages = ({ commit }, data) => {
 }
 export const inviteConferenceMember = ({ commit }, data) => {
   return new Promise((resolve) => {
-    Api.createConference(data).then(function (response) {
+    Api.inviteConferenceMember(data).then(function (response) {
       resolve(response)
     })
   })

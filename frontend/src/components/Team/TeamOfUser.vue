@@ -1,6 +1,6 @@
 <template>
   <div>
-    <create-new-conference></create-new-conference>
+    <create-new-group groupType="Conference"></create-new-group>
     <dismiss-group
       type="Team"
       v-if="isFounder"></dismiss-group>
@@ -16,7 +16,7 @@
           <b-icon icon="justify"></b-icon>
         </template>
         <b-dropdown-item v-b-modal.invite-team-member>邀请新成员</b-dropdown-item>
-        <b-dropdown-item v-b-modal.create-new-conference>新建会议室</b-dropdown-item>
+        <b-dropdown-item v-b-modal.create-new-group>新建会议室</b-dropdown-item>
         <b-dropdown-item
           v-b-modal.bv-modal-dismiss-group
           v-show="isFounder">
@@ -41,7 +41,7 @@
 import { mapState } from 'vuex'
 import InviteNewMember from './InviteNewMember'
 import ConferenceList from '../Team/ConferenceList'
-import CreateNewConference from '../Team/CreateNewConference.vue'
+import CreateNewGroup from '../Team/CreateNewGroup.vue'
 import MemberList from '../Team/MemberList'
 import DismissGroup from '../Team/DismissGroup'
 import LeaveGroup from './LeaveGroup'
@@ -79,7 +79,7 @@ export default {
   components: {
     InviteNewMember,
     ConferenceList,
-    CreateNewConference,
+    CreateNewGroup,
     MemberList,
     DismissGroup,
     LeaveGroup

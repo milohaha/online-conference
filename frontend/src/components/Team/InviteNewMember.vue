@@ -11,7 +11,7 @@
       hide-header-close
     >
       <template #modal-title>
-        {{ inviteContent }}
+        {{ inviteInformation.inviteContent }}
       </template>
       <div class="d-block text-center member-to-invite">
         <b-list-group>
@@ -43,21 +43,19 @@
       </div>
     </b-modal>
     <b-modal
-      :id="confirmNoticeID"
+      :id="inviteInformation.confirmNoticeID"
       ref="my-modal-invite-team-member-check"
       hide-backdrop
       centered
       hide-footer
       no-close-on-backdrop>
       <template #modal-title>
-        {{ inviteContent }}
+        {{ inviteInformation.inviteContent }}
       </template>
       <div class="d-block text-center member-to-invite">
         您确认要邀请这些成员吗？
       </div>
-      <b-button
-        @click="inviteMember"
-        v-b-modal.bv-modal-invite-member-notice>
+      <b-button @click="inviteMember">
         确认
       </b-button>
       <b-button @click="cancelInvitingCheck">
@@ -65,14 +63,12 @@
       </b-button>
     </b-modal>
     <b-modal
-    id="bv-modal-invite-member-notice"
-    hide-backdrop
-    centered
-    hide-footer
-    no-close-on-backdrop>
-      <template #modal-title>
-        {{ inviteContent }}
-      </template>
+      :id="inviteInformation.inviteResultNoticeID"
+      hide-backdrop
+      centered
+      hide-footer
+      no-close-on-backdrop
+    >
       <div class="d-block text-center">
         邀请成功！
       </div>
@@ -87,14 +83,8 @@ import { mapActions, mapState } from 'vuex'
 import MemberToInvite from './MemberToInvite.vue'
 export default {
   props: {
-    inviteType: {
-      String,
-      default: 'invite-team-member'
-    },
-    conferenceName: {
-      String,
-      default: 'null'
-    }
+    inviteType: String,
+    conferenceName: String
   },
   data () {
     return {
@@ -110,23 +100,28 @@ export default {
     ...mapActions({
       getMembers: 'getMembers'
     }),
-    inviteContent: function () {
-      return this.inviteType === 'invite-team-member' ? '邀请成员加入团队' : '请选择与会成员'
-    },
-    confirmNoticeID: function () {
-      return this.inviteType === 'invite-team-member' ? 'invite-team-member-check' : 'invite-conference-member-check'
+    inviteInformation: function () {
+      return this.inviteType === 'invite-team-member' ? {
+        inviteContent: '邀请成员加入团队',
+        confirmNoticeID: 'invite-team-member-check',
+        inviteResultNoticeID: 'invite-team-success'
+      } : {
+        inviteContent: '请选择与会成员',
+        confirmNoticeID: 'invite-conference-member-check',
+        inviteResultNoticeID: 'invite-conference-success'
+      }
     }
   },
   methods: {
     inviteCheck () {
-      this.$bvModal.show(this.confirmNoticeID)
+      this.$bvModal.show(this.inviteInformation.confirmNoticeID)
     },
     cancelInviting () {
       this.$bvModal.hide(this.inviteType)
       this.membersSelected = []
     },
     cancelInvitingCheck () {
-      this.$bvModal.hide(this.confirmNoticeID)
+      this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
     },
     getTeamMemberToInvite () {
       this.$store.dispatch('getMembers', {
@@ -146,6 +141,7 @@ export default {
       })
         .then(response => {
           this.membersToInvite = response.data.members
+          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
     },
     selectMember (memberID) {
@@ -167,28 +163,18 @@ export default {
     inviteConferenceMember () {
       this.$store.dispatch('inviteConferenceMember', {
         conferenceName: this.conferenceName,
-        teamID: this.teamID,
         memberIDs: this.membersSelected
       })
-        .then((response) => {
-          if (response.data.message === 'CREATED') {
-            return this.$emit('createResult', 'success')
-          } else {
-            return this.$emit('createResult', 'exist')
-          }
-        })
-        .catch(() => {
-          return this.$emit('createResult', 'fail')
-        })
     },
     inviteMember () {
       this.inviteType === 'invite-team-member' ? this.inviteTeamMember() : this.inviteConferenceMember()
+      this.$bvModal.show(this.inviteInformation.inviteResultNoticeID)
     },
     inviteMemberSuccess () {
       this.$bvModal.hide(this.inviteType)
-      this.$bvModal.hide(this.confirmNoticeID)
-      this.$bvModal.hide('bv-modal-invite-member-notice')
-      this.membersSelected.length = 0
+      this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
+      this.$bvModal.hide(this.inviteInformation.inviteResultNoticeID)
+      this.membersSelected = []
     }
   },
   components: {
