@@ -340,3 +340,30 @@
  *       ”message“: 'INVALID_TOKEN'
  *     }
  */
+
+/**
+ * @apiName /getActiveUsers
+ * @apiDescription 查看在线会议成员的接口
+ * @apiPermission user
+ * @api {post} /team/getActiveUsers getActiveUsers
+ * @apiParam {Integer} conferenceID
+ * @apiSuccess {Object[]} activeUsers       返回信息PARAS_ERROR或SUCCESS
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "conferenceID": 123
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "activeUsers": [{id: 1, userName: 'name1', email: 'eamil@qq.com'},{id: 2, userName: 'name2', email: 'eamil2@qq.com'}]
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */

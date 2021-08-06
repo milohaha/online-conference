@@ -129,4 +129,26 @@ router.post('/getTeamJoined', async function (request, response, next) {
   response.json({ teams: result })
 })
 
+router.post('/getActiveConferenceUsers', async function (request, response, next) {
+  const conferenceID = request.body.conferenceID
+  if (conferenceID === undefined) {
+    response.json({ activeUsers: [] })
+  }
+  const activeUserIDs = await models.ActiveUserConference.findAll({
+    where: {
+      conferenceID: conferenceID
+    }
+  })
+  const activeUsers = []
+  for (const activeUserID in activeUserIDs) {
+    const user = await models.User.findAll({
+      where: {
+        id: activeUserID.userID
+      }
+    })
+    activeUsers.push({ id: user[0].id, userName: user[0].userName, email: user[0].email })
+  }
+  response.json({ members: activeUsers })
+})
+
 module.exports = router

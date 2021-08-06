@@ -116,6 +116,12 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
           conferenceID: conferenceOrTeamID
         }
       })
+      await models.ActiveUserConference.destroy({
+        where: {
+          userID: userID,
+          conferenceID: conferenceOrTeamID
+        }
+      })
     }
   } catch (error) {
     console.log(error)
@@ -148,7 +154,17 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
           id: conferenceOrTeamID
         }
       })
-      await models.UserTeam.destroy({
+      await models.UserConference.destroy({
+        where: {
+          conferenceID: conferenceOrTeamID
+        }
+      })
+      await models.ActiveUserConference.destroy({
+        where: {
+          conferenceID: conferenceOrTeamID
+        }
+      })
+      await models.ConferenceBoard.destroy({
         where: {
           conferenceID: conferenceOrTeamID
         }
@@ -182,6 +198,19 @@ const readNotice = async function (userID, noticeID) {
   )
 }
 
+const enterConference = async function (userID, conferenceID) {
+  await models.ActiveUserConference.create({ userID: userID, conferenceID: conferenceID })
+}
+
+const exitConference = async function (userID, conferenceID) {
+  await models.ActiveUserConference.destroy({
+    where: {
+      userID: userID,
+      conferenceID: conferenceID
+    }
+  })
+}
+
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
   const EditorSocketIOServer = require('../ot/editor-socketio-server.js')
@@ -201,6 +230,10 @@ module.exports = function (server) {
     socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
     })
+
+    socket.on('enterConference', enterConference)
+
+    socket.on('exitConference', exitConference)
 
     socket.on('rejectNotice', rejectGroupHandler)
 

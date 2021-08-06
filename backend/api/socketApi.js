@@ -79,3 +79,27 @@
  * @apiExample Example usage:
  * this.$io.emit('readNotice', userID, noticeID)
  */
+
+/**
+ * @api {socket} / enterConference
+ * @apiName enterConference
+ * @apiGroup Socket
+ * @apiParam { Integer } userID 进入会议室的userID
+ * @apiParam { Integer } conferenceID 进入的会议室的conferenceID
+ * @apiDescription 监听到'enterConference'的处理函数，当用户进入会议室时调用
+ * @apiSampleRequest off
+ * @apiExample Example usage:
+ * this.$io.emit('enterConference', userID, conferenceID)
+ */
+
+/**
+ * @api {socket} / exitConference
+ * @apiName exitConference
+ * @apiGroup Socket
+ * @apiParam { Integer } userID （暂时）离开会议室的userID
+ * @apiParam { Integer } conferenceID （暂时）离开会议室的conferenceID
+ * @apiDescription 监听到'exitConference'的处理函数，当用户退出会议室的时候调用
+ * @apiSampleRequest off
+ * @apiExample Example usage:
+ * this.$io.emit('exitConference', userID, conferenceID)
+ */
