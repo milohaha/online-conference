@@ -26,10 +26,10 @@
           <b-form-input
             class="input-team-tame"
             v-model="team.groupName"
-            :state="validationTeamName"
+            :state="validationGroupName"
             aria-describedby="input-team-name-help input-team-name-feedback"
             placeholder="请输入团队名称"
-            ref="inputTeamName"
+            ref="inputgroupName"
             trim
           ></b-form-input>
           <b-form-invalid-feedback id="input-team-name-feedback">
@@ -46,7 +46,6 @@
     </b-modal>
     <b-modal
       id="bv-modal-create-team-notice"
-      ref="modal-create-team-notice"
       hide-backdrop
       centered
       hide-footer>
@@ -68,17 +67,11 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import Api from '../../api'
 export default {
   computed: {
-    ...mapActions({
-      createTeam: 'createTeam'
-    }),
-    validationTeamName () {
+    validationGroupName () {
       return this.team.groupName.length > 4
-    },
-    isNameLegit () {
-      return this.$refs.inputTeamName.state
     }
   },
   data: function () {
@@ -92,8 +85,8 @@ export default {
   },
   methods: {
     teamCreate () {
-      if (this.isNameLegit) {
-        this.$store.dispatch('createTeam', this.team)
+      if (this.validationGroupName) {
+        Api.createGroup(this.team)
           .then(response => {
             if (response.data.message === 'CREATED') {
               this.showModal()
@@ -111,7 +104,7 @@ export default {
       this.dismissCountDown = this.dismissTime
     },
     showModal () {
-      this.$refs['modal-create-team-notice'].show()
+      this.$bvModal.show('bv-modal-create-team-notice')
     }
   }
 }

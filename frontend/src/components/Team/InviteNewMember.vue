@@ -79,7 +79,8 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import Api from '../../api'
 import MemberToInvite from './MemberToInvite.vue'
 export default {
   props: {
@@ -96,9 +97,6 @@ export default {
     ...mapState({
       userID: (state) => state.Login.userID,
       teamID: (state) => state.Team.teamID
-    }),
-    ...mapActions({
-      getMembers: 'getMembers'
     }),
     inviteInformation: function () {
       return this.inviteType === 'invite-team-member' ? {
@@ -124,7 +122,7 @@ export default {
       this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
     },
     getTeamMemberToInvite () {
-      this.$store.dispatch('getMembers', {
+      Api.getMembers({
         groupID: this.teamID,
         groupType: 'Team',
         inGroup: false
@@ -134,7 +132,7 @@ export default {
         })
     },
     getConferenceMemberToInvite () {
-      this.$store.dispatch('getMembers', {
+      Api.getMembers({
         groupID: this.teamID,
         groupType: 'Team',
         inGroup: true

@@ -53,7 +53,8 @@
 </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import Api from '../../api'
 export default {
   data: function () {
     return {
@@ -68,28 +69,21 @@ export default {
     ...mapState({
       userID: (state) => state.Login.userID
     }),
-    ...mapActions({
-      joinTeam: 'joinTeam',
-      getObjects: 'getObjects'
-    }),
     validationTeamID () {
       const reg = /^\d+$/
       return !!reg.exec(this.teamID)
-    },
-    isIDLegit () {
-      return this.$refs.inputTeamID.state
     }
   },
   methods: {
     teamJoin () {
-      if (this.isIDLegit) {
-        this.$store.dispatch('joinTeam', {
+      if (this.validationTeamID) {
+        Api.joinTeam({
           teamID: Number(this.teamID)
         })
           .then(outerResponse => {
             if (outerResponse.data.message === 'NOT_JOINED') {
               this.showModal()
-              this.$store.dispatch('getObjects', {
+              Api.getObjects({
                 model: 'Team',
                 condition: { id: Number(this.teamID) }
               })
@@ -120,7 +114,7 @@ export default {
       this.dismissCountDown = this.dismissTime
     },
     showModal () {
-      this.$refs['modal-join-team-notice'].show()
+      this.$bvModal.show('bv-modal-join-team-notice')
     }
   }
 }
