@@ -27,6 +27,7 @@ const mutations = {
     localStorage.removeItem('token')
     localStorage.removeItem('userID')
     localStorage.removeItem('teamID')
+    localStorage.removeItem('conferenceID')
     stateLocal.isLogin = false
     stateLocal.userID = 0
   }

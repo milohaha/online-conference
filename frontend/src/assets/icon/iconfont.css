@@ -1,0 +1,142 @@
+@font-face {
+  font-family: "fmtfont"; /* Project id 2726819 */
+  src: url('iconfont.woff2?t=1628237972273') format('woff2'),
+       url('iconfont.woff?t=1628237972273') format('woff'),
+       url('iconfont.ttf?t=1628237972273') format('truetype');
+}
+
+.fmtfont {
+  font-family: "fmtfont", serif, sans-serif, cursive, fantasy, monospace !important;
+  font-size: 20px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*left-center*/
+.fmt-circle:before {
+  content: "\e637";
+  font-size: 22px;
+}
+.fmt-square:before {
+  content: "\e620";
+  font-size: 22px;
+}
+.fmt-triangle:before {
+  content: "\e6bd";
+  font-size: 22px;
+}
+.fmt-arrow:before {
+  content: "\e6a7";
+  font-size: 22px;
+}
+.fmt-text:before {
+  content: "\e602";
+  font-size: 22px;
+}
+.fmt-notation:before {
+  content: "\e633";
+  font-size: 22px;
+}
+.fmt-mindmap:before {
+  content: "\e619";
+  font-size: 22px;
+}
+.fmt-mouse:before {
+  content: "\e605";
+  font-size: 22px;
+}
+.fmt-shape:before {
+  content: "\e623";
+  font-size: 22px;
+}
+.fmt-pencil:before {
+  content: "\e63a";
+  font-size: 22px;
+}
+.fmt-erase:before {
+  content: "\e6b8";
+  font-size: 22px;
+}
+.fmt-ballpoint:before {
+  content: "\e6e1";
+  font-size: 22px;
+}
+.fmt-pen:before {
+  content: "\e709";
+  font-size: 22px;
+}
+
+/*left-top*/
+.fmt-share:before {
+  content: "\e662";
+}
+
+.fmt-share1:before {
+  content: "\e601";
+}
+
+/*left-bottom*/
+.fmt-document:before {
+  content: "\e618";
+}
+
+.fmt-codeblock:before {
+  content: "\e69f";
+}
+
+.fmt-video:before {
+  content: "\e87a";
+}
+
+/*right-top*/
+.fmt-exit:before {
+  content: "\e656";
+}
+.fmt-exit1:before {
+  content: "\e63b";
+}
+
+.fmt-setting1:before {
+  content: "\e61e";
+  font-size: 24px;
+}
+
+.fmt-setting:before {
+  content: "\e604";
+  font-size: 24px;
+}
+.fmt-notice:before {
+  content: "\e615";
+  font-size: 24px;
+}
+.fmt-notice1:before {
+  content: "\e640";
+  font-size: 24px;
+}
+
+/*top-center*/
+.fmt-userlist:before {
+  content: "\e817";
+  font-size: 24px;
+}
+.fmt-userlist1:before {
+  content: "\e609";
+  font-size: 24px;
+}
+
+.fmt-user1:before {
+  content: "\e6c8";
+  font-size: 24px;
+}
+
+.fmt-user:before {
+  content: "\e614";
+  font-size: 24px;
+}
+
+/*right-bottom*/
+
+
+
+

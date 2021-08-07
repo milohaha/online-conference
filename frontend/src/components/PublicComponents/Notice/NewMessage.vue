@@ -1,8 +1,6 @@
 <template>
   <div>
-    <b-link  @click="updateMessages">
-      <b-icon icon="bell"></b-icon>
-    </b-link>
+    <span class="fmtfont fmt-notice1" @click="updateMessages"></span>
     <div class="message-num" v-show="newMessageNum > 0">
       <p>{{ newMessageNum }}</p>
     </div>

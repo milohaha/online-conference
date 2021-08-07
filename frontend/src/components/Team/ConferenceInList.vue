@@ -8,16 +8,25 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'ConferenceInList',
   props: {
     conferenceID: Number,
     conferenceName: String
   },
+  computed: {
+    ...mapState({
+      userID: state => state.Login.userID
+    })
+  },
   methods: {
     enterConference () {
-      // TODO 向后端发送成员暂离会议室事件 以维护会议室在线成员列表
-      this.$router.push({ path: '/conference', query: { conferenceID: this.conferenceID } })
+      this.$io.emit('enterConference',
+        this.userID,
+        this.conferenceID)
+      this.$store.commit('ENTER_CONFERENCE', this.conferenceID)
+      this.$router.push({ path: '/conference' })
     }
   }
 }

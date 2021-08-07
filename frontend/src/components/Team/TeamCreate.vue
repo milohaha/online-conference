@@ -25,7 +25,7 @@
           <label>你团队的名称：</label>
           <b-form-input
             class="input-team-tame"
-            v-model="team.teamName"
+            v-model="team.groupName"
             :state="validationTeamName"
             aria-describedby="input-team-name-help input-team-name-feedback"
             placeholder="请输入团队名称"
@@ -54,7 +54,7 @@
         创建团队
       </template>
       <div class="d-block text-center">
-        <h3>团队&quot;{{team.teamName}}&quot;创建成功</h3>
+        <h3>团队&quot;{{team.groupName}}&quot;创建成功</h3>
       </div>
       <div>
         <b-button
@@ -75,7 +75,7 @@ export default {
       createTeam: 'createTeam'
     }),
     validationTeamName () {
-      return this.team.teamName.length > 4
+      return this.team.groupName.length > 4
     },
     isNameLegit () {
       return this.$refs.inputTeamName.state
@@ -84,7 +84,7 @@ export default {
   data: function () {
     return {
       team: {
-        teamName: ''
+        groupName: ''
       },
       dismissCountDown: 0,
       dismissTime: 3

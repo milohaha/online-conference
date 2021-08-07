@@ -8,7 +8,8 @@ import store from './store/index.js'
 import socketio from 'socket.io-client'
 import Constants from './constants'
 import Vuesax from 'vuesax'
-import 'vuesax/dist/vuesax.css' // Vuesax styles
+import 'vuesax/dist/vuesax.css'
+import './assets/icon/iconfont.css' // Vuesax styles
 Vue.use(Vuesax, {})
 Vue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
 Vue.prototype.$constant = Constants

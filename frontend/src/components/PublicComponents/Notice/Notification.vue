@@ -1,34 +1,32 @@
 <template>
-  <div>
-  <b-dropdown size="lg" variant="link" right no-caret id="message-box">
-    <template #button-content>
-      <new-message-icon
-      :newMessageNum="newMessageNum"
-      @click="updateMessages"
-      ></new-message-icon>
-    </template>
-    <b-tabs pills align="center" class="message-box">
-      <b-tab title="验证消息" active class="message">
-        <verification v-for="verification in verifications"
-          :key="verification.id"
-          :verification="verification"
-          @solvedVerification='solveVerification'
-        >
-        </verification>
-        <no-new-message v-if="newVerificationNum === 0"/>
-      </b-tab>
-      <b-tab title="通知消息" class="notification">
-        <notice v-for="notice in notices"
-          :key="notice.id"
-          :notice="notice"
-          @read='readNotice'
-        >
-        </notice>
-        <no-new-message v-if="newNoticeNum === 0" />
-      </b-tab>
-    </b-tabs>
-  </b-dropdown>
-</div>
+  <b-dropdown right no-caret id="message-box">
+  <template #button-content>
+    <new-message-icon
+    :newMessageNum="newMessageNum"
+    @click="updateMessages"
+    ></new-message-icon>
+  </template>
+  <b-tabs pills align="center" class="message-box">
+    <b-tab title="验证消息" active class="message">
+      <verification v-for="verification in verifications"
+        :key="verification.id"
+        :verification="verification"
+        @solvedVerification='solveVerification'
+      >
+      </verification>
+      <no-new-message v-if="newVerificationNum === 0"/>
+    </b-tab>
+    <b-tab title="通知消息" class="notice">
+      <notice v-for="notice in notices"
+        :key="notice.id"
+        :notice="notice"
+        @read='readNotice'
+      >
+      </notice>
+      <no-new-message v-if="newNoticeNum === 0" />
+    </b-tab>
+  </b-tabs>
+</b-dropdown>
 </template>
 <script>
 import Verification from './Verification.vue'
@@ -125,12 +123,16 @@ export default {
 }
 </script>
 <style scoped>
+#message-box {
+  padding: 0;
+}
+
 .message-box {
   width: 595px;
 }
 
 .message,
-.notification {
+.notice {
   overflow-y: scroll;
   max-height: 270px;
 }

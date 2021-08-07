@@ -262,7 +262,6 @@ export default {
       }
       canvas.renderAll()
     },
-
     objectChanged: function (options, state) {
       if (!options.target.id) {
         options.target.id = uuid()

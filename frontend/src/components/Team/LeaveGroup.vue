@@ -56,13 +56,13 @@
 import { mapState } from 'vuex'
 export default {
   props: {
-    type: String
+    type: String,
+    conferenceID: Number
   },
   computed: {
     ...mapState({
       userID: (state) => state.Login.userID,
-      teamID: (state) => state.Team.teamID,
-      conferenceID: (state) => state.Team.conferenceID
+      teamID: (state) => state.Team.teamID
     }),
     typeName () {
       return this.type === 'Team' ? '团队' : '会议室'
@@ -92,7 +92,7 @@ export default {
     },
     leaveGroupSuccess () {
       this.$bvModal.hide('bv-modal-leave-group-notice')
-      this.$router.push({ path: '/team/teammanage' })
+      this.$router.push({ path: '/team/teamofuser' })
     }
   }
 }

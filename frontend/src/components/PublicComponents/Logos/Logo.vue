@@ -3,12 +3,18 @@
     <b-link to="/">
       <img src="../../../assets/picture/planet.png" alt="logo">
     </b-link>
-    <span>FMT</span>
+    <span :style="{ color: logoColor }">FMT</span>
   </div>
 </template>
 <script>
 export default {
-  name: 'logo'
+  name: 'logo',
+  props: {
+    logoColor: {
+      String,
+      default: '#fff'
+    }
+  }
 }
 </script>
 <style scoped>
@@ -25,7 +31,6 @@ img {
 
 span {
   font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
-  color: #fff;
   font-size: 30px;
 }
 </style>

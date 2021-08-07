@@ -2,7 +2,6 @@
   <div class="dismiss-group">
     <b-modal
       id="bv-modal-dismiss-group"
-      ref="my-modal-dismiss-group"
       hide-backdrop
       centered
       hide-footer
@@ -35,7 +34,6 @@
     </b-modal>
     <b-modal
       id="bv-modal-dismiss-group-notice"
-      ref="my-modal-dismiss-group-notice"
       hide-backdrop
       centered>
       <div class="d-block text-center">
@@ -47,19 +45,18 @@
         </b-button>
       </template>
     </b-modal>
-
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 export default {
   props: {
-    type: String
+    type: String,
+    conferenceID: Number
   },
   computed: {
     ...mapState({
-      teamID: state => state.Team.teamID,
-      conferenceID: state => state.Team.conferenceID
+      teamID: state => state.Team.teamID
     }),
     typeName () {
       return this.type === 'Team' ? '团队' : '会议室'
@@ -81,7 +78,7 @@ export default {
     },
     dismissGroupSuccess () {
       this.$bvModal.hide('bv-modal-dismiss-group-notice')
-      this.$router.push({ path: '/team/teammanage' })
+      this.$router.push({ path: '/team/teamofuser' })
     }
   }
 }
