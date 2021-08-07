@@ -1,7 +1,7 @@
 import MemberToInvite from '../components/Team/MemberToInvite'
 import BootstrapVue from 'bootstrap-vue'
 import { beforeEach, expect, describe, test } from '@jest/globals'
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
@@ -9,7 +9,7 @@ localVue.use(BootstrapVue)
 describe('测试组件CreateNewConference', () => {
   let wrapper
   beforeEach(() => {
-    wrapper = mount(MemberToInvite, {
+    wrapper = shallowMount(MemberToInvite, {
       propsData: {
         memberToInvite: {
           userName: 'ddd',

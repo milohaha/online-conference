@@ -140,7 +140,7 @@ router.post('/getActiveConferenceUsers', async function (request, response, next
     }
   })
   const activeUsers = []
-  for (const activeUserID in activeUserIDs) {
+  for (const activeUserID of activeUserIDs) {
     const user = await models.User.findAll({
       where: {
         id: activeUserID.userID

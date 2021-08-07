@@ -4,17 +4,24 @@
       <logo/>
       <div class="notice-exit">
         <notification id="notification"></notification>
-        <b-button variant="outline-primary" v-b-toggle.member-list class="check-member-button">成员列表</b-button>
+        <b-button
+          variant="outline-primary"
+          v-b-toggle.member-list class="check-member-button"
+          @click="updateMemberList"
+        >
+        成员列表
+        </b-button>
         <b-button variant="outline-primary" @click="exitConference">退出</b-button>
       </div>
     </div>
     <div class="function-button"></div>
     <b-button class="video">视频</b-button>
-    <b-sidebar id="member-list">
+    <b-sidebar id="member-list"
+    backdrop>
       <template #header>
         成员列表
       </template>
-      <member-list
+      <member-list ref="memberList"
         groupType="Conference"
       ></member-list>
     </b-sidebar>
@@ -44,6 +51,9 @@ export default {
       })
   },
   methods: {
+    updateMemberList () {
+      this.$refs.memberList.getActiveMembers()
+    },
     exitConference () {
       this.$router.push({ path: '/team/teamofuser' })
       // TODO 向后端发送成员暂时离开信息以维护在线成员列表

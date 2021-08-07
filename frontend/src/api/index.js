@@ -41,5 +41,8 @@ export default {
   },
   inviteConferenceMember: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/conferenceMembers', data)
+  },
+  getActiveUsers: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/getActiveConferenceUsers', data)
   }
 }

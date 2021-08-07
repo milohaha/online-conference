@@ -2,31 +2,34 @@
 <div>
     <b-list-group>
       <b-list-group-item
+        v-for="activeMember in sortActiveMembers"
+        :key="activeMember.id"
+      >
+        <member-item
+          :member="activeMember"
+          :founderID="founderID"
+          @removeMember="removeActiveMember"
+          icon='person-check'
+        >
+        </member-item>
+      </b-list-group-item>
+      <b-list-group-item
         v-for="member in sortMembers"
-        :key="member.userID"
-        class="member-item d-flex justify-content-around align-items-center h-auto">
-        <b-avatar
-          class="mr-0"
-          variant="primary"
-          icon="people-fill"
-          size="3rem"></b-avatar>
-        <div class="flex-column justify-content-start flex-grow-1">
-          <p class="text-lg-start">用户名: {{ member.userName }}</p>
-          <p class="text-lg-start">id: {{ member.id }}</p>
-          <p class="text-lg-start">邮箱: {{ member.email }}</p>
-        </div>
-        <remove-team-member
-          :userID="member.id"
-          :modalID="member.userName"
-          v-if="userID === founderID && member.id !== founderID"
-          @removeTeamMember="removeTeamMember"></remove-team-member>
+        :key="member.id"
+      >
+        <member-item
+          :member="member"
+          :founderID="founderID"
+          @removeMember="removeGroupMember"
+        ></member-item>
       </b-list-group-item>
     </b-list-group>
     </div>
 </template>
 <script>
 import { mapState } from 'vuex'
-import RemoveTeamMember from '../../components/Team/RemoveTeamMember'
+import MemberItem from './MemberItem.vue'
+import Api from '../../api'
 export default {
   props: {
     groupType: String
@@ -34,6 +37,7 @@ export default {
   data: function () {
     return {
       sortMembers: [],
+      sortActiveMembers: [],
       founderID: '',
       groupID: ''
     }
@@ -48,22 +52,42 @@ export default {
     this.getGroupInformation()
   },
   methods: {
-    removeTeamMember (userID) {
-      this.members.splice(this.members.findIndex((member) => member.id === userID), 1)
+    removeActiveMember (userID) {
+      // TODO 移除在线成员
+    },
+    removeGroupMember (userID) {
+      this.sortMembers.splice(this.sortMembers.findIndex((member) => member.id === userID), 1)
     },
     getMembers () {
-      this.$store.dispatch('getMembers', {
+      Api.getMembers({
         groupID: this.groupID,
         groupType: this.groupType,
         inGroup: true
       }).then((response) => {
         this.members = response.data.members
         this.sortMembers = this.sortMemberByID(this.members, this.founderID)
+        if (this.groupType === 'Conference') {
+          this.getActiveMembers()
+        }
+      })
+    },
+    getActiveMembers () {
+      Api.getActiveUsers({
+        conferenceID: this.groupID
+      }).then((response) => {
+        const activeMembers = response.data.members
+        this.sortActiveMembers = this.sortMemberByID(activeMembers, this.founderID)
+        this.sortActiveMembers.forEach(activeMember => {
+          const memberIndex = this.sortMembers.findIndex(member => member.id === activeMember.id)
+          if (memberIndex !== -1) {
+            this.sortMembers.splice(memberIndex, 1)
+          }
+        })
       })
     },
     getGroupInformation () {
       this.groupID = this.groupType === 'Team' ? this.teamID : this.$route.query.conferenceID
-      this.$store.dispatch('getObjects', {
+      Api.getObjects({
         model: this.groupType,
         condition: { id: this.groupID }
       })
@@ -88,7 +112,7 @@ export default {
     }
   },
   components: {
-    RemoveTeamMember
+    MemberItem
   }
 }
 </script>

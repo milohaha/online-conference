@@ -49,7 +49,7 @@ export default {
         this.$constant.REMOVED,
         this.$constant.IS_TEAM,
         this.teamID)
-      this.$emit('removeTeamMember', this.userID)
+      this.$emit('remove', this.userID)
       this.$bvModal.hide(this.modalID)
     },
     hideModal () {
