@@ -4,6 +4,8 @@ const { models } = require('../utils/database')
 
 const teamMethods = require('../methods/team')
 const publicMethods = require('../methods/public')
+const { v1: uuid } = require('uuid')
+const constant = require('../utils/constant')
 
 router.post('/createGroup', async (request, response, next) => {
   const userID = request.user.userID
@@ -149,6 +151,53 @@ router.post('/getActiveConferenceUsers', async function (request, response, next
     activeUsers.push({ id: user[0].id, userName: user[0].userName, email: user[0].email })
   }
   response.json({ members: activeUsers })
+})
+
+router.post('/generateConferenceToken', async function (request, response, next) {
+  const conferenceID = request.body.conferenceID
+  if (conferenceID === undefined) {
+    response.json({ message: 'UNDEFINED' })
+  }
+  const object = await models.Conference.findOne({
+    where: {
+      id: conferenceID
+    }
+  })
+  if (!object) {
+    response.json({ message: 'INVALID' })
+  } else {
+    const conferenceToken = uuid()
+    console.log((Date.now() + constant.EXPIRED * 1000).toString())
+    await models.ConferenceToken.create({
+      conferenceID: object.id,
+      conferenceToken: conferenceToken,
+      expiredTime: Date.now() + constant.EXPIRED * 1000
+    })
+    response.json({
+      message: 'SUCCESS',
+      conferenceToken: conferenceToken
+    })
+  }
+})
+
+router.post('/checkConferenceToken', async function (request, response, next) {
+  const conferenceToken = request.body.conferenceToken
+  if (conferenceToken === undefined) {
+    response.json({ message: 'UNDEFINED' })
+  }
+  const object = await models.ConferenceToken.findOne({
+    where: {
+      conferenceToken: conferenceToken
+    }
+  })
+  if (!object) {
+    response.json({ message: 'INVALID' })
+  } else {
+    response.json({
+      message: 'VALID',
+      expired: object.expiredTime < Date.now()
+    })
+  }
 })
 
 module.exports = router

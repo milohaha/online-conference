@@ -39,7 +39,7 @@
  * @apiGroup Socket
  * @apiParam { Integer } conferenceOrTeam 表示是被解散的会议室还是团队 IS_CONFERENCE/IS_TEAM
  * @apiParam { Integer } conferenceOrTeamID 要解散的conference或team的ID
- * @description 监听到'dismissNotice'的处理函数，当会议室/团队被解散时调用
+ * @apiDescription 监听到'dismissNotice'的处理函数，当会议室/团队被解散时调用
  * @apiSampleRequest off
  * @apiExample Example usage:
  * this.$io.emit('dismissNotice', conferenceOrTeam, conferenceOrTeamID)

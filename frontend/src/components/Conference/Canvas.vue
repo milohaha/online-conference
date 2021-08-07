@@ -92,6 +92,7 @@ export default {
       this.updateBoard(this.canvas, object, remoteUUID)
     })
     this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas) => {
+      console.log(itemsOfCanvas)
       for (const item of itemsOfCanvas) {
         this.updateBoard(this.canvas, item, 0)
       }

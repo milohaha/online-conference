@@ -212,6 +212,64 @@
  */
 
 /**
+ * @apiName generateConferenceToken
+ * @apiDescription 生成会议室token的接口
+ * @apiPermission user
+ * @api {post} /team/generateConferenceToken generateConferenceToken
+ * @apiParam {int} conferenceID        会议室ID
+ * @apiSuccess {String} message       请求结果
+ * @apiSuccess {String} conferenceToken       会议室token
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "conferenceID": 1
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "message": "SUCCESS",
+ *         "conferenceToken": "06f81e00-f78f-11eb-a3cb-2df2e2792414"
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
+ * @apiName checkConferenceToken
+ * @apiDescription 校验会议室token的接口
+ * @apiPermission user
+ * @api {post} /team/checkConferenceToken checkConferenceToken
+ * @apiParam {String} conferenceToken        会议室token
+ * @apiSuccess {String} message       请求结果
+ * @apiSuccess {String} conferenceToken       会议室token
+ * @apiError 401        未授权，无token或token过期或非指定地址端口访问
+ * @apiGroup Team
+ * @apiVersion 1.0.0
+ * @apiParamExample {json} Request-Example:
+ *     {
+ *       "conferenceToken": "5297bc10-f78c-11eb-8bdb-63f87ca1e5d6"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *         "message": "VALID",
+ *         "expired": false
+ *     }
+ * @apiErrorExample {json} Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       “code”: -1,
+ *       ”message“: 'INVALID_TOKEN'
+ *     }
+ */
+
+/**
  * @apiName getMessage
  * @apiDescription 请求未读消息/未处理验证消息的接口
  * @apiPermission user

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       Conference.hasMany(models.ConferenceBoard, { as: 'ConferenceBoard', foreignKey: 'conferenceID' })
       Conference.hasMany(models.ConferenceBlock, { as: 'ConferenceBlock', foreignKey: 'conferenceID' })
       Conference.hasMany(models.ActiveUserConference, { as: 'ActiveUserConference', foreignKey: 'conferenceID' })
+      Conference.hasMany(models.ConferenceToken, { as: 'ConferenceToken', foreignKey: 'conferenceID' })
       Conference.belongsTo(models.Team, { as: 'team', foreignKey: 'teamID' })
       Conference.belongsTo(models.User, { as: 'founder', foreignKey: 'founderID' })
     }

@@ -5,7 +5,8 @@
     "database": "database_development",
     "host": "mariadb",
     "dialect": "mariadb",
-    "seederStorage": "sequelize"
+    "seederStorage": "sequelize",
+    "timezone": "+08:00"
   },
   "test": {
     "username": "root",
