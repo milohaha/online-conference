@@ -214,18 +214,66 @@ const exitConference = async function (userID, conferenceID) {
 module.exports = function (server) {
   const io = require('socket.io')(server, { transports: ['websocket'] })
   const EditorSocketIOServer = require('../ot/editor-socketio-server.js')
-  const editorServer = new EditorSocketIOServer('', [], 1) // docId 分组
+  const editorServers = new Map()
 
   io.on('connection', (socket) => {
-    console.log('connected')
+    console.log('userConnected')
 
-    socket.on('enterDocDemo', () => {
+    // 新建文档同步
+    socket.on('newDocumentBlock', (params) => {
+      models.ConferenceBlock.create({
+        conferenceID: params.conferenceID,
+        itemID: params.docID,
+        type: 'document'
+      })
+      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', params.docID)
+    })
+
+    socket.on('enterDocumentBlock', async (docID) => {
+      const block = await models.ConferenceBlock.findOne({ where: { itemID: docID } })
+      let contents = ''
+      if (block) {
+        contents = Object.getOwnPropertyDescriptors(block).dataValues.value.contents
+      }
+      let editorServer = editorServers.get(docID)
+      if (!editorServer) {
+        editorServer = new EditorSocketIOServer(contents, [], docID)
+        editorServers.set(docID, editorServer)
+      }
       editorServer.addClient(socket)
     })
 
-    socket.on('enterCodeBlock', () => {
-      editorServer.addClient(socket)
+    // 移动文档同步
+    socket.on('moveDocumentBlock', (params) => {
+      socket.to('conference' + params.conferenceID).emit('moveDocumentBlock', { left: params.left, top: params.top, docID: params.docID })
     })
+
+    // 移动文档停止
+    socket.on('dragBlockStop', (params) => {
+      models.ConferenceBlock.update({
+        itemLeft: params.left,
+        itemTop: params.top
+      }, {
+        where: {
+          itemID: params.docID
+        }
+      })
+    })
+
+    // 删除文档同步
+    socket.on('deleteDocumentBlock', (params) => {
+      socket.to('conference' + params.conferenceID).emit('deleteDocumentBlock', params.docID)
+      models.ConferenceBlock.destroy({
+        where: {
+          itemID: params.docID,
+          conferenceID: params.conferenceID
+        }
+      })
+    })
+
+    // socket.on('enterCodeBlock', () => {
+    //   editorServer.addClient(socket)
+    // })
 
     socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
@@ -272,11 +320,13 @@ module.exports = function (server) {
       socket.join('conference' + conferenceID)
       const objects = await publicMethods.getObjects(models.ConferenceBoard, { conferenceID: conferenceID })
       const itemsOfCanvas = objects.map(object => { return Object.getOwnPropertyDescriptors(object).dataValues.value.itemDetails })
-      socket.emit('initCanvas', itemsOfCanvas)
+      const blocks = await publicMethods.getObjects(models.ConferenceBlock, { conferenceID: conferenceID })
+      const blocksOfCanvas = blocks.map(block => { return Object.getOwnPropertyDescriptors(block).dataValues.value })
+      socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas)
     })
 
     socket.on('disconnect', () => {
-      console.log('disconnected')
+      console.log('userDisconnected')
     })
   })
 }

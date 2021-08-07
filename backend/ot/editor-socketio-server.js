@@ -6,6 +6,7 @@ const WrappedOperation = require('./wrapped-operation')
 const Server = require('./server')
 const Selection = require('./selection')
 const util = require('util')
+const { models } = require('../utils/database')
 
 function EditorSocketIOServer (document, operations, docId, mayWrite) {
   EventEmitter.call(this)
@@ -31,6 +32,8 @@ function extend (target, source) {
 
 EditorSocketIOServer.prototype.addClient = function (socket) {
   const self = this
+  let shouldUpdate = true
+  let content
   socket
     .join(this.docId)
     .emit('doc', {
@@ -38,7 +41,21 @@ EditorSocketIOServer.prototype.addClient = function (socket) {
       revision: this.operations.length,
       clients: this.users
     })
-    .on('operation', function (revision, operation, selection) {
+    .on('operation', function (revision, operation, selection, value = undefined) {
+      // 不使用self.document是因为它是未经本次operation的文本
+      content = value
+      if (shouldUpdate) {
+        shouldUpdate = false
+        setTimeout(() => {
+          models.ConferenceBlock.update({
+            contents: content
+          }, {
+            where: {
+              itemID: self.docId
+            }
+          }).then(() => { shouldUpdate = true })
+        }, 2000)
+      }
       self.mayWrite(socket, function (mayWrite) {
         if (!mayWrite) {
           console.log("User doesn't have the right to edit.")

@@ -35,6 +35,7 @@ export default {
     return {
       code: '',
       coder: null,
+      client: undefined,
       options: {
         mode: 'text/javascript',
         tabSize: 4,
@@ -52,8 +53,7 @@ export default {
       that.coder.setValue(data.str)
       const serverAdapter = new ot.SocketIOAdapter(that.$io)
       const editorAdapter = new ot.CodeMirrorAdapter(that.coder)
-      const client = new ot.EditorClient(data.revision, data.clients, serverAdapter, editorAdapter)
-      console.log(client)
+      that.client = new ot.EditorClient(data.revision, data.clients, serverAdapter, editorAdapter)
     })
   },
   methods: {

@@ -126,7 +126,7 @@ ot.Client = (function (global) {
 
   // Call this method when the user changes the document.
   Client.prototype.applyClient = function (operation) {
-    this.setState(this.state.applyClient(this, operation))
+    this.setState(this.state.applyClient(this, operation, this.editorAdapter.getValue()))
   }
 
   // Call this method with a new operation from the server
@@ -169,10 +169,10 @@ ot.Client = (function (global) {
   function Synchronized () { }
   Client.Synchronized = Synchronized
 
-  Synchronized.prototype.applyClient = function (client, operation) {
+  Synchronized.prototype.applyClient = function (client, operation, value = undefined) {
     // When the user makes an edit, send the operation to the server and
     // switch to the 'AwaitingConfirm' state
-    client.sendOperation(client.revision, operation)
+    client.sendOperation(client.revision, operation, value)
     return new AwaitingConfirm(operation)
   }
 
@@ -1654,9 +1654,9 @@ ot.EditorClient = (function () {
   EditorClient.prototype.onChange = function (textOperation, inverse) {
     var selectionBefore = this.selection
     this.updateSelection()
-    // var meta = new SelfMeta(selectionBefore, this.selection)
-    // var operation = new WrappedOperation(textOperation, meta)
-
+    var meta = new SelfMeta(selectionBefore, this.selection)
+    var operation = new WrappedOperation(textOperation, meta)
+    console.log(operation)
     var compose = this.undoManager.undoStack.length > 0 &&
       inverse.shouldBeComposedWithInverted(last(this.undoManager.undoStack).wrapped)
     var inverseMeta = new SelfMeta(this.selection, selectionBefore)
@@ -1685,8 +1685,8 @@ ot.EditorClient = (function () {
     this.serverAdapter.sendSelection(selection)
   }
 
-  EditorClient.prototype.sendOperation = function (revision, operation) {
-    this.serverAdapter.sendOperation(revision, operation.toJSON(), this.selection)
+  EditorClient.prototype.sendOperation = function (revision, operation, value = undefined) {
+    this.serverAdapter.sendOperation(revision, operation.toJSON(), this.selection, value)
   }
 
   EditorClient.prototype.applyOperation = function (operation) {
@@ -1980,8 +1980,8 @@ ot.SocketIOAdapter = (function () {
       })
   }
 
-  SocketIOAdapter.prototype.sendOperation = function (revision, operation, selection) {
-    this.socket.emit('operation', revision, operation, selection)
+  SocketIOAdapter.prototype.sendOperation = function (revision, operation, selection, value = undefined) {
+    this.socket.emit('operation', revision, operation, selection, value)
   }
 
   SocketIOAdapter.prototype.sendSelection = function (selection) {

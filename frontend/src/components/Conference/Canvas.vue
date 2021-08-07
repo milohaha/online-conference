@@ -1,16 +1,49 @@
 <template>
   <div class="body">
     <div class="options-container">
-      <b-button variant="outline-primary" class="options-button" @click="switchToCursor">鼠标</b-button>
-      <b-button variant="outline-primary" class="options-button" @click="switchToEraser">橡皮擦</b-button>
-      <b-button variant="outline-primary" class="options-button" @click="switchToPen">画笔</b-button>
-      <b-button variant="outline-primary" name="rectangle" class="options-button" @click="addShape">矩形</b-button>
-      <b-button variant="outline-primary" name="circle" class="options-button" @click="addShape">圆形</b-button>
-      <b-button variant="outline-primary" name="triangle" class="options-button" @click="addShape">三角形</b-button>
-      <b-button variant="outline-primary" name="itext" class="options-button" @click="addShape">文本</b-button>
+      <b-button variant="outline-primary"
+                class="options-button"
+                @click="switchToCursor">鼠标</b-button>
+      <b-button variant="outline-primary"
+                class="options-button"
+                @click="switchToEraser">橡皮擦</b-button>
+      <b-button variant="outline-primary"
+                class="options-button"
+                @click="switchToPen">画笔</b-button>
+      <b-button variant="outline-primary"
+                name="rectangle"
+                class="options-button"
+                @click="addShape">矩形</b-button>
+      <b-button variant="outline-primary"
+                name="circle"
+                class="options-button"
+                @click="addShape">圆形</b-button>
+      <b-button variant="outline-primary"
+                name="triangle"
+                class="options-button"
+                @click="addShape">三角形</b-button>
+      <b-button variant="outline-primary"
+                name="itext"
+                class="options-button"
+                @click="addShape">文本</b-button>
+      <b-button variant="outline-primary"
+                class="options-button"
+                @click="addDocumentBlock">文档块</b-button>
     </div>
     <div class="canvas-container">
-      <canvas id="canvas" width="1200" height="800"></canvas>
+      <canvas id="canvas"
+              width="1200"
+              height="800"></canvas>
+    </div>
+    <div class='document-block-container'>
+      <document-block v-for="docID in documentArray"
+                      :key="docID"
+                      :identifier="docID"
+                      :ref="'doc'+docID"
+                      :init-position="initBlocksOfCanvas.get(docID)"
+                      @remove="removeDocumentBlock"
+                      @moveDocumentBlock="notifyMove">
+      </document-block>
     </div>
   </div>
 </template>
@@ -19,6 +52,7 @@
 import { fabric } from 'fabric'
 import './eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
+import DocumentBlock from './DocumentBlock.vue'
 export default {
   name: 'Canvas',
   data: function () {
@@ -26,20 +60,31 @@ export default {
       canvas: undefined,
       conferenceID: 1,
       uuid: undefined,
-      remoteUUID: undefined
+      remoteUUID: undefined,
+      documentArray: [],
+      initBlocksOfCanvas: undefined
     }
+  },
+  components: {
+    DocumentBlock
   },
   mounted () {
     this.uuid = uuid()
     this.remoteUUID = this.uuid
+    this.initBlocksOfCanvas = new Map()
     this.$io.emit('enterCanvas', this.conferenceID)
     this.canvas = new fabric.Canvas('canvas')
     this.$io.on('receiveObjectOfCanvas', (object, remoteUUID) => {
       this.updateBoard(this.canvas, object, remoteUUID)
     })
-    this.$io.on('initCanvas', (itemsOfCanvas) => {
+    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas) => {
       for (const item of itemsOfCanvas) {
         this.updateBoard(this.canvas, item, 0)
+      }
+      for (const block of blocksOfCanvas) {
+        this.documentArray.push(block.itemID)
+        // 不直接更新位置是因为此时document-block未渲染完毕,无法根据id拿到它
+        this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop })
       }
     })
     this.canvas.on('object:added', (option) => {
@@ -67,6 +112,18 @@ export default {
           }
           break
       }
+    })
+
+    const that = this
+    this.$io.on('newDocumentBlock', (docID) => {
+      that.documentArray.push(docID)
+    })
+    this.$io.on('moveDocumentBlock', (params) => {
+      const targetDoc = this.$refs[`doc${params.docID}`][0].$el
+      targetDoc.setAttribute('style', `position: absolute; left: ${params.left}px; top: ${params.top}px`)
+    })
+    this.$io.on('deleteDocumentBlock', (docID) => {
+      that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
     })
   },
   methods: {
@@ -136,7 +193,7 @@ export default {
           case 'i-text':
             fabricItem = new fabric.IText(object.text, object)
             break
-          default:break
+          default: break
         }
         this.remoteUUID = remoteUUID
         fabricItem.set({ id: objectID })
@@ -210,6 +267,19 @@ export default {
       }
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
+    },
+    addDocumentBlock: function () {
+      const docID = uuid()
+      this.documentArray.push(docID)
+      // 通知会议室里其他socket
+      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
+    },
+    removeDocumentBlock: function (docID) {
+      this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
+      this.$io.emit('deleteDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
+    },
+    notifyMove: function (params) {
+      this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
     }
   }
 }
@@ -235,5 +305,4 @@ export default {
   margin: 20px auto;
   border: 1px solid #594b67;
 }
-
 </style>
