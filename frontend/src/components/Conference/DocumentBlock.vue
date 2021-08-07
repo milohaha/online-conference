@@ -55,10 +55,10 @@ export default {
   mounted () {
     // Initialize Position
     const docDiv = document.getElementById(`docContainer${this.identifier}`)
-    if (this.initPosition) {
-      docDiv.style.left = this.initPosition.left + 'px'
-      docDiv.style.top = this.initPosition.top + 'px'
-    }
+    const left = this.initPosition ? this.initPosition.left : 0
+    const top = this.initPosition ? this.initPosition.top : 0
+    docDiv.style.left = left + 'px'
+    docDiv.style.top = top + 'px'
     const ioClient = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
     const that = this
     ioClient.emit('enterDocumentBlock', this.identifier) // docID

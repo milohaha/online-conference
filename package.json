@@ -14,5 +14,8 @@
   "license": "ISC",
   "devDependencies": {
     "husky": "^7.0.0"
+  },
+  "dependencies": {
+    "vuesax": "^3.12.2"
   }
 }

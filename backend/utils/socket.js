@@ -231,9 +231,9 @@ module.exports = function (server) {
 
     socket.on('enterDocumentBlock', async (docID) => {
       const block = await models.ConferenceBlock.findOne({ where: { itemID: docID } })
-      let contents = ''
-      if (block) {
-        contents = Object.getOwnPropertyDescriptors(block).dataValues.value.contents
+      let contents = Object.getOwnPropertyDescriptors(block).dataValues.value.contents
+      if (!contents) {
+        contents = ''
       }
       let editorServer = editorServers.get(docID)
       if (!editorServer) {
@@ -295,8 +295,8 @@ module.exports = function (server) {
 
     socket.on('readNotice', readNotice)
 
-    socket.on('sendObjectOfCanvas', (object, conferenceID, uuid) => {
-      io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, uuid)
+    socket.on('sendObjectOfCanvas', (object, conferenceID, uuid, setOption) => {
+      io.to('conference' + conferenceID).emit('receiveObjectOfCanvas', object, uuid, setOption)
       if (object.state === 'removed') {
         models.ConferenceBoard.destroy({
           where: {
@@ -305,6 +305,11 @@ module.exports = function (server) {
           }
         })
         return
+      }
+      if (setOption !== undefined && setOption !== null) {
+        Object.keys(setOption).forEach(key => {
+          object[key] = setOption[key]
+        })
       }
       publicMethods.createOrUpdateObject(models.ConferenceBoard, {
         conferenceID: conferenceID,
