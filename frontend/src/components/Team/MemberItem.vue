@@ -1,16 +1,19 @@
 <template>
   <div class="member-item">
-    <div class="d-flex justify-content-around align-items-center h-auto">
+    <div class="d-flex justify-content-center align-items-center h-auto">
+      <div class="little-green-dot" v-if="isActive"></div>
       <b-avatar
-        class="mr-0"
-        variant="primary"
-        :icon=icon
-        size="3rem"
-      ></b-avatar>
-      <div class="user-information">
-        <p class="text-lg-start">用户名: {{ member.userName }}</p>
-        <p class="text-lg-start">id: {{ member.id }}</p>
-        <p class="text-lg-start">邮箱: {{ member.email }}</p>
+        variant="info"
+        src="https://placekitten.com/300/300"
+        class="mx-3"
+        size="4rem"></b-avatar>
+      <div class="user-information mx-2">
+        <div
+          class="text-lg-start d-flex align-items-center justify-content-between">
+          <span>用户名: {{ member.userName }}</span>
+          <span>ID: {{ member.id }}</span>
+        </div>
+        <span class="text-lg-start mt-2">邮箱: {{ member.email }}</span>
       </div>
     </div>
       <remove-team-member
@@ -26,10 +29,7 @@ import { mapState } from 'vuex'
 import RemoveTeamMember from './RemoveTeamMember.vue'
 export default {
   props: {
-    icon: {
-      String,
-      default: 'person-fill'
-    },
+    isActive: Boolean,
     member: Object,
     founderID: Number
   },
@@ -49,6 +49,13 @@ export default {
 }
 </script>
 <style scoped>
+.little-green-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #96f106;
+}
+
 .user-information {
   display: flex;
   flex-direction: column;

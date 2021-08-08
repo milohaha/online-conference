@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown right no-caret id="message-box">
+  <b-dropdown right no-caret variant="light" id="message-box">
   <template #button-content>
     <new-message-icon
     :newMessageNum="newMessageNum"
@@ -129,11 +129,8 @@ export default {
 
 .message-box {
   width: 595px;
+  overflow-y: scroll;
+  max-height: 300px;
 }
 
-.message,
-.notice {
-  overflow-y: scroll;
-  max-height: 270px;
-}
 </style>

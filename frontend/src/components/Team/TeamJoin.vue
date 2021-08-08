@@ -3,8 +3,7 @@
   <b-modal
     id="bv-modal-join-team"
     hide-footer
-    hide-backdrop
-    centered
+    backdrop
     no-stacking
     no-close-on-backdrop>
     <template #modal-title>加入团队</template>
@@ -32,8 +31,7 @@
   <b-modal
     id="bv-modal-join-team-notice"
     ref="modal-join-team-notice"
-    hide-backdrop
-    centered
+    backdrop
     hide-footer>
     <template #modal-title>
       加入团队

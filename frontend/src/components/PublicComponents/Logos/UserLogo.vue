@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-dropdown no-caret right variant='link' size='sm'>
+    <b-dropdown no-caret right variant='light'>
       <template v-slot:button-content>
         <img src="../../../assets/picture/astronaut.png" alt="userLogo" class="user-logo">
       </template>
@@ -36,7 +36,7 @@ export default {
 </script>
 <style scoped>
 .user-logo {
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
 }
 </style>

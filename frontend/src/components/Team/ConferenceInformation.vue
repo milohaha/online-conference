@@ -11,10 +11,10 @@
         <div class="picture">
           <b-img thumbnail src="https://picsum.photos/250/250/?image=54" alt="Image 1"></b-img>
         </div>
-        <div class="information">
+        <div class="justify-content-start mx-3 my-1">
           <p>会议室名称：{{ conferenceInformation.conferenceName }}</p>
           <p>创建者：{{ conferenceInformation.founderID}}</p>
-          <p>创建时间：{{ conferenceInformation.createdAt}}</p>
+          <p>创建时间：<br>{{ conferenceInformation.createdAt}}</p>
         </div>
       </div>
       <div>

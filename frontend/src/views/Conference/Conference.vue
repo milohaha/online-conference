@@ -4,126 +4,230 @@
       <canvas id="canvas" width="1800px" height="1200px"></canvas>
     </div>
     <div class="left-top">
-      <b-container fluid="md" class="text-center container">
-        <b-row>
-          <b-col align-self="center" cols="5">
-            <logo logo-color="black"/>
-          </b-col>
-          <b-col align-self="center" class="conference-name" cols="5">
+      <div class="d-flex align-items-center logo-bar">
+          <div class="px-3 py-2 flex-fill logo">
+            <logo v-if="false" logo-color="black"/>
+            <span>FMT</span>
+          </div>
+          <div
+            class="conference-name px-3 flex-fill"
+            v-b-popover.hover.bottom="'会议室信息'">
             <b-link
+              class="conference-name-link"
               @click="$bvModal.show('bv-modal-conference-information')">
               {{ conferenceName }}
             </b-link>
-          </b-col>
-          <b-col align-self="center" cols="2">
-            <b-button>
-              <span class="fmtfont fmt-share1"></span>
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-container>
+          </div>
+          <div class="px-3 py-2 flex-fill" v-b-popover.hover.rightbottom="'导出文件'">
+            <span class="fmtfont fmt-share"></span>
+          </div>
+      </div>
     </div>
-    <div class="right-top">
-      <b-button>分享</b-button>
-      <notification id="notification"></notification>
-      <b-dropdown no-caret right>
-        <template #button-content>
-          <span class="fmtfont fmt-setting"></span>
-        </template>
-        <b-dropdown-item @click="exitConference">
-          <span class="fmtfont fmt-exit1"></span>
-          退出会议室
-        </b-dropdown-item>
-      </b-dropdown>
+    <div class="right-top-center d-flex">
+      <div class="top-center mx-4">
+      <b-button-group class="user-list">
+        <b-dropdown
+          no-caret
+          right
+          variant="light"
+          v-b-popover.hover.bottomleft="'共享视角'">
+          <template #button-content>
+            <span class="fmtfont fmt-user"></span>
+          </template>
+          <b-dropdown-item>给全员共享视角</b-dropdown-item>
+          <b-dd-divider></b-dd-divider>
+          <b-dropdown-item>共享视角给...</b-dropdown-item>
+        </b-dropdown>
+        <b-button
+          v-b-toggle.member-list
+          class="fmtfont fmt-userlist"
+          variant="light"
+          v-b-popover.hover.bottomleft="'会议室成员列表'">
+        </b-button>
+      </b-button-group>
+
     </div>
-    <div class="top-center">
-      <b-dropdown no-caret right>
-        <template #button-content>
-          <span class="fmtfont fmt-user1"></span>
-        </template>
-      </b-dropdown>
-      <b-button v-b-toggle.member-list>
-        <span class="fmtfont fmt-userlist"></span>
-      </b-button>
+      <div class="right-top">
+        <b-button-group class="setting-toolbar">
+          <div class="d-flex align-items-center">
+            <b-button
+              pill
+              variant="primary"
+              class="px-3 mx-2"
+              v-b-popover.hover.bottomright="'分享会议室'">分享</b-button>
+          </div>
+          <notification id="notification" v-b-popover.hover.bottomright="'通知'"></notification>
+          <b-dropdown no-caret right variant="light" v-b-popover.hover.bottomright="'设置'">
+            <template #button-content>
+              <span class="fmtfont fmt-setting"></span>
+            </template>
+            <b-dropdown-item @click="exitConference">
+              <span class="fmtfont fmt-exit mx-2"></span>
+              退出会议室
+            </b-dropdown-item>
+          </b-dropdown>
+        </b-button-group>
+      </div>
     </div>
     <div class="left-center">
-      <b-button-group vertical>
+      <b-button-group vertical class="button-toolbar">
         <!--          鼠标-->
-        <b-button class="fmtfont fmt-mouse" @click="switchToCursor">
+        <b-button
+          class="fmtfont fmt-mouse"
+          variant="light"
+          v-b-popover.hover.right="'鼠标'"
+          @click="switchToCursor">
         </b-button>
         <!--        笔-->
-        <b-button class="fmtfont fmt-pen" @click="switchToPen">
+        <b-button
+          class="fmtfont fmt-pen"
+          variant="light"
+          @click="switchToPen"
+          v-b-popover.hover.right="'画笔'">
         </b-button>
 
-        <b-dropdown no-caret dropright id="shape">
+        <b-dropdown
+          no-caret
+          variant="light"
+          dropright
+          v-b-popover.hover.right="'图形'"
+          menu-class="dropdown-shape"
+        >
           <!--            图形-->
           <template #button-content>
             <span class="fmtfont fmt-shape"></span>
           </template>
           <!--            矩形-->
-          <b-dropdown-item-button name="rectangle" @click="addShape" button-class="fmtfont fmt-square">
+          <b-dropdown-item-button
+            style="width: 50px;"
+            name="rectangle"
+            @click="addShape"
+            button-class="fmtfont fmt-rectangle"
+            v-b-popover.hover.right="'矩形'">
           </b-dropdown-item-button>
           <!--            圆-->
-          <b-dropdown-item-button name="circle" @click="addShape" button-class="fmtfont fmt-circle">
+          <b-dropdown-item-button
+            style="width: 50px;"
+            name="circle"
+            @click="addShape"
+            button-class="fmtfont fmt-circle"
+            v-b-popover.hover.right="'圆'">
           </b-dropdown-item-button>
           <!--            三角形-->
-          <b-dropdown-item-button name="triangle" @click="addShape" button-class="fmtfont fmt-triangle">
+          <b-dropdown-item-button
+            style="width: 50px;"
+            name="triangle"
+            @click="addShape"
+            button-class="fmtfont fmt-triangle"
+            v-b-popover.hover.right="'三角形'">
           </b-dropdown-item-button>
         </b-dropdown>
         <!--          文本-->
-        <b-button name="itext" @click="addShape" class="fmtfont fmt-text">
+        <b-button
+          name="itext"
+          @click="addShape"
+          variant="light"
+          class="fmtfont fmt-text"
+          v-b-popover.hover.right="'文本'">
         </b-button>
         <!--          橡皮擦-->
-        <b-button @click="switchToEraser" class="fmtfont fmt-erase">
+        <b-button
+          @click="switchToEraser"
+          class="fmtfont fmt-eraser"
+          variant="light"
+          v-b-popover.hover.right="'橡皮擦'">
         </b-button>
         <!--          箭头-->
-        <b-button class="fmtfont fmt-arrow">
+        <b-button
+          class="fmtfont fmt-arrow"
+          variant="light"
+          v-b-popover.hover.right="'箭头'">
         </b-button>
         <!--          注释-->
-        <b-button class="fmtfont fmt-notation">
+        <b-button
+          class="fmtfont fmt-comment"
+          variant="light"
+          v-b-popover.hover.right="'注释'">
         </b-button>
         <!--          思维导图-->
-        <b-button class="fmtfont fmt-mindmap">
+        <b-button
+          class="fmtfont fmt-mindmap"
+          variant="light"
+          v-b-popover.hover.right="'思维导图'">
         </b-button>
       </b-button-group>
     </div>
     <div class="left-bottom">
-      <b-button-group>
-        <b-button>
-          <!--        视频-->
-          <span class="fmtfont fmt-video"></span>
+      <b-button-group
+        class="extra-button-toolbar">
+        <!--        视频-->
+        <b-button
+          class="fmtfont fmt-video"
+          variant="light"
+          v-b-popover.hover.top="'多人音视频'">
         </b-button>
         <!--        代码块-->
         <b-button
-          class="fmtfont fmt-codeblock">
+          class="fmtfont fmt-codeblock"
+          variant="light"
+          v-b-popover.hover.top="'协同编辑代码'">
         </b-button>
         <!--        文档-->
         <b-button
           class="fmtfont fmt-document"
-          @click="addDocumentBlock">
+          @click="addDocumentBlock"
+          variant="light"
+          v-b-popover.hover.top="'协同编辑文档'">
         </b-button>
       </b-button-group>
     </div>
-    <div class="right-bottom">
-      <div class="detail-options-container">
-        <vs-slider v-model="red" color="red" max="255"></vs-slider>
-        <vs-slider v-model="green" color="green" max="255"></vs-slider>
-        <vs-slider v-model="blue" color="blue" max="255"></vs-slider>
-        <vs-slider v-model="size" color="black" max="20"></vs-slider>
+    <div class="right-bottom-center d-flex justify-content-between">
+      <div class="bottom-center mx-5">
+        <div class="detail-options-container" ref="lineHeight">
+          <vs-slider
+            v-model="size"
+            color="black"
+            max="20"
+            @change="toggleLineHeight"></vs-slider>
+        </div>
       </div>
-      <div class="detail-display-container">
-        <button ref="detail-display-button" disabled></button>
+      <div class="right-bottom m-lg-2">
+        <div
+          class="color-container"
+          ref="colorContainer">
+          <color-panel
+            class="color-picker"
+            v-model="color"
+            v-if="displayPicker"></color-panel>
+          <span
+            class="current-color"
+            v-b-popover.hover.top="'调色盘'"
+            :style="'background-color: ' + color"
+            @click="togglePicker"></span>
+        </div>
       </div>
     </div>
+    <div
+      v-if="displayLineHeight"
+      class="detail-display-container">
+    </div>
+    <div
+    class="detail-line-height"
+    v-if="displayLineHeight"
+    :style="{'width':size+'px',
+    'height':size+'px',
+    'background-color':color,
+    'margin-top':-size/2+'px',
+    'margin-left':-size/2+'px'}">
+  </div>
     <b-sidebar
       id="member-list"
       right
+      backdrop
+      width="500px"
       shadow="true">
       <template #header>
         成员列表
-      </template>
-      <template #footer="{ hide }">
-        <b-button @click="hide">关闭</b-button>
       </template>
       <member-list
         groupType="Conference"
@@ -149,7 +253,7 @@
 <script>
 import Logo from '../../components/PublicComponents/Logos/Logo.vue'
 import Notification from '../../components/PublicComponents/Notice/Notification.vue'
-import MemberList from '../../components/Team/MemberList.vue'
+import MemberList from '../../components/Team/ConferenceMemberList.vue'
 import ConferenceInformation from '../../components/Team/ConferenceInformation'
 import { mapState } from 'vuex'
 import Api from '../../api'
@@ -160,13 +264,12 @@ import DocumentBlock from '../../components/Conference/DocumentBlock'
 export default {
   data: function () {
     return {
-      red: 0,
-      green: 0,
-      blue: 0,
       size: 3,
+      color: '#111111',
+      displayPicker: false,
+      displayLineHeight: false,
       conferenceInformation: {},
       conferenceName: '',
-      conferenceID: 0,
       founderID: 0,
       canvas: undefined,
       uuid: undefined,
@@ -177,29 +280,19 @@ export default {
   },
   computed: {
     ...mapState({
-      userID: state => state.Login.userID
+      userID: state => state.Login.userID,
+      conferenceID: state => state.Team.conferenceID
     })
   },
   watch: {
-    red: function (value) {
+    color: function () {
       this.canvas.freeDrawingBrush.color = this.getColor()
-      this.$refs['detail-display-button'].style.backgroundColor = this.getColor()
     },
-    green: function (value) {
-      this.canvas.freeDrawingBrush.color = this.getColor()
-      this.$refs['detail-display-button'].style.backgroundColor = this.getColor()
-    },
-    blue: function (value) {
-      this.canvas.freeDrawingBrush.color = this.getColor()
-      this.$refs['detail-display-button'].style.backgroundColor = this.getColor()
-    },
-    size: function (value) {
+    size: function () {
       this.canvas.freeDrawingBrush.width = this.size
-      this.$refs['detail-display-button'].style.height = this.size + 'px'
     }
   },
   created () {
-    this.conferenceID = parseInt(localStorage.getItem('conferenceID'))
     Api.getObjects({
       model: 'Conference',
       condition: { id: this.conferenceID }
@@ -270,13 +363,53 @@ export default {
     })
   },
   methods: {
-    updateMemberList () {
-      this.$refs.memberList.getActiveMembers()
+    showPicker () {
+      document.addEventListener('click', this.documentClick)
+      this.displayPicker = true
+    },
+    hidePicker () {
+      document.removeEventListener('click', this.documentClick)
+      this.displayPicker = false
+    },
+    togglePicker () {
+      this.displayPicker ? this.hidePicker() : this.showPicker()
+    },
+    documentClick (e) {
+      const el = this.$refs.colorContainer
+      const target = e.target
+      if (el !== target && !el.contains(target)) {
+        this.hidePicker()
+      }
+    },
+    showLineHeight () {
+      document.addEventListener('mousedown', this.documentMouseDown)
+      this.displayLineHeight = true
+    },
+    hideLineHeight () {
+      document.addEventListener('mouseup', this.documentMouseUp)
+      this.displayLineHeight = false
+    },
+    toggleLineHeight () {
+      this.hideLineHeight()
+      this.showLineHeight()
+    },
+    documentMouseDown (e) {
+      const el = this.$refs.lineHeight
+      const target = e.target
+      if (el !== target && !el.contains(target)) {
+        this.displayLineHeight = false
+      }
+    },
+    documentMouseUp () {
+      document.removeEventListener('mousedown', this.documentMouseDown)
+      document.removeEventListener('mouseup', this.documentMouseUp)
+      this.displayLineHeight = false
     },
     exitConference () {
       this.$io.emit('exitConference',
         this.userID,
         this.conferenceID)
+      this.$store.commit('LEAVE_CONFERENCE')
       this.$router.push({ path: '/team/teamofuser' })
     },
     solveObjectOption: function (object, setOption) {
@@ -323,7 +456,7 @@ export default {
       }
     },
     getColor: function () {
-      return '#' + ('000000' + (256 * 256 * this.red + 256 * this.green + this.blue).toString(16)).substr(-6)
+      return this.color
     },
     getObjectById: function (canvas, id) {
       const currentObjects = canvas.getObjects()
@@ -512,56 +645,105 @@ export default {
 </script>
 <style scoped>
 .left-top {
-  background-color: #eee;
+  background-color: #fff;
   position: fixed;
   top: 5px;
-  left: 10px;
+  left: 1%;
 }
 
 .left-center {
-  background-color: #eee;
   position: fixed;
+  left: 1%;
   top: 25%;
 }
 
 .left-bottom {
-  background-color: #eee;
   position: fixed;
   bottom: 5px;
-  left: 10px;
+  left: 1%;
 }
 
-.right-top {
-  background-color: #eee;
+.right-top-center {
   position: fixed;
   top: 5px;
-  right: 10px;
+  right: 2%;
 }
 
-.right-bottom {
-  background-color: #eee;
+.right-bottom-center {
   position: fixed;
-  right: 10px;
+  right: 5px;
   bottom: 5px;
-}
-
-.top-center {
-  background-color: #eee;
-  position: fixed;
-  right: 200px;
-  top: 5px;
-}
-
-.container {
-  width: 400px;
 }
 
 .conference-name {
-  border-left: #7f7f7f solid 1px;
-  border-right: #7f7f7f solid 1px;
+  border-left: #a0a0a0 dashed 1px;
+  border-right: #7f7f7f dashed 1px;
 }
 
-#shape {
+.conference-name-link {
+  text-decoration: none;
+  color: #111;
+  font-size: 20px;
+}
+
+.conference-name-link:hover {
+  text-decoration: none;
+  color: #0a20dc;
+  font-size: 20px;
+}
+
+.button-toolbar,
+.extra-button-toolbar,
+.user-list,
+.setting-toolbar,
+.logo-bar {
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px #7f7f7f;
+}
+
+>>> .dropdown-shape {
+  min-width: 0;
+}
+
+.logo span {
+  font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 30px;
+}
+
+.color-picker {
+  position: fixed;
+  right: 5px;
+  bottom: 55px;
+}
+
+.current-color {
+  display: inline-block;
   width: 50px;
+  height: 50px;
+  border-bottom-right-radius: 30px;
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+}
+
+.detail-display-container {
+  width: 200px;
+  height: 200px;
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -100px;
+  background-color: #eee;
+  filter: blur(19px);
+}
+
+.detail-line-height {
+  border-radius: 50%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  color: rgba(255, 255, 255, 0.7);
 }
 </style>

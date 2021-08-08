@@ -12,7 +12,7 @@ export default {
   props: {
     logoColor: {
       String,
-      default: '#fff'
+      default: '#111111'
     }
   }
 }

@@ -1,16 +1,16 @@
 @font-face {
   font-family: "fmtfont"; /* Project id 2726819 */
-  src: url('iconfont.woff2?t=1628237972273') format('woff2'),
-       url('iconfont.woff?t=1628237972273') format('woff'),
-       url('iconfont.ttf?t=1628237972273') format('truetype');
+  src: url('iconfont.woff2?t=1628320085099') format('woff2'),
+       url('iconfont.woff?t=1628320085099') format('woff'),
+       url('iconfont.ttf?t=1628320085099') format('truetype');
 }
-
 .fmtfont {
   font-family: "fmtfont", serif, sans-serif, cursive, fantasy, monospace !important;
   font-size: 20px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #111111;
 }
 
 /*left-center*/
@@ -18,125 +18,196 @@
   content: "\e637";
   font-size: 22px;
 }
-.fmt-square:before {
+.fmt-circle:hover {
+  content: "\e637";
+  font-size: 22px;
+  color: #1424b3;
+}
+.fmt-rectangle:before {
   content: "\e620";
   font-size: 22px;
+}
+.fmt-rectangle:hover {
+  content: "\e620";
+  font-size: 22px;
+  color: #1424b3;
 }
 .fmt-triangle:before {
   content: "\e6bd";
   font-size: 22px;
 }
+.fmt-triangle:hover {
+  content: "\e6bd";
+  font-size: 22px;
+  color: #1424b3;
+}
 .fmt-arrow:before {
   content: "\e6a7";
-  font-size: 22px;
+  font-size: 24px;
+}
+.fmt-arrow:hover {
+  content: "\e6a7";
+  font-size: 24px;
+  color: #1424b3;
 }
 .fmt-text:before {
   content: "\e602";
+  font-size: 24px;
+}
+.fmt-text:hover {
+  content: "\e602";
+  font-size: 24px;
+  color: #1424b3;
+}
+.fmt-comment:before {
+  content: "\e600";
   font-size: 22px;
 }
-.fmt-notation:before {
-  content: "\e633";
+.fmt-comment:hover {
+  content: "\e600";
   font-size: 22px;
+  color: #1424b3;
 }
 .fmt-mindmap:before {
   content: "\e619";
   font-size: 22px;
 }
+.fmt-mindmap:hover {
+  content: "\e619";
+  font-size: 22px;
+  color: #1424b3;
+}
 .fmt-mouse:before {
   content: "\e605";
   font-size: 22px;
+}
+.fmt-mouse:hover {
+  content: "\e605";
+  font-size: 22px;
+  color: #1424b3;
 }
 .fmt-shape:before {
   content: "\e623";
   font-size: 22px;
 }
-.fmt-pencil:before {
-  content: "\e63a";
+.fmt-shape:hover {
+  content: "\e623";
+  font-size: 22px;
+  color: #1424b3;
+}
+.fmt-eraser:before {
+  content: "\e6ed";
   font-size: 22px;
 }
-.fmt-erase:before {
-  content: "\e6b8";
+.fmt-eraser:hover {
+  content: "\e6ed";
   font-size: 22px;
-}
-.fmt-ballpoint:before {
-  content: "\e6e1";
-  font-size: 22px;
+  color: #1424b3;
 }
 .fmt-pen:before {
   content: "\e709";
   font-size: 22px;
 }
-
+.fmt-pen:hover {
+  content: "\e709";
+  font-size: 22px;
+  color: #1424b3;
+}
 /*left-top*/
 .fmt-share:before {
-  content: "\e662";
+  font-size: 20px;
+  content: "\e62f";
 }
-
-.fmt-share1:before {
-  content: "\e601";
+.fmt-share:hover {
+  font-size: 20px;
+  content: "\e62f";
+  color: #1424b3;
 }
 
 /*left-bottom*/
 .fmt-document:before {
   content: "\e618";
+  font-size: 24px;
+}
+.fmt-document:hover {
+  content: "\e618";
+  font-size: 24px;
+  color: #1424b3;
 }
 
 .fmt-codeblock:before {
   content: "\e69f";
+  font-size: 24px;
+}
+.fmt-codeblock:hover {
+  content: "\e69f";
+  font-size: 24px;
+  color: #1424b3;
 }
 
 .fmt-video:before {
-  content: "\e87a";
+  content: "\e640";
+  font-size: 24px;
 }
-
+.fmt-video:hover {
+  content: "\e640";
+  font-size: 24px;
+  color: #1424b3;
+}
 /*right-top*/
 .fmt-exit:before {
-  content: "\e656";
-}
-.fmt-exit1:before {
   content: "\e63b";
 }
-
-.fmt-setting1:before {
-  content: "\e61e";
-  font-size: 24px;
+.fmt-exit:hover {
+  content: "\e63b";
+  color: #1424b3;
 }
 
 .fmt-setting:before {
   content: "\e604";
   font-size: 24px;
 }
+.fmt-setting:hover {
+  content: "\e604";
+  font-size: 24px;
+  color: #1424b3;
+}
 .fmt-notice:before {
-  content: "\e615";
+  content: "\e720";
   font-size: 24px;
 }
-.fmt-notice1:before {
-  content: "\e640";
+.fmt-notice:hover {
+  content: "\e720";
   font-size: 24px;
+  color: #1424b3;
 }
+
 
 /*top-center*/
 .fmt-userlist:before {
   content: "\e817";
   font-size: 24px;
 }
-.fmt-userlist1:before {
-  content: "\e609";
+.fmt-userlist:hover {
+  content: "\e817";
   font-size: 24px;
-}
-
-.fmt-user1:before {
-  content: "\e6c8";
-  font-size: 24px;
+  color: #1424b3;
 }
 
 .fmt-user:before {
-  content: "\e614";
+  content: "\e6c8";
   font-size: 24px;
 }
-
+.fmt-user:hover {
+  content: "\e6c8";
+  font-size: 24px;
+  color: #1424b3;
+}
 /*right-bottom*/
 
-
-
-
+/*others*/
+.fmt-add:before {
+  content: "\e721";
+  font-size: 80px;
+  color: #1424b3;
+}

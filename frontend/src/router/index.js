@@ -25,7 +25,6 @@ const routes = [
   },
   {
     path: '/team',
-    name: 'team',
     component: () => import('../views/Team/Team.vue'),
     children: [
       {
@@ -34,19 +33,14 @@ const routes = [
         component: () => import('../../src/components/Team/RecentFile.vue')
       },
       {
-        path: 'teamcreate',
-        name: 'teamcreate',
-        component: () => import('../components/Team/TeamCreate.vue')
+        path: '',
+        name: 'team',
+        component: () => import('../../src/components/Team/TeamPage.vue')
       },
       {
-        path: 'teamjoin',
-        name: 'teamjoin',
-        component: () => import('../../src/components/Team/TeamJoin.vue')
-      },
-      {
-        path: 'teammanage',
-        name: 'teammanage',
-        component: () => import('../../src/components/Team/TeamManage.vue')
+        path: 'teampage',
+        name: 'teampage',
+        component: () => import('../../src/components/Team/TeamPage.vue')
       },
       {
         path: 'teamofuser',

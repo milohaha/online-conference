@@ -78,7 +78,7 @@ export default {
     },
     dismissGroupSuccess () {
       this.$bvModal.hide('bv-modal-dismiss-group-notice')
-      this.$router.push({ path: '/team/teamofuser' })
+      this.$router.push({ path: '/team/teampage' })
     }
   }
 }

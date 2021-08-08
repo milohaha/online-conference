@@ -1,5 +1,5 @@
 <template>
-<div>
+  <div>
     <b-list-group>
       <b-list-group-item
         v-for="activeMember in sortActiveMembers"
@@ -9,13 +9,14 @@
           :member="activeMember"
           :founderID="founderID"
           @removeMember="removeActiveMember"
-          icon='person-check'
+          :isActive="true"
         >
         </member-item>
       </b-list-group-item>
       <b-list-group-item
         v-for="member in sortMembers"
         :key="member.id"
+        class="text-muted"
       >
         <member-item
           :member="member"
@@ -24,16 +25,13 @@
         ></member-item>
       </b-list-group-item>
     </b-list-group>
-    </div>
+  </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import MemberItem from './MemberItem.vue'
 import Api from '../../api'
 export default {
-  props: {
-    groupType: String
-  },
   data: function () {
     return {
       sortMembers: [],
@@ -45,7 +43,8 @@ export default {
   computed: {
     ...mapState({
       teamID: (state) => state.Team.teamID,
-      userID: (state) => state.Login.userID
+      userID: (state) => state.Login.userID,
+      conferenceID: (state) => state.Team.conferenceID
     })
   },
   created () {
@@ -61,14 +60,12 @@ export default {
     getMembers () {
       Api.getMembers({
         groupID: this.groupID,
-        groupType: this.groupType,
+        groupType: 'Conference',
         inGroup: true
       }).then((response) => {
         this.members = response.data.members
         this.sortMembers = this.sortMemberByID(this.members, this.founderID)
-        if (this.groupType === 'Conference') {
-          this.getActiveMembers()
-        }
+        this.getActiveMembers()
       })
     },
     getActiveMembers () {
@@ -85,10 +82,14 @@ export default {
         })
       })
     },
+    getAllMembers () {
+      this.getMembers()
+      this.getActiveMembers()
+    },
     getGroupInformation () {
-      this.groupID = this.groupType === 'Team' ? this.teamID : this.$route.query.conferenceID
+      this.groupID = this.conferenceID
       Api.getObjects({
-        model: this.groupType,
+        model: 'Conference',
         condition: { id: this.groupID }
       })
         .then(response => {

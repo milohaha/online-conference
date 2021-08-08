@@ -15,10 +15,7 @@ describe('ConferenceList组件测试', () => {
       stubs: ['router-view'],
       localVue,
       store,
-      router,
-      propsData: {
-        groupType: 'Conference'
-      }
+      router
     })
   })
   test('测试查看会议室列表--已有会议室', async () => {

@@ -1,27 +1,38 @@
 <template>
 <div class="team-page">
-  <div class="logo">
+  <div class="logo bg-light">
     <logo/>
     <div class="notice-user">
       <notification id="notification"></notification>
       <user-logo/>
     </div>
   </div>
-  <div class="team-page-main-part">
-    <b-nav vertical class="nav" id="firstnav" align="start" pills>
-      <b-nav-item to="/team/recentfile" class="recent-file">
-        <b-icon icon='file-earmark-richtext'></b-icon>
-        最近文件
-      </b-nav-item>
-      <b-nav-item to="/team/teammanage" class="team-manage">
-        <b-icon icon='people'></b-icon>
-        团队管理
-      </b-nav-item>
-    </b-nav>
-    <div class="changing-part">
+  <div class="body d-flex">
+    <div class="side-nav flex-column mx-3">
+      <div class="my-3">
+        <b-icon
+          icon='file-earmark-richtext'
+          size="md"
+          class="mx-2"></b-icon>
+        <b-link class="recent-file" to="/team/recentfile">
+          <span>最近文件</span>
+        </b-link>
+      </div>
+      <div class="my-3">
+        <b-icon
+          icon='people'
+          size="md"
+          class="mx-2"></b-icon>
+        <b-link class="team-manage" to="/team/teampage">
+          <span>团队管理</span>
+        </b-link>
+      </div>
+      <hr>
+    </div>
+    <div class="team-manage-page">
       <router-view></router-view>
     </div>
-</div>
+  </div>
 </div>
 </template>
 <script>
@@ -41,15 +52,10 @@ export default {
   font-family: Simsun, serif, sans-serif, cursive, fantasy, monospace;
 }
 
-.team-page {
-  margin: 0;
-}
-
 .logo {
   padding: 10px;
   height: 10vh;
   display: flex;
-  background-color: #04294f;
   align-items: center;
   justify-content: space-between;
 }
@@ -59,26 +65,24 @@ export default {
   align-items: center;
 }
 
-.nav {
-  width: 10vw;
-  height: 90vh;
-  background-color: #faf5f0;
-  font-size: 17px;
-  font-weight: 500;
+.side-nav {
+  width: 130px;
+  height: 200px;
 }
 
-.changing-part {
-  padding: 60px;
-  width: 90vw;
-  background-color: #fff;
+.side-nav div span {
+  font-size: 20px;
 }
 
 .recent-file,
 .team-manage {
-  padding: 10px;
+  text-decoration: none;
 }
 
-.team-page-main-part {
-  display: flex;
+.team-manage-page {
+  position: absolute;
+  top: 78px;
+  left: 164px;
+  width: 1360px;
 }
 </style>

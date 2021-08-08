@@ -1,5 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
-import MemberList from '../components/Team/MemberList.vue'
+import MemberList from '../components/Team/ConferenceMemberList.vue'
 import { describe, expect, jest, test, beforeEach } from '@jest/globals'
 import BootstrapVue from 'bootstrap-vue'
 import store from '../store/index'
@@ -16,10 +16,7 @@ describe('MemberList', () => {
       stubs: ['router-view'],
       localVue,
       store,
-      router,
-      propsData: {
-        groupType: 'Conference'
-      }
+      router
     })
     response = new Promise(resolve => {
       resolve({
