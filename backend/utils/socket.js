@@ -224,9 +224,9 @@ module.exports = function (server) {
       models.ConferenceBlock.create({
         conferenceID: params.conferenceID,
         itemID: params.docID,
-        type: 'document'
+        type: params.type
       })
-      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', params.docID)
+      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID })
     })
 
     socket.on('enterDocumentBlock', async (docID) => {
@@ -271,9 +271,17 @@ module.exports = function (server) {
       })
     })
 
-    // socket.on('enterCodeBlock', () => {
-    //   editorServer.addClient(socket)
-    // })
+    // 切换语言
+    socket.on('changeLanguage', (params) => {
+      socket.to('conference' + params.conferenceID).emit('changeLanguage', { language: params.language, docID: params.docID })
+      models.ConferenceBlock.update({
+        language: params.language
+      }, {
+        where: {
+          itemID: params.docID
+        }
+      })
+    })
 
     socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)

@@ -61,11 +61,6 @@ const routes = [
     component: () => import('../components/Conference/Canvas')
   },
   {
-    path: '/codeBlock',
-    name: 'codeBlock',
-    component: () => import('../components/Conference/CodeBlock')
-  },
-  {
     path: '/conference',
     name: 'conference',
     component: () => import('../views/Conference/Conference.vue')

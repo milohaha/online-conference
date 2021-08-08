@@ -2,23 +2,55 @@
   <div class="body">
     <div class="options-container">
       <div class="basic-options-container">
-        <b-button variant="outline-primary" class="options-button" @click="switchToCursor">鼠标</b-button>
-        <b-button variant="outline-primary" class="options-button" @click="switchToEraser">橡皮擦</b-button>
-        <b-button variant="outline-primary" class="options-button" @click="switchToPen">画笔</b-button>
-        <b-button variant="outline-primary" name="rectangle" class="options-button" @click="addShape">矩形</b-button>
-        <b-button variant="outline-primary" name="circle" class="options-button" @click="addShape">圆形</b-button>
-        <b-button variant="outline-primary" name="triangle" class="options-button" @click="addShape">三角形</b-button>
-        <b-button variant="outline-primary" name="itext" class="options-button" @click="addShape">文本</b-button>
-        <b-button variant="outline-primary" class="options-button" @click="addDocumentBlock">文档块</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="switchToCursor">鼠标</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="switchToEraser">橡皮擦</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="switchToPen">画笔</b-button>
+        <b-button variant="outline-primary"
+                  name="rectangle"
+                  class="options-button"
+                  @click="addShape">矩形</b-button>
+        <b-button variant="outline-primary"
+                  name="circle"
+                  class="options-button"
+                  @click="addShape">圆形</b-button>
+        <b-button variant="outline-primary"
+                  name="triangle"
+                  class="options-button"
+                  @click="addShape">三角形</b-button>
+        <b-button variant="outline-primary"
+                  name="itext"
+                  class="options-button"
+                  @click="addShape">文本</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="addDocumentBlock('text')">文档块</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="addDocumentBlock('code')">代码块</b-button>
       </div>
       <div class="detail-options-container">
-        <vs-slider v-model="red" color="red" max="255"></vs-slider>
-        <vs-slider v-model="green" color="green" max="255"></vs-slider>
-        <vs-slider v-model="blue" color="blue" max="255"></vs-slider>
-        <vs-slider v-model="size" color="black" max="20"></vs-slider>
+        <vs-slider v-model="red"
+                   color="red"
+                   max="255"></vs-slider>
+        <vs-slider v-model="green"
+                   color="green"
+                   max="255"></vs-slider>
+        <vs-slider v-model="blue"
+                   color="blue"
+                   max="255"></vs-slider>
+        <vs-slider v-model="size"
+                   color="black"
+                   max="20"></vs-slider>
       </div>
       <div class="detail-display-container">
-        <button ref="detail-display-button" disabled="true"></button>
+        <button ref="detail-display-button"
+                disabled="true"></button>
       </div>
     </div>
     <div class="canvas-container">
@@ -31,9 +63,10 @@
                       :key="docID"
                       :identifier="docID"
                       :ref="'doc'+docID"
-                      :init-position="initBlocksOfCanvas.get(docID)"
+                      :init-params="initBlocksOfCanvas.get(docID)"
                       @remove="removeDocumentBlock"
-                      @moveDocumentBlock="notifyMove">
+                      @moveDocumentBlock="notifyMove"
+                      @changeLanguage="notifyChangeLanguage">
       </document-block>
     </div>
   </div>
@@ -99,7 +132,7 @@ export default {
       for (const block of blocksOfCanvas) {
         this.documentArray.push(block.itemID)
         // 不直接更新位置是因为此时document-block未渲染完毕,无法根据id拿到它
-        this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop })
+        this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop, type: block.type, language: block.language })
       }
     })
     this.canvas.on('object:added', (option) => {
@@ -130,8 +163,9 @@ export default {
     })
 
     const that = this
-    this.$io.on('newDocumentBlock', (docID) => {
-      that.documentArray.push(docID)
+    this.$io.on('newDocumentBlock', (params) => {
+      that.documentArray.push(params.docID)
+      this.initBlocksOfCanvas.set(params.docID, { left: 0, top: 0, type: params.type, language: 'javascript' })
     })
     this.$io.on('moveDocumentBlock', (params) => {
       const targetDoc = this.$refs[`doc${params.docID}`][0].$el
@@ -350,11 +384,12 @@ export default {
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
     },
-    addDocumentBlock: function () {
+    addDocumentBlock: function (type) {
       const docID = uuid()
       this.documentArray.push(docID)
+      this.initBlocksOfCanvas.set(docID, { left: 0, top: 0, type: type, language: 'javascript' })
       // 通知会议室里其他socket
-      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
+      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type })
     },
     removeDocumentBlock: function (docID) {
       this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
@@ -362,6 +397,9 @@ export default {
     },
     notifyMove: function (params) {
       this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
+    },
+    notifyChangeLanguage: function (params) {
+      this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: params.language, docID: params.docID })
     }
   }
 }
