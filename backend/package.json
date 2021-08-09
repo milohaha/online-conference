@@ -19,6 +19,7 @@
     "@admin-bro/sequelize": "^1.2.1",
     "acorn": "^8.4.1",
     "admin-bro": "^4.0.1",
+    "agora-access-token": "^2.0.4",
     "apidoc": "^0.28.1",
     "codemirror": "^5.34.0",
     "cookie-parser": "~1.4.4",

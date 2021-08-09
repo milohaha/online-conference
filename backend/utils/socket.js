@@ -1,7 +1,12 @@
 const noticeMethods = require('../methods/notice')
 const publicMethods = require('../methods/public')
-const { models } = require('../utils/database')
+const { models } = require('./database')
+const constant = require('./constant')
 const { NOT_READ, NOT_SOLVED, ACCEPTED, REJECTED, IS_TEAM, IS_CONFERENCE, LEAVE, ALREADY_READ } = require('../utils/constant')
+// for video channel
+const { RtcTokenBuilder, RtcRole } = require('agora-access-token')
+const appID = 'a72e28c547214bb7a8c03c136be2ff11'
+const appCertificate = 'c3927ee9482243b1ad766cfcea4da3f9'
 
 const sendUniqueNotice = async function (toWhom, title, content) {
   const noticeID = await noticeMethods.storeNotice({ title: title, content: content })
@@ -199,7 +204,13 @@ const readNotice = async function (userID, noticeID) {
 }
 
 const enterConference = async function (userID, conferenceID) {
-  await models.ActiveUserConference.create({ userID: userID, conferenceID: conferenceID })
+  const object = await models.ActiveUserConference.findOne({ where: { userID: userID, conferenceID: conferenceID } })
+  if (!object) {
+    await models.ActiveUserConference.create({
+      userID: userID,
+      conferenceID: conferenceID
+    })
+  }
 }
 
 const exitConference = async function (userID, conferenceID) {
@@ -379,6 +390,15 @@ module.exports = function (server) {
       const files = await publicMethods.getObjects(models.ConferenceFile, { conferenceID: conferenceID })
       const filesOfCanvas = files.map(file => { return Object.getOwnPropertyDescriptors(file).dataValues.value })
       socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas, filesOfCanvas)
+    })
+
+    socket.on('enterVideo', async (userID, conferenceID) => {
+      const channelName = 'Conference' + conferenceID
+      const role = RtcRole.PUBLISHER
+      const currentTimestamp = Math.floor(Date.now() / 1000)
+      const privilegeExpiredTs = currentTimestamp + constant.EXPIRED
+      const videoToken = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, userID, role, privilegeExpiredTs)
+      socket.emit('initVideo', videoToken)
     })
 
     socket.on('disconnect', () => {

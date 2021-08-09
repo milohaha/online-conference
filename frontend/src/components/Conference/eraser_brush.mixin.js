@@ -686,7 +686,7 @@ import { fabric } from 'fabric'
         var _this = this
         var targets = []
         canvas.forEachObject(function (obj) {
-          if (obj.erasable && obj.intersectsWithObject(path)) {
+          if (obj.erasable && obj.intersectsWithObject(path,true)) {
             _this._addPathToObjectEraser(obj, path)
             targets.push(obj)
             canvas.fire('object:modified', { target: obj })

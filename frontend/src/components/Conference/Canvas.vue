@@ -7,6 +7,9 @@
                   @click="switchToCursor">鼠标</b-button>
         <b-button variant="outline-primary"
                   class="options-button"
+                  @click="switchToDrag">拖拽</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
                   @click="switchToEraser">橡皮擦</b-button>
         <b-button variant="outline-primary"
                   class="options-button"
@@ -211,16 +214,6 @@ export default {
             this.canvas.renderAll()
           }
           break
-      }
-    })
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'm') {
-        this.dragMode = true
-      }
-    })
-    document.addEventListener('keyup', (event) => {
-      if (event.key === 's') {
-        this.dragMode = false
       }
     })
     // 移动缩放监听
@@ -481,15 +474,21 @@ export default {
       }
     },
     switchToCursor: function () {
+      this.dragMode = false
       this.canvas.isDrawingMode = false
     },
+    switchToDrag: function () {
+      this.dragMode = true
+    },
     switchToPen: function () {
+      this.dragMode = false
       this.canvas.isDrawingMode = true
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas)
       this.canvas.freeDrawingBrush.width = this.size
       this.canvas.freeDrawingBrush.color = this.getColor()
     },
     switchToEraser: function () {
+      this.dragMode = false
       this.canvas.isDrawingMode = true
       this.canvas.freeDrawingBrush = new fabric.EraserBrush(this.canvas)
       this.canvas.freeDrawingBrush.width = 4

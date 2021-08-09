@@ -175,7 +175,8 @@
         <b-button
           class="fmtfont fmt-video"
           variant="light"
-          v-b-popover.hover.top="'多人音视频'">
+          v-b-popover.hover.top="'多人音视频'"
+          v-b-modal.media-device-test>
         </b-button>
         <!--        代码块-->
         <b-button
@@ -191,6 +192,10 @@
           v-b-popover.hover.top="'协同编辑文档'">
         </b-button>
       </b-button-group>
+    </div>
+    <div id="video-container">
+      <div id="me" style="display: none;"></div>
+      <div id="remote-container"></div>
     </div>
     <div class="right-bottom-center d-flex justify-content-between">
       <div class="bottom-center mx-5">
@@ -260,6 +265,45 @@
                       @moveDocumentBlock="notifyMove">
       </document-block>
     </div>
+    <!-- Modal -->
+    <b-modal class="modal fade" id="media-device-test" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <template #modal-header="{ }">
+        <h5 class="modal-title" id="modal-label">Media Device Test</h5>
+      </template>
+      <template>
+        <div class="device-check-container">
+          <h5 class="device-name">Microphone</h5>
+          <p>Produce sounds to check if the mic works.</p>
+          <div class="input-group mb-3">
+            <b-dropdown id="mics-dropdown" style="width: 82px;" text="Mics" @click.native="(event)=>switchMicrophone(event.target.outerText)">
+              <template v-for="(mic,index) in mics" >
+                <b-dropdown-item v-bind:key="index">{{mic.label}}</b-dropdown-item>
+              </template>
+            </b-dropdown>
+            <input type="text" class="mic-input form-control" aria-label="Text input with dropdown button" readonly>
+          </div>
+          <div class="progress">
+            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <h5 class="device-name">Camera</h5>
+          <p>Move in front of the camera to check if it works.</p>
+          <div class="input-group mb-3">
+            <b-dropdown id="cams-dropdown" style="width: 82px;" text="Cams" @click.native="(event)=>switchCamera(event.target.outerText)">
+              <template v-for="(cam,index) in cams" >
+                <b-dropdown-item v-bind:key="index">{{cam.label}}</b-dropdown-item>
+              </template>
+
+            </b-dropdown>
+            <input type="text" class="cam-input form-control" aria-label="Text input with dropdown button" readonly>
+          </div>
+          <div id="pre-local-player" class="player"></div>
+        </div>
+      </template>
+      <template #modal-footer="{}">
+        <button type="button" class="btn btn-secondary" @click="joinChannel(false)">关闭摄像头与麦克风后进入</button>
+        <button type="button" class="btn btn-primary" @click="joinChannel(true)" >进入会议室</button>
+      </template>
+    </b-modal>
   </div>
   <div v-if="!isValid" class="invalid-token">
     <p>链接已失效</p>
@@ -278,6 +322,7 @@ import { fabric } from 'fabric'
 import '../../components/Conference/eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
 import DocumentBlock from '../../components/Conference/DocumentBlock'
+import AgoraRTC from 'agora-rtc-sdk-ng'
 export default {
   data: function () {
     return {
@@ -296,7 +341,22 @@ export default {
       copyNotice: '',
       URL: '',
       isValid: true,
-      isVisitor: ''
+      isVisitor: '',
+      // for video
+      videoClient: undefined,
+      localTracks: {
+        videoTrack: null,
+        audioTrack: null
+      },
+      videoOptions: {
+        appID: 'a72e28c547214bb7a8c03c136be2ff11',
+        token: null
+      },
+      mics: [], // all microphones devices you can use
+      cams: [], // all cameras devices you can use
+      currentMic: undefined, // the microphone you are using
+      currentCam: undefined, // the camera you are using
+      volumeAnimation: undefined
     }
   },
   computed: {
@@ -338,6 +398,10 @@ export default {
     this.uuid = uuid()
     this.remoteUUID = this.uuid
     this.initBlocksOfCanvas = new Map()
+    this.$io.on('initVideo', this.initVideo)
+    this.$io.emit('enterVideo',
+      this.userID,
+      this.conferenceID)
     this.$io.emit('enterCanvas', this.conferenceID)
     this.canvas = new fabric.Canvas('canvas')
     this.$io.on('receiveObjectOfCanvas', (object, remoteUUID, setOption) => {
@@ -391,6 +455,16 @@ export default {
     })
     this.$io.on('deleteDocumentBlock', (docID) => {
       that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
+    })
+    this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+      if (bvEvent.componentId === 'media-device-test') {
+        cancelAnimationFrame(this.volumeAnimation)
+      }
+    })
+    this.$root.$on('bv::modal::show', (bvEvent, modalId) => {
+      if (bvEvent.componentId === 'media-device-test') {
+        this.mediaDeviceTest()
+      }
     })
     window.onload = e => {
       e = e || window.event
@@ -734,6 +808,120 @@ export default {
     },
     notifyMove: function (params) {
       this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
+    },
+    mediaDeviceTest: async function () {
+      if (this.localTracks.audioTrack && this.localTracks.videoTrack) {
+        this.localTracks.videoTrack.stop()
+        this.localTracks.videoTrack.close()
+        this.localTracks.audioTrack.stop()
+        this.localTracks.audioTrack.close()
+      }
+      // get mics
+      this.mics = await AgoraRTC.getMicrophones()
+      this.currentMic = this.mics[0]
+      if (this.currentMic) {
+        this.localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack()
+        this.volumeAnimation = requestAnimationFrame(this.setVolumeWave)
+        document.getElementsByClassName('mic-input')[0].setAttribute('value', this.currentMic.label)
+      } else {
+        document.getElementsByClassName('mic-input')[0].setAttribute('value', 'Not found, please check')
+      }
+      // get cameras
+      this.cams = await AgoraRTC.getCameras()
+      this.currentCam = this.cams[0]
+      console.log(this.currentCam)
+      if (this.currentCam) {
+        this.localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack()
+        this.localTracks.videoTrack.play('pre-local-player')
+        document.getElementsByClassName('cam-input')[0].setAttribute('value', this.currentCam.label)
+      } else {
+        document.getElementsByClassName('cam-input')[0].setAttribute('value', 'Not found, please check')
+      }
+    },
+    joinChannel: async function (withCamera) {
+      this.$bvModal.hide('media-device-test')
+      if (this.localTracks.videoTrack) {
+        this.localTracks.videoTrack.stop()
+      }
+      if (!this.videoClient._joinInfo) {
+        await this.videoClient.join(this.videoOptions.appID, 'Conference' + this.conferenceID, this.videoOptions.token, this.userID)
+      }
+      if (withCamera) {
+        if (this.localTracks.videoTrack && this.localTracks.audioTrack) {
+          document.getElementById('me').style.display = 'block'
+          this.localTracks.videoTrack.play('me')
+          await this.videoClient.publish([this.localTracks.audioTrack, this.localTracks.videoTrack])
+        }
+      } else {
+        document.getElementById('me').style.display = 'none'
+        if (this.localTracks.videoTrack) {
+          this.localTracks.videoTrack.close()
+        }
+        if (this.localTracks.audioTrack) {
+          this.localTracks.audioTrack.stop()
+          this.localTracks.audioTrack.close()
+        }
+        this.localTracks = {
+          videoTrack: null,
+          audioTrack: null
+        }
+      }
+    },
+    switchCamera: async function (label) {
+      this.currentCam = this.cams.find(cam => cam.label === label)
+      document.getElementsByClassName('cam-input')[0].setAttribute('value', this.currentCam.label)
+      await this.localTracks.videoTrack.setDevice(this.currentCam.deviceId)
+    },
+
+    switchMicrophone: async function (label) {
+      this.currentMic = this.mics.find(mic => mic.label === label)
+      document.getElementsByClassName('mic-input')[0].setAttribute('value', this.currentMic.label)
+      await this.localTracks.audioTrack.setDevice(this.currentMic.deviceId)
+    },
+    setVolumeWave: function () {
+      this.volumeAnimation = requestAnimationFrame(this.setVolumeWave)
+      const progressBar = document.getElementsByClassName('progress-bar')[0]
+      progressBar.style.width = this.localTracks.audioTrack.getVolumeLevel() * 100 + '%'
+      progressBar.setAttribute('aria-valuenow', this.localTracks.audioTrack.getVolumeLevel() * 100)
+    },
+    initVideo: async function (videoToken) {
+      this.videoOptions.token = videoToken
+      this.videoClient = AgoraRTC.createClient({
+        mode: 'rtc',
+        codec: 'vp8'
+      })
+      this.videoClient.on('user-published', async (user, mediaType) => {
+        // 开始订阅远端用户。
+        await this.videoClient.subscribe(user, mediaType)
+        if (mediaType === 'video') {
+          // 订阅完成后，从 `user` 中获取远端视频轨道对象。
+          const remoteVideoTrack = user.videoTrack
+          // 动态插入一个 DIV 节点作为播放远端视频轨道的容器。
+          const playerContainer = document.createElement('div')
+          // 给这个 DIV 节点指定一个 ID，这里指定的是远端用户的 UID。
+          playerContainer.id = user.uid.toString()
+          playerContainer.style.width = '200px'
+          playerContainer.style.height = '200px'
+          playerContainer.style.transform = 'rotateY(180deg)'
+          playerContainer.style.border = '#3c465d 1px solid'
+          playerContainer.style.marginLeft = '10px'
+          document.getElementById('remote-container').append(playerContainer)
+          remoteVideoTrack.play(playerContainer)
+          // 也可以只传入该 DIV 节点的 ID。
+          // remoteVideoTrack.play(playerContainer.id);
+        }
+        if (mediaType === 'audio') {
+          const remoteAudioTrack = user.audioTrack
+          remoteAudioTrack.play()
+        }
+      })
+      this.videoClient.on('user-unpublished', (user, mediaType) => {
+        if (mediaType === 'video') {
+          const playerContainer = document.getElementById(user.uid.toString())
+          playerContainer.remove()
+        }
+      })
+      this.$bvModal.show('media-device-test')
     }
   },
   components: {
@@ -820,6 +1008,39 @@ export default {
 
 .current-color {
   display: inline-block;
+}
+
+#video-container {
+  position: fixed;
+  bottom: 5px;
+  left: 200px;
+  display: flex;
+}
+
+#me {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  display: block;
+  border: #4a9ee9 2px solid;
+}
+
+#me video {
+  position: relative !important;
+  width: 200px;
+}
+
+#remote-container {
+  display: flex;
+}
+
+#remote-container video {
+  height: auto;
+  position: relative !important;
+}
+
+#shape {
   width: 50px;
   height: 50px;
   border-bottom-right-radius: 30px;
@@ -859,5 +1080,34 @@ export default {
 
 .invalid-token img {
   width: 800px;
+}
+input {
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.player {
+  width: 480px;
+  height: 320px;
+}
+
+#pre-local-player {
+  width: 240px;
+  height: 180px;
+}
+
+.progress {
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  transition-duration: 0.3s;
+}
+
+@media (max-width: 640px) {
+  .player {
+    width: 320px;
+    height: 240px;
+  }
 }
 </style>

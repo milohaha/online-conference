@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@vue/cli": "^4.5.13",
+    "agora-rtc-sdk": "^3.6.3",
+    "agora-rtc-sdk-ng": "^4.6.2",
     "bootstrap": "^5.0.2",
     "bootstrap-vue": "^2.21.2",
     "codemirror": "^5.62.2",
