@@ -95,12 +95,14 @@ export default {
             this.createResult = response.data.message
             if (this.createResult === 'CREATED') {
               this.notice = '创建成功'
+              this.$emit('createSuccess')
             } else if (this.createResult === 'EXISTS') {
               this.notice = '创建失败，该名称已存在'
             } else {
               this.notice = '创建失败，请稍后再尝试'
             }
           })
+          .catch((error) => console.log(error))
         this.$bvModal.show('create-result-notice')
         this.groupName = this.inputName
         this.inputName = ''
@@ -118,6 +120,7 @@ export default {
 }
 
 img {
+  margin-top: 10px;
   width: 350px;
   align-self: center;
 }

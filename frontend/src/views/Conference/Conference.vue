@@ -1,5 +1,6 @@
 <template>
-  <div>
+<div>
+  <div v-if="isValid">
     <div class="canvas-container">
       <canvas id="canvas" width="1800px" height="1200px"></canvas>
     </div>
@@ -22,6 +23,7 @@
             <span class="fmtfont fmt-share"></span>
           </div>
       </div>
+
     </div>
     <div class="right-top-center d-flex">
       <div class="top-center mx-4">
@@ -39,6 +41,7 @@
           <b-dropdown-item>共享视角给...</b-dropdown-item>
         </b-dropdown>
         <b-button
+          @click="updateMemberList"
           v-b-toggle.member-list
           class="fmtfont fmt-userlist"
           variant="light"
@@ -51,10 +54,18 @@
         <b-button-group class="setting-toolbar">
           <div class="d-flex align-items-center">
             <b-button
+              id="copyURL"
+              @click="shareConference"
               pill
               variant="primary"
               class="px-3 mx-2"
-              v-b-popover.hover.bottomright="'分享会议室'">分享</b-button>
+            >分享</b-button>
+            <b-tooltip target="copyURL" triggers="hover">
+              复制会议室链接
+            </b-tooltip>
+            <b-tooltip target="copyURL" ref="copySuccess" triggers="click">
+              {{ copyNotice }}
+            </b-tooltip>
           </div>
           <notification id="notification" v-b-popover.hover.bottomright="'通知'"></notification>
           <b-dropdown no-caret right variant="light" v-b-popover.hover.bottomright="'设置'">
@@ -95,7 +106,7 @@
         >
           <!--            图形-->
           <template #button-content>
-            <span class="fmtfont fmt-shape"></span>
+            <span class="fmtfont fmt-setting"></span>
           </template>
           <!--            矩形-->
           <b-dropdown-item-button
@@ -231,6 +242,7 @@
       </template>
       <member-list
         groupType="Conference"
+        ref="memberList"
       ></member-list>
     </b-sidebar>
     <conference-information
@@ -249,6 +261,11 @@
       </document-block>
     </div>
   </div>
+  <div v-if="!isValid" class="invalid-token">
+    <p>链接已失效</p>
+    <img src="../../assets/picture/error404.png" alt="链接失效">
+  </div>
+</div>
 </template>
 <script>
 import Logo from '../../components/PublicComponents/Logos/Logo.vue'
@@ -275,13 +292,17 @@ export default {
       uuid: undefined,
       remoteUUID: undefined,
       documentArray: [],
-      initBlocksOfCanvas: undefined
+      initBlocksOfCanvas: undefined,
+      copyNotice: '',
+      URL: '',
+      isValid: true,
+      isVisitor: ''
     }
   },
   computed: {
     ...mapState({
       userID: state => state.Login.userID,
-      conferenceID: state => state.Team.conferenceID
+      teamID: state => state.Team.teamID
     })
   },
   watch: {
@@ -293,15 +314,25 @@ export default {
     }
   },
   created () {
-    Api.getObjects({
-      model: 'Conference',
-      condition: { id: this.conferenceID }
-    })
-      .then(response => {
-        this.founderID = response.data.objects[0].founderID
-        this.conferenceName = response.data.objects[0].conferenceName
-        this.conferenceInformation = response.data.objects[0]
+    this.conferenceID = Number(this.$route.query.conferenceID)
+    if (this.conferenceID) {
+      this.$store.commit('ENTER_CONFERENCE', this.conferenceID)
+      Api.getObjects({
+        model: 'Conference',
+        condition: { id: this.conferenceID }
       })
+        .then(response => {
+          this.founderID = response.data.objects[0].founderID
+          this.conferenceName = response.data.objects[0].conferenceName
+          this.conferenceInformation = response.data.objects[0]
+          this.isVisitor = (this.teamID !== this.conferenceInformation.teamID)
+          if (this.isVisitor) {
+            this.checkConferenceToken()
+          }
+        })
+    } else {
+      this.isValid = false
+    }
   },
   mounted () {
     this.uuid = uuid()
@@ -361,6 +392,27 @@ export default {
     this.$io.on('deleteDocumentBlock', (docID) => {
       that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
     })
+    window.onload = e => {
+      e = e || window.event
+      if (e) {
+        this.$io.emit('enterConference',
+          this.userID,
+          this.conferenceID)
+      }
+    }
+    window.onbeforeunload = e => {
+      e = e || window.event
+      if (e) {
+        this.$io.emit('exitConference',
+          this.userID,
+          this.conferenceID)
+      }
+    }
+  },
+  beforeDestroy () {
+    this.$io.emit('exitConference',
+      this.userID,
+      this.conferenceID)
   },
   methods: {
     showPicker () {
@@ -405,12 +457,62 @@ export default {
       document.removeEventListener('mouseup', this.documentMouseUp)
       this.displayLineHeight = false
     },
+    checkConferenceToken () {
+      const conferenceToken = this.$route.query.conferenceToken
+      if (conferenceToken) {
+        Api.checkConferenceToken({
+          conferenceToken: conferenceToken
+        })
+          .then((response) => {
+            if (response.data.message === 'VALID' && response.data.expired === false) {
+              this.isValid = true
+            } else {
+              this.isValid = false
+            }
+          })
+          .catch(error => console.log(error))
+      } else {
+        this.isValid = false
+      }
+    },
+    shareConference () {
+      Api.generateConferenceToken({
+        conferenceID: this.conferenceID
+      })
+        .then((response) => {
+          if (response.data.message === 'SUCCESS') {
+            this.URL = process.env.VUE_APP_CONFERENCE_BASE + '?conferenceToken=' + response.data.conferenceToken +
+                       '&' + 'conferenceID=' + this.conferenceID
+            this.$copyText(this.URL).then(this.copySuccess, this.copyFail)
+          }
+        })
+        .catch((error) => console.log(error))
+    },
+    copySuccess () {
+      this.copyNotice = '会议室链接已复制到剪贴板'
+      this.showCopyNotice()
+    },
+    copyFail () {
+      this.copyNotice = '该浏览器不支持自动复制'
+      this.showCopyNotice()
+    },
+    showCopyNotice () {
+      setTimeout(() => {
+        this.$refs.copySuccess.$emit('close')
+      }, 1500)
+    },
+    updateMemberList () {
+      this.$refs.memberList.getMembers()
+    },
     exitConference () {
       this.$io.emit('exitConference',
         this.userID,
         this.conferenceID)
-      this.$store.commit('LEAVE_CONFERENCE')
-      this.$router.push({ path: '/team/teamofuser' })
+      if (this.isVisitor) {
+        this.$router.push({ path: '/team/teammanage' })
+      } else {
+        this.$router.push({ path: '/team/teamofuser' })
+      }
     },
     solveObjectOption: function (object, setOption) {
       if (setOption === undefined || setOption === null) {
@@ -701,7 +803,7 @@ export default {
   box-shadow: 1px 1px 5px #7f7f7f;
 }
 
->>> .dropdown-shape {
+.dropdown-shape {
   min-width: 0;
 }
 
@@ -745,5 +847,17 @@ export default {
   top: 50%;
   left: 50%;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.invalid-token {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.invalid-token img {
+  width: 800px;
 }
 </style>

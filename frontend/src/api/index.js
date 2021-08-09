@@ -44,5 +44,11 @@ export default {
   },
   getActiveUsers: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/getActiveConferenceUsers', data)
+  },
+  generateConferenceToken: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/generateConferenceToken', data)
+  },
+  checkConferenceToken: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/team/checkConferenceToken', data)
   }
 }

@@ -11,6 +11,7 @@ import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
 import './assets/icon/iconfont.css' // Vuesax styles
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
+import VueClipBoard from 'vue-clipboard2'
 Vue.use(Vuesax, {})
 Vue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
 Vue.prototype.$constant = Constants
@@ -19,6 +20,8 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(ColorPicker)
 Vue.use(ColorPanel)
+Vue.use(VueClipBoard)
+
 new Vue({
   router,
   store,

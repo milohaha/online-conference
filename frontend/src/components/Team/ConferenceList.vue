@@ -61,7 +61,7 @@ export default {
       this.$io.emit('enterConference',
         this.userID,
         this.conferenceID)
-      this.$router.push({ path: '/conference' })
+      this.$router.push({ path: '/conference', query: { conferenceID: conferenceID } })
     }
   },
   components: {

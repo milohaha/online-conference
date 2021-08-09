@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-list-group>
+      <div>
       <b-list-group-item
         v-for="activeMember in sortActiveMembers"
         :key="activeMember.id"
@@ -13,6 +14,8 @@
         >
         </member-item>
       </b-list-group-item>
+      </div>
+      <div>
       <b-list-group-item
         v-for="member in sortMembers"
         :key="member.id"
@@ -24,6 +27,7 @@
           @removeMember="removeGroupMember"
         ></member-item>
       </b-list-group-item>
+      </div>
     </b-list-group>
   </div>
 </template>
@@ -81,10 +85,6 @@ export default {
           }
         })
       })
-    },
-    getAllMembers () {
-      this.getMembers()
-      this.getActiveMembers()
     },
     getGroupInformation () {
       this.groupID = this.conferenceID

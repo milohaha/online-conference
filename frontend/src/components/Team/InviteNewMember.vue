@@ -130,6 +130,7 @@ export default {
         .then(response => {
           this.membersToInvite = response.data.members
         })
+        .catch((error) => console.log(error))
     },
     getConferenceMemberToInvite () {
       Api.getMembers({
@@ -141,6 +142,7 @@ export default {
           this.membersToInvite = response.data.members
           this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
+        .catch((error) => console.log(error))
     },
     selectMember (memberID) {
       if (this.membersSelected.findIndex((memberSelected) => memberSelected === memberID) !== -1) {
@@ -163,6 +165,7 @@ export default {
         conferenceName: this.conferenceName,
         memberIDs: this.membersSelected
       })
+        .catch((error) => console.log(error))
     },
     inviteMember () {
       this.inviteType === 'invite-team-member' ? this.inviteTeamMember() : this.inviteConferenceMember()

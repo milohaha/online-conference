@@ -1,10 +1,9 @@
 <template>
   <div class="single-team d-flex">
-    <create-new-group groupType="Conference"></create-new-group>
-    <dismiss-group type="Team"></dismiss-group>
-    <leave-group  type="Team"></leave-group>
+    <dismiss-group type="Team" v-if="isFounder"></dismiss-group>
+    <leave-group  type="Team" v-else></leave-group>
+    <create-new-group groupType="Conference" @createSuccess="createConferenceSuccess"></create-new-group>
     <invite-new-member inviteType='invite-team-member'></invite-new-member>
-
     <div class="team-info-area mx-3">
       <b-card
         no-body
@@ -64,7 +63,7 @@
         <team-member-list groupType="Team"></team-member-list>
       </div>
       <div class="team-conference-lists my-3">
-        <conference-list></conference-list>
+        <conference-list ref="conferenceList"></conference-list>
       </div>
     </div>
   </div>
@@ -96,6 +95,9 @@ export default {
     })
   },
   methods: {
+    createConferenceSuccess () {
+      this.$refs.conferenceList.checkConference()
+    },
     getTeamInfo () {
       this.$store.dispatch('getObjects', {
         model: 'Team',
