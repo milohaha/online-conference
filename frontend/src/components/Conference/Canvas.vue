@@ -41,6 +41,16 @@
           <b-dropdown-item @click="addDocumentBlock('code','x-sh')">shell</b-dropdown-item>
           <b-dropdown-item @click="addDocumentBlock('code','x-sql')">sql</b-dropdown-item>
         </b-dropdown>
+        <span class="file-selector-wrapper">
+          <b-button variant="outline-primary"
+                    class="options-button"
+                    @click="clickFileSelector">上传文件</b-button>
+          <input type="file"
+                 style="display: none;"
+                 id="file-selector"
+                 accept="application/pdf"
+                 @change="loadFileHandler">
+        </span>
       </div>
       <div class="detail-options-container">
         <vs-slider v-model="red"
@@ -77,6 +87,26 @@
               width="1200"
               height="800"></canvas>
     </div>
+    <div class='document-block-container'>
+      <document-block v-for="docID in documentArray"
+                      :key="docID"
+                      :identifier="docID"
+                      :ref="'doc'+docID"
+                      :init-params="initBlocksOfCanvas.get(docID)"
+                      @remove="removeDocumentBlock"
+                      @moveDocumentBlock="notifyMove"
+                      @changeLanguage="notifyChangeLanguage">
+      </document-block>
+    </div>
+    <div class="file-container">
+      <upload-file v-for="fileID in fileArray"
+                   :key="fileID"
+                   :identifier="fileID"
+                   :ref="'file'+fileID"
+                   :init-params="initFile.get(fileID)"
+                   @moveFile="notifyMoveFile"
+                   @remove="removeFile"></upload-file>
+    </div>
   </div>
 </template>
 
@@ -85,6 +115,8 @@ import { fabric } from 'fabric'
 import './eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
 import DocumentBlock from './DocumentBlock.vue'
+import UploadFile from './UploadFile.vue'
+
 export default {
   name: 'Canvas',
   data: function () {
@@ -103,11 +135,14 @@ export default {
       dragMode: false,
       zoom: 1,
       relativeX: 0,
-      relativeY: 0
+      relativeY: 0,
+      fileArray: [],
+      initFile: undefined
     }
   },
   components: {
-    DocumentBlock
+    DocumentBlock,
+    UploadFile
   },
   watch: {
     red: function (value) {
@@ -131,13 +166,14 @@ export default {
     this.uuid = uuid()
     this.remoteUUID = this.uuid
     this.initBlocksOfCanvas = new Map()
+    this.initFile = new Map()
     this.$io.emit('enterCanvas', this.conferenceID)
     this.canvas = new fabric.Canvas('canvas')
     this.$io.on('receiveObjectOfCanvas', (object, remoteUUID, setOption) => {
       this.solveObjectOption(object, setOption)
       this.updateBoard(this.canvas, object, remoteUUID)
     })
-    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas) => {
+    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas, filesOfCanvas) => {
       for (const item of itemsOfCanvas) {
         this.updateBoard(this.canvas, item, 0)
       }
@@ -145,6 +181,10 @@ export default {
         this.documentArray.push(block.itemID)
         // 不直接更新位置是因为此时document-block未渲染完毕,无法根据id拿到它
         this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop, type: block.type, language: block.language, zoom: this.zoom })
+      }
+      for (const file of filesOfCanvas) {
+        this.fileArray.push(file.fileID)
+        this.initFile.set(file.fileID, { left: file.fileLeft, top: file.fileTop, fileContent: file.fileContent })
       }
     })
     this.canvas.on('object:added', (option) => {
@@ -250,6 +290,19 @@ export default {
     })
     this.$io.on('deleteDocumentBlock', (docID) => {
       that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
+    })
+    this.$io.on('newPdfFile', (params) => {
+      that.fileArray.push(params.fileID)
+      that.initFile.set(params.fileID, { left: 0, top: 0, fileContent: params.fileContent })
+    })
+    this.$io.on('moveFile', (params) => {
+      const targetFile = that.$refs[`file${params.fileID}`][0].$el
+      targetFile.style.postion = 'absolute'
+      targetFile.style.left = params.left + 'px'
+      targetFile.style.top = params.top + 'px'
+    })
+    this.$io.on('removeFile', (fileID) => {
+      that.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
     })
   },
   methods: {
@@ -488,6 +541,34 @@ export default {
     },
     notifyMove: function (params) {
       this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
+    },
+    notifyChangeLanguage: function (params) {
+      this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: params.language, docID: params.docID })
+    },
+    loadFileHandler: function () {
+      const reader = new FileReader()
+      const file = document.getElementById('file-selector').files[0]
+      if (file) {
+        reader.readAsDataURL(file)
+        const that = this
+        reader.onload = function () {
+          const fileID = uuid()
+          const fileContent = reader.result.split('base64,')[1] // base64码
+          that.fileArray.push(fileID)
+          that.initFile.set(fileID, { left: 0, top: 0, fileContent: fileContent })
+          that.$io.emit('newPdfFile', { conferenceID: that.conferenceID, fileContent: fileContent, fileID: fileID })
+        }
+      }
+    },
+    notifyMoveFile: function (params) {
+      this.$io.emit('moveFile', { conferenceID: this.conferenceID, left: params.left, top: params.top, fileID: params.fileID })
+    },
+    removeFile: function (fileID) {
+      this.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
+      this.$io.emit('removeFile', { conferenceID: this.conferenceID, fileID: fileID })
+    },
+    clickFileSelector: function () {
+      document.getElementById('file-selector').click()
     }
   }
 }
@@ -536,5 +617,4 @@ export default {
   z-index: 10000;
   position: absolute;
 }
-
 </style>

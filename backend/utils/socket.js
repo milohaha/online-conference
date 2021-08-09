@@ -285,6 +285,45 @@ module.exports = function (server) {
       })
     })
 
+    // 上传文件同步
+    socket.on('newPdfFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('newPdfFile', { fileContent: params.fileContent, fileID: params.fileID })
+      models.ConferenceFile.create({
+        conferenceID: params.conferenceID,
+        fileID: params.fileID,
+        fileContent: params.fileContent,
+        fileLeft: 0,
+        fileTop: 0
+      })
+    })
+
+    // 移动文件
+    socket.on('moveFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('moveFile', { left: params.left, top: params.top, fileID: params.fileID })
+    })
+
+    socket.on('dragFileStop', (params) => {
+      models.ConferenceFile.update({
+        fileLeft: params.left,
+        fileTop: params.top
+      }, {
+        where: {
+          fileID: params.fileID
+        }
+      })
+    })
+
+    // 删除PDF文件
+    socket.on('removeFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('removeFile', params.fileID)
+      models.ConferenceFile.destroy({
+        where: {
+          conferenceID: params.conferenceID,
+          fileID: params.fileID
+        }
+      })
+    })
+
     socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
     })
@@ -337,7 +376,9 @@ module.exports = function (server) {
       const itemsOfCanvas = objects.map(object => { return Object.getOwnPropertyDescriptors(object).dataValues.value.itemDetails })
       const blocks = await publicMethods.getObjects(models.ConferenceBlock, { conferenceID: conferenceID })
       const blocksOfCanvas = blocks.map(block => { return Object.getOwnPropertyDescriptors(block).dataValues.value })
-      socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas)
+      const files = await publicMethods.getObjects(models.ConferenceFile, { conferenceID: conferenceID })
+      const filesOfCanvas = files.map(file => { return Object.getOwnPropertyDescriptors(file).dataValues.value })
+      socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas, filesOfCanvas)
     })
 
     socket.on('disconnect', () => {

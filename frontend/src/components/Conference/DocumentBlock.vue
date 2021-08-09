@@ -1,11 +1,12 @@
 <template>
-  <div class="Container"
-       :id="'docContainer'+identifier"
+  <div class="container"
+       :id="'doc-container'+identifier"
        ref="documentDiv"
        @mousedown="click"
        @dblclick="$emit('remove',identifier)"
        style="position: absolute; left: 0; top: 0;">
-    <textarea ref="documentBlock" id="'textarea'+identifier"></textarea>
+    <textarea ref="documentBlock"
+              id="'textarea'+identifier"></textarea>
   </div>
 </template>
 
@@ -90,7 +91,7 @@ export default {
 </script>
 
 <style scoped>
-.Container {
+.container {
   border: #2c3e50 1px solid;
   font-size: 14px;
 }

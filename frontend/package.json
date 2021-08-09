@@ -17,6 +17,7 @@
     "fabric": "^4.5.1",
     "jquery": "^3.6.0",
     "one-colorpicker": "^1.0.12",
+    "pdfjs-dist": "2.0.943",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "uuid": "^8.3.2",
