@@ -224,9 +224,11 @@ module.exports = function (server) {
       models.ConferenceBlock.create({
         conferenceID: params.conferenceID,
         itemID: params.docID,
-        type: params.type
+        type: params.type,
+        itemLeft: params.left,
+        itemTop: params.top
       })
-      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID })
+      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID, left: params.left, top: params.top })
     })
 
     socket.on('enterDocumentBlock', async (docID) => {

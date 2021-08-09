@@ -30,9 +30,17 @@
         <b-button variant="outline-primary"
                   class="options-button"
                   @click="addDocumentBlock('text')">文档块</b-button>
-        <b-button variant="outline-primary"
-                  class="options-button"
-                  @click="addDocumentBlock('code')">代码块</b-button>
+        <b-dropdown variant="outline-primary"
+                    text="代码块"
+                    class="options-button">
+          <b-dropdown-item @click="addDocumentBlock('code','javascript')">javascript</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-python')">python</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-csrc')">C</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-c++src')">C++</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-java')">java</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-sh')">shell</b-dropdown-item>
+          <b-dropdown-item @click="addDocumentBlock('code','x-sql')">sql</b-dropdown-item>
+        </b-dropdown>
       </div>
       <div class="detail-options-container">
         <vs-slider v-model="red"
@@ -54,20 +62,20 @@
       </div>
     </div>
     <div class="canvas-container">
+      <div class='document-block-container'>
+        <document-block v-for="docID in documentArray"
+                        @click="documentDrag"
+                        :key="docID"
+                        :identifier="docID"
+                        :ref="'doc'+docID"
+                        :init-params="initBlocksOfCanvas.get(docID)"
+                        @remove="removeDocumentBlock"
+                        @moveDocumentBlock="notifyMove">
+        </document-block>
+      </div>
       <canvas id="canvas"
               width="1200"
               height="800"></canvas>
-    </div>
-    <div class='document-block-container'>
-      <document-block v-for="docID in documentArray"
-                      :key="docID"
-                      :identifier="docID"
-                      :ref="'doc'+docID"
-                      :init-params="initBlocksOfCanvas.get(docID)"
-                      @remove="removeDocumentBlock"
-                      @moveDocumentBlock="notifyMove"
-                      @changeLanguage="notifyChangeLanguage">
-      </document-block>
     </div>
   </div>
 </template>
@@ -90,7 +98,12 @@ export default {
       uuid: undefined,
       remoteUUID: undefined,
       documentArray: [],
-      initBlocksOfCanvas: undefined
+      initBlocksOfCanvas: undefined,
+      dragging: false,
+      dragMode: false,
+      zoom: 1,
+      relativeX: 0,
+      relativeY: 0
     }
   },
   components: {
@@ -125,14 +138,13 @@ export default {
       this.updateBoard(this.canvas, object, remoteUUID)
     })
     this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas) => {
-      console.log(itemsOfCanvas)
       for (const item of itemsOfCanvas) {
         this.updateBoard(this.canvas, item, 0)
       }
       for (const block of blocksOfCanvas) {
         this.documentArray.push(block.itemID)
         // 不直接更新位置是因为此时document-block未渲染完毕,无法根据id拿到它
-        this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop, type: block.type, language: block.language })
+        this.initBlocksOfCanvas.set(block.itemID, { left: block.itemLeft, top: block.itemTop, type: block.type, language: block.language, zoom: this.zoom })
       }
     })
     this.canvas.on('object:added', (option) => {
@@ -161,21 +173,106 @@ export default {
           break
       }
     })
-
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'm') {
+        this.dragMode = true
+      }
+    })
+    document.addEventListener('keyup', (event) => {
+      if (event.key === 's') {
+        this.dragMode = false
+      }
+    })
+    // 移动缩放监听
+    this.canvas.on({
+      'mouse:down': (event) => {
+        if (event.target === null && this.dragMode) {
+          this.dragging = true
+          this.canvas.selection = false
+        }
+      },
+      'mouse:up': (event) => {
+        this.dragging = false
+        this.canvas.selection = true
+      },
+      'mouse:move': (event) => {
+        if (this.dragging && event && event.e) {
+          const delta = new fabric.Point(event.e.movementX, event.e.movementY)
+          this.relativeX += event.e.movementX / this.zoom
+          this.relativeY += event.e.movementY / this.zoom
+          this.canvas.relativePan(delta)
+          for (let index = this.documentArray.length - 1; index >= 0; index--) {
+            const block = this.getElementById('docContainer' + this.documentArray[index])
+            const left = block.style.left
+            const top = block.style.top
+            block.style.left = Number(left.substr(0, left.length - 2)) + event.e.movementX + 'px'
+            block.style.top = Number(top.substr(0, top.length - 2)) + event.e.movementY + 'px'
+          }
+        }
+      },
+      'mouse:wheel': (mouseEvent) => {
+        const oldZoom = this.canvas.getZoom()
+        let zoom = (event.deltaY > 0 ? -0.1 : 0.1) + this.canvas.getZoom()
+        zoom = Math.max(0.1, zoom)
+        zoom = Math.min(10, zoom)
+        this.zoom = zoom
+        this.relativeX = mouseEvent.pointer.x / zoom - (mouseEvent.pointer.x - this.relativeX * oldZoom) / oldZoom
+        this.relativeY = mouseEvent.pointer.y / zoom - (mouseEvent.pointer.y - this.relativeY * oldZoom) / oldZoom
+        const zoomPoint = new fabric.Point(mouseEvent.pointer.x, mouseEvent.pointer.y)
+        this.canvas.zoomToPoint(zoomPoint, zoom)
+        for (let index = this.documentArray.length - 1; index >= 0; index--) {
+          const docRef = 'doc' + this.documentArray[index]
+          const documentComponent = this.$refs[docRef][0]
+          const block = documentComponent.codeMirror
+          let width = block.getWrapperElement().style.width
+          width = width === '0' ? 0 : Number(width.substr(0, width.length - 2)) + 2
+          let height = block.getWrapperElement().style.height
+          height = height === '0' ? 0 : Number(height.substr(0, height.length - 2)) + 2
+          let left = documentComponent.getContainer().style.left
+          left = left === '0' ? 0 : Number(left.substr(0, left.length - 2))
+          let top = documentComponent.getContainer().style.top
+          top = top === '0' ? 0 : Number(top.substr(0, top.length - 2))
+          documentComponent.getContainer().style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
+          documentComponent.getContainer().style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
+          block.setSize(400 * zoom, 400 * zoom)
+          documentComponent.getContainer().style.fontSize = Math.ceil(14 * zoom) + 'px'
+        }
+      }
+    })
     const that = this
     this.$io.on('newDocumentBlock', (params) => {
       that.documentArray.push(params.docID)
-      this.initBlocksOfCanvas.set(params.docID, { left: 0, top: 0, type: params.type, language: 'javascript' })
+      this.initBlocksOfCanvas.set(params.docID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, type: params.type, language: 'javascript', zoom: this.zoom })
     })
     this.$io.on('moveDocumentBlock', (params) => {
       const targetDoc = this.$refs[`doc${params.docID}`][0].$el
-      targetDoc.setAttribute('style', `position: absolute; left: ${params.left}px; top: ${params.top}px`)
+      targetDoc.setAttribute('style', `position: absolute; left: ${(params.left + this.relativeX) * this.zoom}px; top: ${(params.top + this.relativeY) * this.zoom}px`)
     })
     this.$io.on('deleteDocumentBlock', (docID) => {
       that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
     })
   },
   methods: {
+    documentDrag: function (e, docDiv) {
+      const disX = e.clientX - docDiv.offsetLeft
+      const disY = e.clientY - docDiv.offsetTop
+      document.onmousemove = (ev) => {
+        const left = -this.relativeX + (ev.clientX - disX) / this.zoom
+        const top = -this.relativeY + (ev.clientY - disY) / this.zoom
+        docDiv.style.left = ev.clientX - disX + 'px'
+        docDiv.style.top = ev.clientY - disY + 'px'
+        this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: left, top: top, docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+      }
+      // 避免频繁更新数据库
+      document.onmouseup = (e) => {
+        document.onmousemove = null
+        document.onmouseup = null
+        this.$io.emit('dragBlockStop', { left: parseInt(docDiv.style.left), top: parseInt(docDiv.style.top), docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+      }
+    },
+    getElementById: function (ID) {
+      return document.getElementById(ID)
+    },
     solveObjectOption: function (object, setOption) {
       if (setOption === undefined || setOption === null) {
         setOption = object
@@ -263,7 +360,7 @@ export default {
         existing.setCoords()
         canvas.fire('object:modified', { target: object })
       } else {
-        let fabricItem, path, pathResult
+        let fabricItem
         switch (objectType) {
           case 'rect':
             fabricItem = new fabric.Rect(object)
@@ -275,16 +372,7 @@ export default {
             fabricItem = new fabric.Triangle(object)
             break
           case 'path':
-            path = object.path
-            pathResult = []
-            for (const smallPath of path) {
-              pathResult = pathResult.concat(smallPath)
-            }
-            path = pathResult.join(' ')
-            fabricItem = new fabric.Path(path)
-            fabricItem.set({ fill: false })
-            fabricItem.set({ stroke: object.stroke })
-            fabricItem.set({ strokeWidth: object.strokeWidth })
+            fabricItem = new fabric.Path(object.path, object)
             break
           case 'i-text':
             fabricItem = new fabric.IText(object.text, object)
@@ -384,12 +472,15 @@ export default {
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
     },
-    addDocumentBlock: function (type) {
+    addDocumentBlock: function (type, language) {
       const docID = uuid()
       this.documentArray.push(docID)
-      this.initBlocksOfCanvas.set(docID, { left: 0, top: 0, type: type, language: 'javascript' })
+      this.initBlocksOfCanvas.set(docID, { left: this.relativeX * this.zoom, top: this.relativeY * this.zoom, type: type, language: language, zoom: this.zoom })
       // 通知会议室里其他socket
-      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type })
+      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type, left: 0, top: 0 })
+      if (language !== undefined && language !== null) {
+        this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: language, docID: docID })
+      }
     },
     removeDocumentBlock: function (docID) {
       this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
@@ -397,9 +488,6 @@ export default {
     },
     notifyMove: function (params) {
       this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
-    },
-    notifyChangeLanguage: function (params) {
-      this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: params.language, docID: params.docID })
     }
   }
 }
@@ -425,6 +513,8 @@ export default {
   height: 800px;
   margin: 20px auto;
   border: 1px solid #594b67;
+  overflow: hidden;
+  position: relative;
 }
 
 .options-container > div {
@@ -441,4 +531,10 @@ export default {
   height: 3px;
   background-color: #000;
 }
+
+.document-block-container > div {
+  z-index: 10000;
+  position: absolute;
+}
+
 </style>

@@ -2,25 +2,10 @@
   <div class="Container"
        :id="'docContainer'+identifier"
        ref="documentDiv"
+       @mousedown="click"
+       @dblclick="$emit('remove',identifier)"
        style="position: absolute; left: 0; top: 0;">
-    <span style="background-color: red;"
-          @mousedown="drag">点击此处拖拽</span>
-    <textarea ref="documentBlock"></textarea>
-    <b-dropdown v-if="initParams.type==='code'"
-                id="dropdown-1"
-                text="Language"
-                class="m-md-2">
-      <b-dropdown-item @click="changeMode('javascript')">javascript</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-python')">python</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-csrc')">C</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-c++src')">C++</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-java')">java</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-sh')">shell</b-dropdown-item>
-      <b-dropdown-item @click="changeMode('x-sql')">sql</b-dropdown-item>
-    </b-dropdown>
-    <b-button variant="outline-primary"
-              class="options-button"
-              @click="deleteComponent">删除</b-button>
+    <textarea ref="documentBlock" id="'textarea'+identifier"></textarea>
   </div>
 </template>
 
@@ -62,36 +47,17 @@ export default {
     }
   },
   methods: {
-    deleteComponent () {
-      this.$emit('remove', this.identifier)
+    click (e) {
+      this.$emit('click', e, document.getElementById(`docContainer${this.identifier}`))
     },
-    drag (e) {
-      const docDiv = document.getElementById(`docContainer${this.identifier}`)
-      const disX = e.clientX - docDiv.offsetLeft
-      const disY = e.clientY - docDiv.offsetTop
-      document.onmousemove = (ev) => {
-        const left = ev.clientX - disX
-        const top = ev.clientY - disY
-        docDiv.style.left = left + 'px'
-        docDiv.style.top = top + 'px'
-        this.$emit('moveDocumentBlock', { left: left, top: top, docID: this.identifier })
-      }
-      // 避免频繁更新数据库
-      document.onmouseup = (e) => {
-        document.onmousemove = null
-        document.onmouseup = null
-        Vue.prototype.$io.emit('dragBlockStop', { left: parseInt(docDiv.style.left), top: parseInt(docDiv.style.top), docID: this.identifier })
-      }
-    },
-    changeMode (chosenMode) {
-      this.codeMirror.setOption('mode', `text/${chosenMode}`)
-      this.$emit('changeLanguage', { language: `${chosenMode}`, docID: this.identifier })
+    getContainer () {
+      return this.$refs.documentDiv
     }
   },
   mounted () {
     // Initialize
     const docDiv = document.getElementById(`docContainer${this.identifier}`)
-    const { left, top, type, language } = this.initParams
+    const { left, top, type, language, zoom } = this.initParams
     docDiv.style.left = left + 'px'
     docDiv.style.top = top + 'px'
     const ioClient = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
@@ -104,10 +70,10 @@ export default {
           options = that.textOptions
         } else {
           options = that.codeOptions
-          options.mode = language
+          options.mode = 'text/' + language
         }
         that.codeMirror = CodeMirror.fromTextArea(that.$refs.documentBlock, options)
-        that.codeMirror.setSize('400px', '400px')
+        that.codeMirror.setSize(400 * zoom, 400 * zoom)
         that.codeMirror.setValue(data.str)
         const serverAdapter = new ot.SocketIOAdapter(ioClient)
         const editorAdapter = new ot.CodeMirrorAdapter(that.codeMirror)
@@ -126,5 +92,6 @@ export default {
 <style scoped>
 .Container {
   border: #2c3e50 1px solid;
+  font-size: 14px;
 }
 </style>
