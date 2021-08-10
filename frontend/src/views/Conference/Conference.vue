@@ -1081,6 +1081,7 @@ export default {
 .invalid-token img {
   width: 800px;
 }
+
 input {
   width: 100%;
   margin-bottom: 2px;

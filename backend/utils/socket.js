@@ -237,9 +237,10 @@ module.exports = function (server) {
         itemID: params.docID,
         type: params.type,
         itemLeft: params.left,
-        itemTop: params.top
+        itemTop: params.top,
+        language: params.language
       })
-      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID, left: params.left, top: params.top })
+      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID, left: params.left, top: params.top, language: params.language })
     })
 
     socket.on('enterDocumentBlock', async (docID) => {
@@ -280,18 +281,6 @@ module.exports = function (server) {
         where: {
           itemID: params.docID,
           conferenceID: params.conferenceID
-        }
-      })
-    })
-
-    // 切换语言
-    socket.on('changeLanguage', (params) => {
-      socket.to('conference' + params.conferenceID).emit('changeLanguage', { language: params.language, docID: params.docID })
-      models.ConferenceBlock.update({
-        language: params.language
-      }, {
-        where: {
-          itemID: params.docID
         }
       })
     })

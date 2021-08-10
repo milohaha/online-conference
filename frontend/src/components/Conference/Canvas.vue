@@ -82,24 +82,12 @@
                         :identifier="docID"
                         :ref="'doc'+docID"
                         :init-params="initBlocksOfCanvas.get(docID)"
-                        @remove="removeDocumentBlock"
-                        @moveDocumentBlock="notifyMove">
+                        @remove="removeDocumentBlock">
         </document-block>
       </div>
       <canvas id="canvas"
               width="1200"
               height="800"></canvas>
-    </div>
-    <div class='document-block-container'>
-      <document-block v-for="docID in documentArray"
-                      :key="docID"
-                      :identifier="docID"
-                      :ref="'doc'+docID"
-                      :init-params="initBlocksOfCanvas.get(docID)"
-                      @remove="removeDocumentBlock"
-                      @moveDocumentBlock="notifyMove"
-                      @changeLanguage="notifyChangeLanguage">
-      </document-block>
     </div>
     <div class="file-container">
       <upload-file v-for="fileID in fileArray"
@@ -244,6 +232,8 @@ export default {
         }
       },
       'mouse:wheel': (mouseEvent) => {
+        mouseEvent.e.preventDefault()
+        mouseEvent.e.stopPropagation()
         const oldZoom = this.canvas.getZoom()
         let zoom = (event.deltaY > 0 ? -0.1 : 0.1) + this.canvas.getZoom()
         zoom = Math.max(0.1, zoom)
@@ -275,7 +265,7 @@ export default {
     const that = this
     this.$io.on('newDocumentBlock', (params) => {
       that.documentArray.push(params.docID)
-      this.initBlocksOfCanvas.set(params.docID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, type: params.type, language: 'javascript', zoom: this.zoom })
+      this.initBlocksOfCanvas.set(params.docID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, type: params.type, language: params.language, zoom: this.zoom })
     })
     this.$io.on('moveDocumentBlock', (params) => {
       const targetDoc = this.$refs[`doc${params.docID}`][0].$el
@@ -529,20 +519,11 @@ export default {
       this.documentArray.push(docID)
       this.initBlocksOfCanvas.set(docID, { left: this.relativeX * this.zoom, top: this.relativeY * this.zoom, type: type, language: language, zoom: this.zoom })
       // 通知会议室里其他socket
-      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type, left: 0, top: 0 })
-      if (language !== undefined && language !== null) {
-        this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: language, docID: docID })
-      }
+      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type, left: 0, top: 0, language: language })
     },
     removeDocumentBlock: function (docID) {
       this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
       this.$io.emit('deleteDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
-    },
-    notifyMove: function (params) {
-      this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
-    },
-    notifyChangeLanguage: function (params) {
-      this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: params.language, docID: params.docID })
     },
     loadFileHandler: function () {
       const reader = new FileReader()

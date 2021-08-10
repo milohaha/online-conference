@@ -1,6 +1,6 @@
 <template>
-  <div class="container"
-       :id="'doc-container'+identifier"
+  <div class="Container"
+       :id="'docContainer'+identifier"
        ref="documentDiv"
        @mousedown="click"
        @dblclick="$emit('remove',identifier)"
@@ -16,7 +16,6 @@ import CodeMirror from 'codemirror/lib/codemirror.js'
 import 'codemirror/theme/darcula.css'
 import ot from '../../ot.js'
 import socketio from 'socket.io-client'
-import Vue from 'vue'
 // 语法高亮库
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/clike/clike.js'
@@ -81,17 +80,12 @@ export default {
         that.client = new ot.EditorClient(data.revision, data.clients, serverAdapter, editorAdapter)
       })
     })
-    Vue.prototype.$io.on('changeLanguage', (params) => {
-      if (params.docID === this.identifier) {
-        that.codeMirror.setOption('mode', `text/${params.language}`)
-      }
-    })
   }
 }
 </script>
 
 <style scoped>
-.container {
+.Container {
   border: #2c3e50 1px solid;
   font-size: 14px;
 }
