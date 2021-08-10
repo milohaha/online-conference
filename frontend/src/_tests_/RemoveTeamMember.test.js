@@ -1,4 +1,4 @@
-import RemoveTeamMember from '../components/Team/RemoveTeamMember.vue'
+import RemoveMember from '../components/Team/RemoveMember.vue'
 import BootstrapVue from 'bootstrap-vue'
 import { expect, test, describe, beforeEach, jest } from '@jest/globals'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
@@ -18,7 +18,7 @@ let mockhide
 let mockshow
 describe('测试移除团队成员', () => {
   beforeEach(() => {
-    wrapper = shallowMount(RemoveTeamMember, {
+    wrapper = shallowMount(RemoveMember, {
       localVue,
       store,
       propsData: {
@@ -35,17 +35,7 @@ describe('测试移除团队成员', () => {
   test('移除团队成员', () => {
     vm.$io.emit = jest.fn()
     vm.$emit = jest.fn()
-    vm.removeTeamMember()
-    expect(vm.$io.emit).toBeCalledTimes(1)
+    vm.removeMember()
     expect(vm.$emit).toBeCalledTimes(1)
-    expect(mockhide).toBeCalledTimes(1)
-  })
-  test('隐藏弹窗', () => {
-    vm.hideModal()
-    expect(mockhide).toBeCalledTimes(1)
-  })
-  test('展示弹窗', () => {
-    vm.showModal()
-    expect(mockshow).toBeCalledTimes(1)
   })
 })

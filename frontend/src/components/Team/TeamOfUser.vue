@@ -1,9 +1,16 @@
 <template>
   <div class="single-team d-flex">
-    <dismiss-group type="Team" v-if="isFounder"></dismiss-group>
-    <leave-group  type="Team" v-else></leave-group>
+    <dismiss-group :type="$constant.IS_TEAM" :groupID="teamID" v-if="isFounder"></dismiss-group>
+    <leave-group  :type="$constant.IS_TEAM" :groupID="teamID" v-else></leave-group>
     <create-new-group groupType="Conference" @createSuccess="createConferenceSuccess"></create-new-group>
-    <invite-new-member inviteType='invite-team-member'></invite-new-member>
+    <invite-new-member
+      inviteType='invite-team-member'
+      :groupID="teamID"
+      v-if="isInviting"
+      @inviteSuccess="isInviting = false"
+      @noOneToInvite="isInviting = false"
+    >
+    </invite-new-member>
     <div class="team-info-area mx-3">
       <b-card
         no-body
@@ -23,12 +30,13 @@
             <p>你还可以邀请新朋友加入你们的团队！</p>
           </b-card-text>
         </b-card-body>
-
         <b-list-group flush>
           <b-list-group-item
             button
             v-b-modal.invite-team-member
-            style="text-align: center;">
+            style="text-align: center;"
+            @click="isInviting = true"
+          >
             邀请新成员
           </b-list-group-item>
           <b-list-group-item
@@ -82,7 +90,8 @@ export default {
     return {
       teamName: '',
       founderID: 0,
-      isFounder: false
+      isFounder: false,
+      isInviting: ''
     }
   },
   mounted () {
@@ -117,6 +126,15 @@ export default {
     CreateNewGroup,
     DismissGroup,
     LeaveGroup
+  },
+  created () {
+    this.$io.on('leave', () => {
+      alert('您已被移出团队')
+      this.$router.push({ path: '/team/teampage' })
+    })
+  },
+  beforeDestroy () {
+    this.$io.off('leave')
   }
 }
 </script>

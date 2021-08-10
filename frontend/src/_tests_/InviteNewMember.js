@@ -3,7 +3,6 @@ import socketio from 'socket.io-client'
 import BootstrapVue from 'bootstrap-vue'
 import { expect, describe, test, beforeEach, jest } from '@jest/globals'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
-import { USER_SIGNIN } from '../store/types'
 import Vuex from 'vuex'
 import store from '../store/index'
 import Api from '../api'
@@ -12,9 +11,13 @@ const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(Vuex)
 localVue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
-const response = new Promise(resolve => { resolve({ data: { members: [{ id: 1 }, { id: 2 }] } }) }, reject => { reject('error') })
+const response = new Promise(resolve => {
+  resolve({ data: { members: [{ id: 1 }, { id: 2 }] } })
+},
+reject => { reject('error') })
 let wrapper
 let vm
+
 describe('测试邀请团队成员', () => {
   beforeEach(() => {
     wrapper = shallowMount(InviteNewMember, {
@@ -67,14 +70,14 @@ describe('测试邀请团队成员', () => {
     expect(vm.inviteTeamMember).toBeCalledTimes(1)
     expect(vm.$bvModal.show).toBeCalledTimes(1)
   })
-  test('邀请团队成员', () => {
+  test('邀请团队成员', async () => {
     vm.$io.emit = jest.fn()
-    vm.inviteTeamMember()
+    await vm.inviteTeamMember()
     expect(vm.$io.emit).toBeCalledTimes(1)
   })
-  test('获取可邀请进团队的成员', async () => {
+  test('获取可邀请的成员', async () => {
     Api.getMembers = jest.fn().mockReturnValue(response)
-    await vm.getTeamMemberToInvite()
+    await vm.getMemberToInvite()
     expect(vm.membersToInvite.length).toBe(2)
   })
 })
@@ -88,9 +91,10 @@ describe('测试邀请会议室成员', () => {
       }
     })
     vm = wrapper.vm
+    jest.createMockFromModule('../api')
   })
   test('测试计算属性', () => {
-    expect(vm.inviteInformation.inviteContent).toBe('请选择与会成员')
+    expect(vm.inviteInformation.inviteContent).toBe('邀请成员加入会议室')
     expect(vm.inviteInformation.confirmNoticeID).toBe('invite-conference-member-check')
     expect(vm.inviteInformation.inviteResultNoticeID).toBe('invite-conference-success')
   })
@@ -105,17 +109,5 @@ describe('测试邀请会议室成员', () => {
     Api.inviteConferenceMember = jest.fn()
     await vm.inviteConferenceMember()
     expect(Api.inviteConferenceMember).toBeCalledTimes(1)
-  })
-  test('获取可邀请进会议室的成员', async () => {
-    Api.getMembers = jest.fn().mockReturnValue(response)
-    vm.$store.commit(USER_SIGNIN, {
-      expireTime: 1,
-      token: 1,
-      userID: 1
-    })
-    await vm.getConferenceMemberToInvite()
-    setTimeout(() => {
-      expect(vm.membersToInvite.length).toBe(1)
-    }, 500)
   })
 })

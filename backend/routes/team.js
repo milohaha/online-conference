@@ -12,17 +12,16 @@ router.post('/createGroup', async (request, response, next) => {
   const groupName = request.body.groupName
   const teamID = request.body.teamID
   const result = await teamMethods.createGroup(groupName, userID, teamID)
-  return response.json({ message: result })
+  return response.json(result)
 })
 
 router.post('/conferenceMembers', async (request, response, next) => {
-  const conferenceName = request.body.conferenceName
+  const conferenceID = request.body.conferenceID
   const memberIDs = request.body.memberIDs
-  const newConference = await publicMethods.getObjects(models.Conference, { conferenceName: conferenceName })
   for (const memberID of memberIDs) {
     await models.UserConference.create({
       userID: memberID,
-      conferenceID: newConference[0].id
+      conferenceID: conferenceID
     })
   }
   return response.json({ message: 'SUCCESS' })
@@ -33,15 +32,25 @@ router.post('/getMembers', async function (request, response, next) {
   const allUsers = await publicMethods.getObjects(models.User, {})
   const members = []
   for (const user of allUsers) {
-    let inGroupResult
     if (groupType === 'Team') {
-      inGroupResult = await publicMethods.getObjects(models.UserTeam, { teamID: groupID, userID: user.id })
+      const inGroupResult = await publicMethods.getObjects(models.UserTeam, { teamID: groupID, userID: user.id })
+      const isInGroup = (inGroupResult) && (inGroupResult.length !== 0)
+      if (isInGroup.toString() === inGroup.toString()) {
+        members.push({ id: user.id, userName: user.userName, email: user.email })
+      }
     } else if (groupType === 'Conference') {
-      inGroupResult = await publicMethods.getObjects(models.UserConference, { conferenceID: groupID, userID: user.id })
-    }
-    const isInGroup = (inGroupResult) && (inGroupResult.length !== 0)
-    if (isInGroup.toString() === inGroup.toString()) {
-      members.push({ id: user.id, userName: user.userName, email: user.email })
+      const inConferenceResult = await publicMethods.getObjects(models.UserConference, { conferenceID: groupID, userID: user.id })
+      const isInConference = (inConferenceResult) && (inConferenceResult.length !== 0)
+      if (inGroup.toString() === 'true' && isInConference) {
+        members.push({ id: user.id, userName: user.userName, email: user.email })
+      } else if (inGroup.toString() === 'false') {
+        const conferenceInformation = await publicMethods.getObjects(models.Conference, { id: groupID })
+        const inTeamResult = await publicMethods.getObjects(models.UserTeam, { UserID: user.id, teamID: conferenceInformation[0].teamID })
+        const isInTeam = (inTeamResult) && (inTeamResult.length !== 0)
+        if (!isInConference && isInTeam) {
+          members.push({ id: user.id, userName: user.userName, email: user.email })
+        }
+      }
     }
   }
   response.json({ members: members })

@@ -15,6 +15,7 @@ module.exports = {
       senderID: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
         references: {
           model: 'User',
           key: 'id',
@@ -24,6 +25,7 @@ module.exports = {
       receiverID: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
         references: {
           model: 'User',
           key: 'id',
@@ -33,6 +35,7 @@ module.exports = {
       teamID: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
         references: {
           model: 'Team',
           key: 'id',

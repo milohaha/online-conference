@@ -3,6 +3,7 @@ import socketio from 'socket.io-client'
 import BootstrapVue from 'bootstrap-vue'
 import { beforeEach, expect, describe, test } from '@jest/globals'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
+import store from '../store/index.js'
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
@@ -11,7 +12,7 @@ localVue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transp
 describe('测试组件Notification', () => {
   let wrapper
   beforeEach(() => {
-    wrapper = shallowMount(Notification, { localVue })
+    wrapper = shallowMount(Notification, { localVue, store })
   })
   test('测试最大验证消息数', () => {
     wrapper.vm.maxMessageNum = 1

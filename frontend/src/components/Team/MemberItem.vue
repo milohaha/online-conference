@@ -16,17 +16,17 @@
         <span class="text-lg-start mt-2">邮箱: {{ member.email }}</span>
       </div>
     </div>
-      <remove-team-member
+      <remove-member
         :userID="member.id"
         :modalID="member.userName"
         v-if="userID === founderID && member.id !== founderID"
-        @remove="removeTeamMember"
-      ></remove-team-member>
+        @remove="removeMember"
+      ></remove-member>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
-import RemoveTeamMember from './RemoveTeamMember.vue'
+import RemoveMember from './RemoveMember.vue'
 export default {
   props: {
     isActive: Boolean,
@@ -34,10 +34,10 @@ export default {
     founderID: Number
   },
   components: {
-    RemoveTeamMember
+    RemoveMember
   },
   methods: {
-    removeTeamMember (userID) {
+    removeMember (userID) {
       this.$emit('removeMember', userID)
     }
   },

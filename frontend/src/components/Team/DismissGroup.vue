@@ -10,14 +10,14 @@
         解散{{ typeName }}
       </template>
       <div class="d-block text-center">
-        你确定要解散{{ typeName }}吗？
+        <h3>你确定要解散{{ typeName }}吗？</h3>
       </div>
-      <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center my-3">
         <b-button
           size="lg"
           pill
           variant="outline-success"
-          class="modal-confirm-button mt-2"
+          class="modal-confirm-button mt-2 mx-2"
           @click="dismissGroup"
           v-b-modal.bv-modal-dismiss-group-notice>
           确认
@@ -26,7 +26,7 @@
           size="lg"
           pill
           variant="outline-warning"
-          class="modal-cancel-button mt-2"
+          class="modal-cancel-button mt-2 mx-2"
           @click="$bvModal.hide('bv-modal-dismiss-group')">
           取消
         </b-button>
@@ -36,11 +36,14 @@
       id="bv-modal-dismiss-group-notice"
       hide-backdrop
       centered>
+      <template #modal-header>
+        解散{{ typeName }}
+      </template>
       <div class="d-block text-center">
-        解散{{ typeName }}成功！
+        <h3>解散{{ typeName }}成功！</h3>
       </div>
       <template #modal-footer>
-        <b-button @click="dismissGroupSuccess">
+        <b-button @click="dismissGroupSuccess" variant="outline-success">
           确定
         </b-button>
       </template>
@@ -51,34 +54,26 @@
 import { mapState } from 'vuex'
 export default {
   props: {
-    type: String,
-    conferenceID: Number
+    type: Number
   },
   computed: {
     ...mapState({
-      teamID: state => state.Team.teamID
+      teamID: state => state.Team.teamID,
+      conferenceID: state => state.Team.conferenceID
     }),
     typeName () {
-      return this.type === 'Team' ? '团队' : '会议室'
+      return this.type === this.$constant.IS_TEAM ? '团队' : '会议室'
     }
   },
   methods: {
-    dismissTeam () {
-      this.$io.emit('dismissNotice',
-        this.$constant.IS_TEAM,
-        this.teamID)
-    },
-    dismissConference () {
-      this.$io.emit('dismissNotice',
-        this.$constant.IS_CONFERENCE,
-        this.conferenceID)
-    },
     dismissGroup () {
-      this.type === 'Team' ? this.dismissTeam() : this.dismissConference()
+      this.$io.emit('dismissNotice',
+        this.type,
+        this.groupID)
     },
     dismissGroupSuccess () {
       this.$bvModal.hide('bv-modal-dismiss-group-notice')
-      this.$router.push({ path: '/team/teampage' })
+      this.$router.push({ path: '/team/teamofuser' })
     }
   }
 }

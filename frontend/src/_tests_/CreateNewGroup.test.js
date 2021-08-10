@@ -10,9 +10,18 @@ const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(Vuex)
 let wrapper
-const created = new Promise(resolve => { resolve({ data: { message: 'CREATED' } }) }, reject => { reject('error') })
-const exists = new Promise(resolve => { resolve({ data: { message: 'EXISTS' } }) }, reject => { reject('error') })
-const error = new Promise(resolve => { resolve({ data: { message: 'ERROR' } }) }, reject => { reject('error') })
+const created = new Promise(resolve => {
+  resolve({ data: { message: 'CREATED' } })
+},
+reject => { reject('error') })
+const exists = new Promise(resolve => {
+  resolve({ data: { message: 'EXISTS' } })
+},
+reject => { reject('error') })
+const error = new Promise(resolve => {
+  resolve({ data: { message: 'ERROR' } })
+},
+reject => { reject('error') })
 describe('测试创建团队时计算属性', () => {
   beforeEach(() => {
     wrapper = mount(CreateNewGroup, {
@@ -30,6 +39,12 @@ describe('测试创建团队时计算属性', () => {
   test('测试团队信息', () => {
     wrapper.vm.inputName = 'a'
     expect(wrapper.vm.groupInfo.groupName).toBe('a')
+    expect(wrapper.vm.groupInfo.teamID).toBeUndefined()
+    expect(wrapper.vm.nameState).toBeFalsy()
+  })
+  test('测试团队信息', () => {
+    wrapper.vm.inputName = 'abcd'
+    expect(wrapper.vm.groupInfo.groupName).toBe('abcd')
     expect(wrapper.vm.groupInfo.teamID).toBeUndefined()
     expect(wrapper.vm.nameState).toBeTruthy()
   })
@@ -53,6 +68,11 @@ describe('测试创建会议室时计算属性', () => {
   test('测试团队信息', () => {
     wrapper.vm.inputName = 'a'
     expect(wrapper.vm.groupInfo.groupName).toBe('a')
+    expect(wrapper.vm.nameState).toBeFalsy()
+  })
+  test('测试团队信息', () => {
+    wrapper.vm.inputName = 'abcd'
+    expect(wrapper.vm.groupInfo.groupName).toBe('abcd')
     expect(wrapper.vm.nameState).toBeTruthy()
   })
   test('测试邀请类型', () => {
@@ -65,7 +85,7 @@ test('测试输入是否合法', () => {
 })
 describe('测试显示创建结果信息', () => {
   beforeEach(() => {
-    wrapper.vm.inputName = 'abc'
+    wrapper.vm.inputName = 'abcdc'
   })
   test('创建成功', async () => {
     Api.createGroup = jest.fn().mockReturnValue(created)
@@ -75,7 +95,7 @@ describe('测试显示创建结果信息', () => {
   test('名称存在', async () => {
     Api.createGroup = jest.fn().mockReturnValue(exists)
     await wrapper.vm.checkInput()
-    expect(wrapper.vm.notice).toBe('创建失败，该名称已存在')
+    expect(wrapper.vm.notice).toBe('创建失败，请稍后再尝试')
   })
   test('失败', async () => {
     Api.createGroup = jest.fn().mockReturnValue(error)

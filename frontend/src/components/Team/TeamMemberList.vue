@@ -14,7 +14,7 @@
           <member-item
             :member="member"
             :founderID="founderID"
-            @removeMember="removeGroupMember"
+            @removeMember="removeMember"
           ></member-item>
         </b-list-group-item>
       </b-list-group>
@@ -44,8 +44,13 @@ export default {
     this.getGroupInformation()
   },
   methods: {
-    removeGroupMember (userID) {
+    removeMember (userID) {
       this.sortMembers.splice(this.sortMembers.findIndex((member) => member.id === userID), 1)
+      this.$io.emit('leaveNotice',
+        userID,
+        this.$constant.REMOVED,
+        this.$constant.IS_TEAM,
+        this.teamID)
     },
     getMembers () {
       Api.getMembers({

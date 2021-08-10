@@ -2,7 +2,6 @@
   <div class="leave-group">
     <b-modal
       id="bv-modal-leave-group"
-      ref="my-modal-leave-group"
       scrollable
       hide-backdrop
       centered
@@ -37,7 +36,6 @@
     </b-modal>
     <b-modal
       id="bv-modal-leave-group-notice"
-      ref="my-modal-leave-group-notice"
       hide-backdrop
       centered>
       <div class="d-block text-center">
@@ -56,43 +54,30 @@
 import { mapState } from 'vuex'
 export default {
   props: {
-    type: String,
-    conferenceID: Number
+    type: Number,
+    groupID: Number
   },
   computed: {
     ...mapState({
-      userID: (state) => state.Login.userID,
-      teamID: (state) => state.Team.teamID
+      userID: (state) => state.Login.userID
     }),
     typeName () {
-      return this.type === 'Team' ? '团队' : '会议室'
+      return this.type === this.$constant.IS_TEAM ? '团队' : '会议室'
     }
   },
   methods: {
-    leaveTeam () {
-      this.$io.emit(
-        'leaveNotice',
-        this.userID,
-        this.$constant.LEAVE,
-        this.$constant.IS_TEAM,
-        this.teamID
-      )
-    },
-    leaveConference () {
-      this.$io.emit(
-        'leaveNotice',
-        this.userID,
-        this.$constant.LEAVE,
-        this.$constant.IS_CONFERENCE,
-        this.conferenceID
-      )
-    },
     leaveGroup () {
-      this.type === 'Team' ? this.leaveTeam() : this.leaveConference()
+      this.$io.emit(
+        'leaveNotice',
+        this.userID,
+        this.$constant.LEAVE,
+        this.type,
+        this.groupID
+      )
     },
     leaveGroupSuccess () {
       this.$bvModal.hide('bv-modal-leave-group-notice')
-      this.$router.push({ path: '/team/teamofuser' })
+      this.$router.push({ path: '/team/teampage' })
     }
   }
 }

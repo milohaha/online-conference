@@ -8,11 +8,11 @@ describe('createGroup', () => {
   describe('createTeam', () => {
     test('no paras should return GroupName Error', async () => {
       const result = await teamMethods.createGroup()
-      expect(result).toBe('GROUPNAME_ERROR')
+      expect(result.message).toBe('GROUPNAME_ERROR')
     })
     test('one paras should return User Error', async () => {
       const result = await teamMethods.createGroup('name')
-      expect(result).toBe('USER_ERROR')
+      expect(result.message).toBe('USER_ERROR')
     })
     test('if team created, return created', async () => {
       const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
@@ -29,11 +29,11 @@ describe('createGroup', () => {
           email: 'testemail_teamMethods'
         }
       })
-      expect(result).toBe('CREATED')
+      expect(result.message).toBe('CREATED')
     })
     test('if user doesnt exist, return FounderId Error', async () => {
       const result = await teamMethods.createGroup('team', -2)
-      expect(result).toBe('FOUNDERID_ERROR')
+      expect(result.message).toBe('FOUNDERID_ERROR')
     })
   })
   describe('createConference', () => {
@@ -47,7 +47,7 @@ describe('createGroup', () => {
           email: 'testemail_teamMethods'
         }
       })
-      expect(result).toEqual('TEAM_NOT_FOUND')
+      expect(result.message).toEqual('TEAM_NOT_FOUND')
     })
     test('if Conference created,return Created', async () => {
       const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
@@ -67,7 +67,7 @@ describe('createGroup', () => {
           email: 'testemail_teamMethods'
         }
       })
-      expect(result).toEqual('CREATED')
+      expect(result.message).toEqual('CREATED')
     })
   })
 })

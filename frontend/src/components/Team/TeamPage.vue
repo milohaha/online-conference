@@ -1,6 +1,6 @@
 <template>
   <div class="team-page">
-    <create-new-group groupType="Team"></create-new-group>
+    <create-new-group groupType="Team" @createSuccess="getTeamCreated"></create-new-group>
     <team-join></team-join>
     <div class="team-create-page">
       <div>
@@ -29,7 +29,7 @@
         </b-card-group>
       </div>
     </div>
-    <div class="team-join-page">
+    <div class="team-join-page my-3">
       <div>
         <b-link class="team-join-update-link" @click="getTeamJoined">
           <span class="mx-4">我加入的团队</span>
@@ -114,6 +114,7 @@ span {
 .team-create-update-link,
 .team-join-update-link {
   text-decoration: none;
+  color: #044;
 }
 
 .team-group {

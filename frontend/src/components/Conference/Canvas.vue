@@ -4,10 +4,16 @@
       <div class="basic-options-container">
         <b-button variant="outline-primary"
                   class="options-button"
+                  @click="switchToComment">注解</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
                   @click="switchToCursor">鼠标</b-button>
         <b-button variant="outline-primary"
                   class="options-button"
                   @click="switchToDrag">拖拽</b-button>
+        <b-button variant="outline-primary"
+                  class="options-button"
+                  @click="shareMyView(1)">分享视角</b-button>
         <b-button variant="outline-primary"
                   class="options-button"
                   @click="switchToEraser">橡皮擦</b-button>
@@ -74,10 +80,33 @@
                 disabled="true"></button>
       </div>
     </div>
+    <div class="comment-detail-container" ref="comment-detail-container">
+      <div v-for="(comment,index) in currentComments" :key="index">
+        <div>
+          {{ index }}:{{ comment }}
+          <button @click="revokeComment(comment.commentItemID)">删除</button>
+        </div>
+      </div>
+      <input ref="comment-input">
+      <button @click="deleteCommentBlock">delete!</button>
+      <button @click="addComment">提交</button>
+      <button @click="cancelComment">取消</button>
+    </div>
     <div class="canvas-container">
+      <div class="comment-block-container">
+        <CommentBlock v-for="commentBlockID in blocks"
+                      :key="commentBlockID"
+                      :identifier="commentBlockID"
+                      :ref="'commentBlock'+commentBlockID"
+                      :init-params="initCommentBlocks.get(commentBlockID)"
+                      @click="displayComment">
+        </CommentBlock>
+      </div>
       <div class='document-block-container'>
         <document-block v-for="docID in documentArray"
-                        @click="documentDrag"
+                        @mousedown="documentDrag"
+                        @click="addCommentBlock"
+                        @blockComment="displayComment"
                         :key="docID"
                         :identifier="docID"
                         :ref="'doc'+docID"
@@ -85,9 +114,29 @@
                         @remove="removeDocumentBlock">
         </document-block>
       </div>
+      <div class="file-container">
+        <upload-file v-for="fileID in fileArray"
+                     @mousedown="fileDrag"
+                     :key="fileID"
+                     :identifier="fileID"
+                     :ref="'file'+fileID"
+                     :init-params="initFile.get(fileID)"
+                     @remove="removeFile"></upload-file>
+      </div>
       <canvas id="canvas"
               width="1200"
               height="800"></canvas>
+    </div>
+    <div class='document-block-container'>
+      <document-block v-for="docID in documentArray"
+                      :key="docID"
+                      :identifier="docID"
+                      :ref="'doc'+docID"
+                      :init-params="initBlocksOfCanvas.get(docID)"
+                      @remove="removeDocumentBlock"
+                      @moveDocumentBlock="notifyMove"
+                      @changeLanguage="notifyChangeLanguage">
+      </document-block>
     </div>
     <div class="file-container">
       <upload-file v-for="fileID in fileArray"
@@ -107,7 +156,8 @@ import './eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
 import DocumentBlock from './DocumentBlock.vue'
 import UploadFile from './UploadFile.vue'
-
+import CommentBlock from './CommentBlock.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'Canvas',
   data: function () {
@@ -128,12 +178,28 @@ export default {
       relativeX: 0,
       relativeY: 0,
       fileArray: [],
-      initFile: undefined
+      initFile: undefined,
+      blockComments: [],
+      freeComments: [],
+      currentComments: [],
+      currentCommentType: 'block',
+      currentBlockID: 0,
+      blocks: [],
+      dependBlocks: new Map(),
+      initCommentBlocks: undefined,
+      commentMode: false,
+      documentBlockOfComment: undefined
     }
   },
   components: {
     DocumentBlock,
-    UploadFile
+    UploadFile,
+    CommentBlock
+  },
+  computed: {
+    ...mapState({
+      userID: state => state.Login.userID
+    })
   },
   watch: {
     red: function (value) {
@@ -158,13 +224,14 @@ export default {
     this.remoteUUID = this.uuid
     this.initBlocksOfCanvas = new Map()
     this.initFile = new Map()
-    this.$io.emit('enterCanvas', this.conferenceID)
+    this.initCommentBlocks = new Map()
+    this.$io.emit('enterCanvas', this.conferenceID, this.userID)
     this.canvas = new fabric.Canvas('canvas')
     this.$io.on('receiveObjectOfCanvas', (object, remoteUUID, setOption) => {
       this.solveObjectOption(object, setOption)
       this.updateBoard(this.canvas, object, remoteUUID)
     })
-    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas, filesOfCanvas) => {
+    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas, filesOfCanvas, blocks, blockComments, freeComments) => {
       for (const item of itemsOfCanvas) {
         this.updateBoard(this.canvas, item, 0)
       }
@@ -175,8 +242,78 @@ export default {
       }
       for (const file of filesOfCanvas) {
         this.fileArray.push(file.fileID)
-        this.initFile.set(file.fileID, { left: file.fileLeft, top: file.fileTop, fileContent: file.fileContent })
+        this.initFile.set(file.fileID, { left: file.fileLeft, top: file.fileTop, fileContent: file.fileContent, zoom: this.zoom })
       }
+      for (const block of blocks) {
+        if (block.stickBlockID === null || block.stickBlockID === undefined) {
+          this.blocks.push(block.commentBlockID)
+          this.initCommentBlocks.set(block.commentBlockID, { left: block.left, top: block.top, commentBlockID: block.commentBlockID, conferenceID: block.conferenceID, stickBlockID: block.stickBlockID })
+        } else {
+          const object = this.initBlocksOfCanvas.get(block.stickBlockID)
+          this.initBlocksOfCanvas.set(block.stickBlockID, { ...object, commentID: block.commentBlockID })
+        }
+      }
+      for (let index = blockComments.length - 1; index >= 0; index--) {
+        this.blockComments.push(blockComments[index])
+      }
+      for (let index = freeComments.length - 1; index >= 0; index--) {
+        this.freeComments.push(freeComments[index])
+      }
+    })
+    this.$io.on('shareViewInvitation', (params) => {
+      const viewportTransform = params.viewportTransform
+      this.relativeX = params.relativeX
+      this.relativeY = params.relativeY
+      const zoom = viewportTransform[0]
+      const oldZoom = this.canvas.viewportTransform[0]
+      this.zoom = zoom
+      this.canvas.setZoom(zoom)
+      for (let index = this.documentArray.length - 1; index >= 0; index--) {
+        const docRef = 'doc' + this.documentArray[index]
+        const documentComponent = this.$refs[docRef][0]
+        const block = documentComponent.codeMirror
+        const container = documentComponent.getContainer()
+        const left = parseFloat(container.style.left)
+        const top = parseFloat(container.style.top)
+        container.style.left = zoom / oldZoom * left + 'px'
+        container.style.top = zoom / oldZoom * top + 'px'
+        container.style.fontSize = Math.ceil(14 * zoom) + 'px'
+        block.setSize(400 * zoom, 400 * zoom)
+      }
+      for (let index = this.blocks.length - 1; index >= 0; index--) {
+        const comment = this.getElementById('commentBlock' + this.blocks[index])
+        const left = parseFloat(comment.style.left)
+        const top = parseFloat(comment.style.top)
+        comment.style.left = zoom / oldZoom * left + 'px'
+        comment.style.top = zoom / oldZoom * top + 'px'
+        comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
+      }
+      for (let index = this.fileArray.length - 1; index >= 0; index--) {
+        const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+        fileItem.style.width = parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
+        fileItem.style.height = parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
+        fileItem.style.left = zoom / oldZoom * parseFloat(fileItem.style.left) + 'px'
+        fileItem.style.top = zoom / oldZoom * parseFloat(fileItem.style.top) + 'px'
+      }
+      const oldViewportTransform = this.canvas.viewportTransform
+
+      this.canvas.viewportTransform = viewportTransform
+      for (let index = this.documentArray.length - 1; index >= 0; index--) {
+        const block = this.getElementById('docContainer' + this.documentArray[index])
+        block.style.left = parseFloat(block.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
+        block.style.top = parseFloat(block.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+      }
+      for (let index = this.blocks.length - 1; index >= 0; index--) {
+        const comment = this.getElementById('commentBlock' + this.blocks[index])
+        comment.style.left = parseFloat(comment.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
+        comment.style.top = parseFloat(comment.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+      }
+      for (let index = this.fileArray.length - 1; index >= 0; index--) {
+        const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+        fileItem.style.left = parseFloat(fileItem.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
+        fileItem.style.top = parseFloat(fileItem.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+      }
+      this.canvas.renderAll()
     })
     this.canvas.on('object:added', (option) => {
       this.objectChanged(option, 'added')
@@ -213,7 +350,9 @@ export default {
         }
       },
       'mouse:up': (event) => {
-        this.dragging = false
+        if (this.dragging) {
+          this.dragging = false
+        }
         this.canvas.selection = true
       },
       'mouse:move': (event) => {
@@ -228,6 +367,20 @@ export default {
             const top = block.style.top
             block.style.left = Number(left.substr(0, left.length - 2)) + event.e.movementX + 'px'
             block.style.top = Number(top.substr(0, top.length - 2)) + event.e.movementY + 'px'
+          }
+          for (let index = this.blocks.length - 1; index >= 0; index--) {
+            const comment = this.getElementById('commentBlock' + this.blocks[index])
+            const left = parseFloat(comment.style.left)
+            const top = parseFloat(comment.style.top)
+            comment.style.left = left + event.e.movementX + 'px'
+            comment.style.top = top + event.e.movementY + 'px'
+          }
+          for (let index = this.fileArray.length - 1; index >= 0; index--) {
+            const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+            const left = parseFloat(fileItem.style.left)
+            const top = parseFloat(fileItem.style.top)
+            fileItem.style.left = left + event.e.movementX + 'px'
+            fileItem.style.top = top + event.e.movementY + 'px'
           }
         }
       },
@@ -247,10 +400,6 @@ export default {
           const docRef = 'doc' + this.documentArray[index]
           const documentComponent = this.$refs[docRef][0]
           const block = documentComponent.codeMirror
-          let width = block.getWrapperElement().style.width
-          width = width === '0' ? 0 : Number(width.substr(0, width.length - 2)) + 2
-          let height = block.getWrapperElement().style.height
-          height = height === '0' ? 0 : Number(height.substr(0, height.length - 2)) + 2
           let left = documentComponent.getContainer().style.left
           left = left === '0' ? 0 : Number(left.substr(0, left.length - 2))
           let top = documentComponent.getContainer().style.top
@@ -259,6 +408,23 @@ export default {
           documentComponent.getContainer().style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
           block.setSize(400 * zoom, 400 * zoom)
           documentComponent.getContainer().style.fontSize = Math.ceil(14 * zoom) + 'px'
+        }
+        for (let index = this.blocks.length - 1; index >= 0; index--) {
+          const comment = this.getElementById('commentBlock' + this.blocks[index])
+          const left = parseFloat(comment.style.left)
+          const top = parseFloat(comment.style.top)
+          comment.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
+          comment.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
+          comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
+        }
+        for (let index = this.fileArray.length - 1; index >= 0; index--) {
+          const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+          const left = parseFloat(fileItem.style.left)
+          const top = parseFloat(fileItem.style.top)
+          fileItem.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
+          fileItem.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
+          fileItem.style.width = parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
+          fileItem.style.height = parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
         }
       }
     })
@@ -276,19 +442,136 @@ export default {
     })
     this.$io.on('newPdfFile', (params) => {
       that.fileArray.push(params.fileID)
-      that.initFile.set(params.fileID, { left: 0, top: 0, fileContent: params.fileContent })
+      that.initFile.set(params.fileID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, fileContent: params.fileContent, zoom: this.zoom })
     })
     this.$io.on('moveFile', (params) => {
       const targetFile = that.$refs[`file${params.fileID}`][0].$el
       targetFile.style.postion = 'absolute'
-      targetFile.style.left = params.left + 'px'
-      targetFile.style.top = params.top + 'px'
+      targetFile.style.left = (params.left + this.relativeX) * this.zoom + 'px'
+      targetFile.style.top = (params.top + this.relativeY) * this.zoom + 'px'
     })
     this.$io.on('removeFile', (fileID) => {
       that.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
     })
+
+    this.canvas.on({
+      'mouse:down': (event) => {
+        this.addCommentBlock(event)
+      }
+    })
+    this.$io.on('newCommentBlock', (block) => {
+      if (block.stickBlockID === null || block.stickBlockID === undefined) {
+        this.blocks.push(block.commentBlockID)
+        this.initCommentBlocks.set(block.commentBlockID, block)
+      } else {
+        const ref = 'doc' + block.stickBlockID
+        this.$refs[ref][0].setComment(true)
+        this.$refs[ref][0].setCommentID(block.commentBlockID)
+      }
+    })
+    this.$io.on('newComment', (comment, type) => {
+      if (type === 'free') {
+        this.freeComments.push(comment)
+      } else {
+        this.blockComments.push(comment)
+      }
+      if (comment.commentBlockID === this.currentBlockID) {
+        this.refresh(this.currentCommentType, this.currentBlockID)
+      }
+    })
+    this.$io.on('deleteComment', (comment, type) => {
+      if (type === 'block') {
+        this.blockComments.splice(this.blockComments.findIndex(data => data.commentItemID === comment.commentItemID), 1)
+      } else {
+        this.freeComments.splice(this.freeComments.findIndex(data => data.commentItemID === comment.commentItemID), 1)
+      }
+      if (comment.commentBlockID === this.currentBlockID) {
+        this.refresh(this.currentCommentType, this.currentBlockID)
+      }
+    })
+    this.$io.on('deleteCommentBlock', (commentBlockID, type, documentBlockID) => {
+      if (commentBlockID === this.currentBlockID) {
+        this.$refs['comment-detail-container'].style.display = 'none'
+      }
+      if (type === 'free') {
+        this.blocks.splice(this.blocks.findIndex(block => block === commentBlockID), 1)
+      } else {
+        const ref = 'doc' + documentBlockID
+        this.$refs[ref][0].setComment(false)
+      }
+    })
   },
   methods: {
+    addCommentBlock: function (event, stickBlockID) {
+      if (!this.commentMode) {
+        return
+      }
+      this.commentMode = false
+      const ID = uuid()
+      if (stickBlockID === null || stickBlockID === undefined) {
+        this.$io.emit('addCommentBlock', { conferenceID: this.conferenceID, commentBlockID: ID, left: -this.relativeX + this.zoom * event.pointer.x, top: -this.relativeY + this.zoom * event.pointer.y })
+      } else {
+        this.$io.emit('addCommentBlock', { conferenceID: this.conferenceID, commentBlockID: ID, stickBlockID: stickBlockID, left: -this.relativeX + this.zoom * event.x, top: -this.relativeY + this.zoom * event.y })
+      }
+    },
+    deleteCommentBlock: function (event) {
+      if (this.currentCommentType === 'block') {
+        const ref = 'doc' + this.documentBlockOfComment
+        this.$refs[ref][0].setComment(false)
+      }
+      this.$refs['comment-detail-container'].style.display = 'none'
+      this.$io.emit('deleteCommentBlock', this.currentBlockID, this.conferenceID)
+    },
+    revokeComment: function (commentID) {
+      let comment
+      if (this.currentCommentType === 'block') {
+        comment = this.blockComments.find(data => data.commentItemID === commentID)
+      } else {
+        comment = this.freeComments.find(data => data.commentItemID === commentID)
+      }
+      this.$io.emit('revokeComment', this.currentCommentType, comment, this.conferenceID)
+    },
+    addComment: function () {
+      const content = this.$refs['comment-input'].value
+      const ID = uuid()
+      this.$io.emit('addComment', {
+        commentBlockID: this.currentBlockID,
+        userID: localStorage.getItem('userID'),
+        content: content,
+        commentItemID: ID
+      }, this.conferenceID)
+    },
+    displayComment: function (e, type, commentID, documentID) {
+      if (type === 'block') {
+        this.documentBlockOfComment = documentID
+      }
+      this.refresh(type, commentID)
+      this.currentBlockID = commentID
+      this.currentCommentType = type
+      this.$refs['comment-detail-container'].style.display = 'block'
+      this.$refs['comment-detail-container'].style.float = 'top'
+      const commentBlock = document.getElementById('commentBlock' + commentID)
+      commentBlock.setCommentContent(this.currentComments)
+    },
+    cancelComment: function () {
+      this.$refs['comment-detail-container'].style.display = 'none'
+    },
+    refresh: function (type, blockID) {
+      this.currentComments = []
+      if (type === 'block') {
+        for (let index = this.blockComments.length - 1; index >= 0; index--) {
+          if (this.blockComments[index].commentBlockID === blockID) {
+            this.currentComments.push(this.blockComments[index])
+          }
+        }
+      } else {
+        for (let index = this.freeComments.length - 1; index >= 0; index--) {
+          if (this.freeComments[index].commentBlockID === blockID) {
+            this.currentComments.push(this.freeComments[index])
+          }
+        }
+      }
+    },
     documentDrag: function (e, docDiv) {
       const disX = e.clientX - docDiv.offsetLeft
       const disY = e.clientY - docDiv.offsetTop
@@ -303,7 +586,26 @@ export default {
       document.onmouseup = (e) => {
         document.onmousemove = null
         document.onmouseup = null
-        this.$io.emit('dragBlockStop', { left: parseInt(docDiv.style.left), top: parseInt(docDiv.style.top), docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+        this.$io.emit('dragBlockStop', { left: parseFloat(docDiv.style.left), top: parseFloat(docDiv.style.top), docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+      }
+    },
+    fileDrag: function (e, fileDiv) {
+      console.log('fileDrag')
+      const disX = e.clientX - fileDiv.offsetLeft
+      const disY = e.clientY - fileDiv.offsetTop
+      document.onmousemove = (ev) => {
+        const left = -this.relativeX + (ev.clientX - disX) / this.zoom
+        const top = -this.relativeY + (ev.clientY - disY) / this.zoom
+        fileDiv.style.left = ev.clientX - disX + 'px'
+        fileDiv.style.top = ev.clientY - disY + 'px'
+        this.$io.emit('moveFile', { left: left, top: top, fileID: fileDiv.id.substr(11, fileDiv.id.length - 11), conferenceID: this.conferenceID })
+      }
+      // 避免频繁更新数据库
+      document.onmouseup = (e) => {
+        document.onmousemove = null
+        document.onmouseup = null
+        console.log('dragFileStop', fileDiv.id, fileDiv.id.substr(11, fileDiv.id.length - 11))
+        this.$io.emit('dragFileStop', { left: parseFloat(fileDiv.style.left), top: parseFloat(fileDiv.style.top), fileID: fileDiv.id.substr(11, fileDiv.id.length - 11) })
       }
     },
     getElementById: function (ID) {
@@ -463,15 +765,29 @@ export default {
         this.$io.emit('sendObjectOfCanvas', object, this.conferenceID, this.uuid, setOption)
       }
     },
+    switchToComment: function () {
+      this.commentMode = true
+    },
     switchToCursor: function () {
       this.dragMode = false
+      this.commentMode = false
       this.canvas.isDrawingMode = false
     },
     switchToDrag: function () {
       this.dragMode = true
+      this.canvas.isDrawingMode = false
+      this.commentMode = false
+    },
+    shareMyView: function (toWhomID) {
+      this.$io.emit('shareMyView', toWhomID, {
+        viewportTransform: this.canvas.viewportTransform,
+        relativeX: this.relativeX,
+        relativeY: this.relativeY
+      })
     },
     switchToPen: function () {
       this.dragMode = false
+      this.commentMode = false
       this.canvas.isDrawingMode = true
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas)
       this.canvas.freeDrawingBrush.width = this.size
@@ -479,6 +795,7 @@ export default {
     },
     switchToEraser: function () {
       this.dragMode = false
+      this.commentMode = false
       this.canvas.isDrawingMode = true
       this.canvas.freeDrawingBrush = new fabric.EraserBrush(this.canvas)
       this.canvas.freeDrawingBrush.width = 4
@@ -525,23 +842,27 @@ export default {
       this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
       this.$io.emit('deleteDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
     },
+    notifyMove: function (params) {
+      this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
+    },
+    notifyChangeLanguage: function (params) {
+      this.$io.emit('changeLanguage', { conferenceID: this.conferenceID, language: params.language, docID: params.docID })
+    },
     loadFileHandler: function () {
       const reader = new FileReader()
       const file = document.getElementById('file-selector').files[0]
       if (file) {
         reader.readAsDataURL(file)
         const that = this
-        reader.onload = function () {
+        reader.onload = () => {
           const fileID = uuid()
           const fileContent = reader.result.split('base64,')[1] // base64码
           that.fileArray.push(fileID)
-          that.initFile.set(fileID, { left: 0, top: 0, fileContent: fileContent })
-          that.$io.emit('newPdfFile', { conferenceID: that.conferenceID, fileContent: fileContent, fileID: fileID })
+          console.log('loadFileHandler zoom', this.zoom)
+          that.initFile.set(fileID, { left: this.relativeX * this.zoom, top: this.relativeY * this.zoom, fileContent: fileContent, zoom: this.zoom })
+          that.$io.emit('newPdfFile', { conferenceID: that.conferenceID, fileContent: fileContent, fileID: fileID, left: 0, top: 0 })
         }
       }
-    },
-    notifyMoveFile: function (params) {
-      this.$io.emit('moveFile', { conferenceID: this.conferenceID, left: params.left, top: params.top, fileID: params.fileID })
     },
     removeFile: function (fileID) {
       this.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
@@ -597,4 +918,10 @@ export default {
   z-index: 10000;
   position: absolute;
 }
+
+.file-container > div {
+  z-index: 10000;
+  position: absolute;
+}
+
 </style>

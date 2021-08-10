@@ -1,12 +1,21 @@
 <template>
-  <div class="Container"
-       :id="'docContainer'+identifier"
+  <div class="container"
+       :id="'doc-container'+identifier"
        ref="documentDiv"
-       @mousedown="click"
+       @click="click"
+       @mousedown="mousedown"
        @dblclick="$emit('remove',identifier)"
        style="position: absolute; left: 0; top: 0;">
-    <textarea ref="documentBlock"
-              id="'textarea'+identifier"></textarea>
+    <CommentBlock
+      v-if="commentDisplay"
+      @click="displayComment"
+      :identifier="commentID"
+      :ref="'commentBlock'+commentID"
+      @addComment="addComment"
+      @deleteCommentBlock="deleteCommentBlock"
+      @revokeComment="revokeComment"></CommentBlock>
+<!--    <span class="block-comment fmtfont fmt-comment" @click="blockComment" ref="block-comment" :id="'commentBlock'+identifier"></span>-->
+    <textarea ref="documentBlock" id="'textarea'+identifier"></textarea>
   </div>
 </template>
 
@@ -22,8 +31,11 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/shell/shell.js'
 import 'codemirror/mode/sql/sql.js'
-
+import CommentBlock from '../../components/Conference/CommentBlock'
 export default {
+  components: {
+    CommentBlock
+  },
   name: 'documentBlock',
   props: {
     identifier: String,
@@ -43,12 +55,43 @@ export default {
       textOptions: {
         lineNumbers: true,
         lineWrapping: true
-      }
+      },
+      commentID: undefined,
+      commentDisplay: false
     }
   },
   methods: {
+    addComment (text, commentBlockID) {
+      this.$emit('addComment', text, commentBlockID)
+    },
+    deleteCommentBlock (event, type, identifier) {
+      this.commentID = undefined
+      this.$emit('deleteCommentBlock', event, 'block', identifier, this.identifier)
+    },
+    revokeComment (commentID, type) {
+      this.$emit('revokeComment', commentID, 'block')
+    },
+    displayComment (e, type, identifier) {
+      this.$emit('displayComment', e, 'block', identifier, this.identifier)
+    },
+    setCommentContent (comments) {
+      const ref = 'commentBlock' + this.commentID
+      this.$refs[ref].setCommentContent(comments)
+    },
+    setCommentID (ID) {
+      this.commentID = ID
+    },
+    setComment (display) {
+      this.commentDisplay = display
+    },
     click (e) {
-      this.$emit('click', e, document.getElementById(`docContainer${this.identifier}`))
+      this.$emit('click', { x: e.x, y: e.y }, this.identifier)
+    },
+    blockComment (e) {
+      this.$emit('blockComment', e, 'block', this.commentID, this.identifier)
+    },
+    mousedown (e) {
+      this.$emit('mousedown', e, document.getElementById(`docContainer${this.identifier}`))
     },
     getContainer () {
       return this.$refs.documentDiv
@@ -57,9 +100,13 @@ export default {
   mounted () {
     // Initialize
     const docDiv = document.getElementById(`docContainer${this.identifier}`)
-    const { left, top, type, language, zoom } = this.initParams
+    const { left, top, type, language, zoom, commentID } = this.initParams
     docDiv.style.left = left + 'px'
     docDiv.style.top = top + 'px'
+    if (commentID !== undefined && commentID !== null) {
+      this.commentID = commentID
+      this.setComment(true)
+    }
     const ioClient = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
     const that = this
     ioClient.emit('enterDocumentBlock', this.identifier) // docID
@@ -85,8 +132,9 @@ export default {
 </script>
 
 <style scoped>
-.Container {
+.container {
   border: #2c3e50 1px solid;
   font-size: 14px;
 }
+
 </style>

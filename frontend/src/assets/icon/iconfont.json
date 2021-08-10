@@ -6,8 +6,29 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8715895",
+      "name": "拖拽",
+      "font_class": "drag",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "5838813",
+      "name": "上传",
+      "font_class": "upload",
+      "unicode": "e876",
+      "unicode_decimal": 59510
+    },
+    {
+      "icon_id": "14582713",
+      "name": "关闭",
+      "font_class": "close",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
       "icon_id": "7192356",
-      "name": "add",
+      "name": "加号",
       "font_class": "add",
       "unicode": "e721",
       "unicode_decimal": 59169

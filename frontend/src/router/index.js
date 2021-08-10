@@ -28,11 +28,6 @@ const routes = [
     component: () => import('../views/Team/Team.vue'),
     children: [
       {
-        path: 'recentfile',
-        name: 'recentfile',
-        component: () => import('../../src/components/Team/RecentFile.vue')
-      },
-      {
         path: '',
         name: 'team',
         component: () => import('../../src/components/Team/TeamPage.vue')
@@ -58,6 +53,11 @@ const routes = [
     path: '/conference',
     name: 'conference',
     component: () => import('../views/Conference/Conference.vue')
+  },
+  {
+    path: '/notice',
+    name: 'notice',
+    component: () => import('../components/PublicComponents/Notice/NoticeSideBar')
   }
 ]
 

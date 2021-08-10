@@ -22,18 +22,13 @@ describe('测试解散团队', () => {
       store,
       router,
       propsData: {
-        type: 'Team'
+        type: 1
       }
     })
     vm = wrapper.vm
   })
   test('测试类型名称', () => {
-    expect(vm.typeName).toBe('团队')
-  })
-  test('函数调用正确', () => {
-    vm.dismissTeam = jest.fn()
-    vm.dismissGroup()
-    expect(vm.dismissTeam).toBeCalledTimes(1)
+    expect(vm.typeName).toBe('会议室')
   })
   test('解散成功', () => {
     vm.$bvModal.hide = jest.fn()
@@ -44,7 +39,7 @@ describe('测试解散团队', () => {
   })
   test('解散团队', () => {
     vm.$io.emit = jest.fn()
-    vm.dismissTeam()
+    vm.dismissGroup()
     expect(vm.$io.emit).toBeCalledTimes(1)
   })
 })
@@ -55,22 +50,12 @@ describe('测试解散会议室', () => {
       store,
       router,
       propsData: {
-        type: 'Conference'
+        type: 2
       }
     })
     vm = wrapper.vm
   })
   test('测试类型名称', () => {
-    expect(vm.typeName).toBe('会议室')
-  })
-  test('函数调用正确', () => {
-    vm.dismissConference = jest.fn()
-    vm.dismissGroup()
-    expect(vm.dismissConference).toBeCalledTimes(1)
-  })
-  test('解散会议室', () => {
-    vm.$io.emit = jest.fn()
-    vm.dismissConference()
-    expect(vm.$io.emit).toBeCalledTimes(1)
+    expect(vm.typeName).toBe('团队')
   })
 })

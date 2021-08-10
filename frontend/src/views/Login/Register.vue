@@ -1,7 +1,25 @@
 <template>
   <div class="register-father">
-    <div class="register" v-if="isFormVisible">
-      <b-form @submit.prevent="onSubmit" >
+    <div class="nav-logo-login my-2 d-flex align-items-center justify-content-between">
+      <div class="logo mx-5">
+        <b-link
+          class="logo-content"
+          to="/">
+          FMT
+        </b-link>
+      </div>
+      <div class="login mx-5">
+        <b-button
+          class="mx-3 login-button"
+          variant="outline-info"
+          @click="$router.push({ path: '/login' })"
+          size="lg">
+          登录
+        </b-button>
+      </div>
+    </div>
+    <div class="register d-flex align-items-center justify-content-center">
+      <b-form :style="{'min-width': 460 + 'px'}" @submit.prevent="onSubmit" >
 <b-alert
         :show="dismissCountDown"
         variant="danger"
@@ -19,6 +37,9 @@
         该页面将在{{ countDown }}秒后跳转至登录界面&nbsp;
         <b-link to="/login" class="alert-link">点击此处</b-link>立即跳转
 </b-alert>
+        <div class="form-header">
+          注册
+        </div>
         <b-form-group class="input-group-email" label="邮箱地址:" label-for="input-email">
           <b-form-input
             id="input-email"
@@ -28,12 +49,9 @@
             required
             placeholder="输入邮箱"
           ></b-form-input>
-          <b-form-invalid-feedback :state="validationEmail">
+          <b-form-invalid-feedback class="email-feedback" :state="validationEmail">
             请输入正确的邮箱格式
           </b-form-invalid-feedback>
-          <b-form-valid-feedback :state="validationEmail">
-            符合要求
-          </b-form-valid-feedback>
         </b-form-group>
         <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
           <b-form-input
@@ -44,12 +62,9 @@
             required
             placeholder="输入用户名"
           ></b-form-input>
-          <b-form-invalid-feedback :state="validationUsername">
+          <b-form-invalid-feedback class="username-feedback" :state="validationUsername">
             你的用户名长度必须在5-12个字符之间
           </b-form-invalid-feedback>
-          <b-form-valid-feedback :state="validationUsername">
-            符合要求
-          </b-form-valid-feedback>
         </b-form-group>
         <b-form-group class="input-group-password" label="密码:" label-for="input-password">
           <b-form-input
@@ -61,12 +76,9 @@
             type="password"
             placeholder="输入密码"
           ></b-form-input>
-          <b-form-invalid-feedback :state="validationPassword">
+          <b-form-invalid-feedback class="password-feedback" :state="validationPassword">
             你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
           </b-form-invalid-feedback>
-          <b-form-valid-feedback :state="validationPassword">
-            符合要求
-          </b-form-valid-feedback>
         </b-form-group>
         <b-form-group class="input-group-password-check" label="验证密码:" label-for="input-password-check">
           <b-form-input
@@ -78,15 +90,24 @@
             type="password"
             placeholder="再次输入密码"
           ></b-form-input>
-          <b-form-invalid-feedback :state="validationPasswordCheck">
+          <b-form-invalid-feedback class="password-check-feedback" :state="validationPasswordCheck">
             密码不一致
           </b-form-invalid-feedback>
-          <b-form-valid-feedback :state="validationPasswordCheck">
-            符合要求
-          </b-form-valid-feedback>
         </b-form-group>
-        <b-button type="submit" variant="primary">注册</b-button>
-        <b-button variant="danger" to="/">返回</b-button>
+        <div class="d-flex align-items-center justify-content-center my-3">
+          <b-button
+            class="mx-3 register-button"
+            type="submit"
+            variant="outline-primary">
+            注册
+          </b-button>
+          <b-button
+            class="mx-3 back-button"
+            variant="outline-danger"
+            to="/">
+            返回
+          </b-button>
+        </div>
       </b-form>
     </div>
   </div>
@@ -102,7 +123,6 @@ export default {
         email: '',
         passwordCheck: ''
       },
-      isFormVisible: true,
       dismissCountDown: 0,
       countDown: 0,
       dismissTime: 5
@@ -189,8 +209,50 @@ export default {
   justify-content: center;
 }
 
+.nav-logo-login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 90px;
+  width: 100%;
+}
+
+.logo-content {
+  font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 60px;
+  text-decoration: none;
+  color: #3d493d;
+}
+
+.logo-content:hover {
+  color: #3d493d;
+}
+
+.login-button {
+  font-size: 24px;
+}
+
 .register {
-  width: 400px;
+  width: 460px;
   height: 700px;
+  font-family: KaiTi, serif, sans-serif, cursive, fantasy, monospace;
+  font-size: 30px;
+  margin-top: 8%;
+}
+
+.form-header {
+  font-size: 40px;
+}
+
+.email-feedback,
+.username-feedback,
+.password-feedback,
+.password-check-feedback {
+  font-size: 22px;
+}
+
+.register-button,
+.back-button {
+  font-size: 22px;
 }
 </style>

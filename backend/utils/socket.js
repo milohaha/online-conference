@@ -22,6 +22,11 @@ const broadcastGroupNotice = async function (conferenceOrTeam, conferenceOrTeamI
   if (toWhoms && toWhoms.length !== 0) {
     for (const toWhom of toWhoms) {
       sendUniqueNotice(toWhom, title, content)
+      // socket通知前端
+      const toSocket = noticeMethods.findOnlineSocket(toWhom)
+      if (toSocket) {
+        toSocket.emit('leave')
+      }
     }
   }
 }
@@ -42,13 +47,19 @@ const verificationHandler = async function (acceptOrReject, userID, verification
       const responseName = acceptOrReject === REJECTED ? '拒绝' : '同意'
       content = userName + responseName + '了您的' + typeName
       sendUniqueNotice(solvedVerification[0].senderID, title, content)
+      // 处理其他多余的消息
+      const sameVerifications = await publicMethods.getObjects(models.Verification,
+        { type: solvedVerification[0].type, senderID: solvedVerification[0].senderID, receiverID: solvedVerification[0].receiverID, teamID: solvedVerification[0].teamID })
+      if (sameVerifications && sameVerifications.length !== 0) {
+        for (const sameVerification of sameVerifications) {
+          await models.UserVerification.update(
+            { hasSolved: acceptOrReject },
+            {
+              where: { userID: userID, verificationID: sameVerification.id }
+            })
+        }
+      }
     }
-    // 处理该用户的消息记录
-    await models.UserVerification.update(
-      { hasSolved: acceptOrReject },
-      {
-        where: { userID: userID, verificationID: verificationID }
-      })
   } catch (error) {
     console.log(error)
   }
@@ -105,6 +116,11 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
       sendUniqueNotice(receiverID, title, content)
     }
   }
+  // socket通知前端
+  const toSocket = noticeMethods.findOnlineSocket(userID)
+  if (toSocket) {
+    toSocket.emit('leave')
+  }
   // 把用户从相应的表中删除
   try {
     if (conferenceOrTeam === IS_TEAM) {
@@ -114,6 +130,18 @@ const leaveGroupHandler = async function (userID, removedOrLeave, conferenceOrTe
           teamID: conferenceOrTeamID
         }
       })
+      // 退出团队要退出相应会议室
+      const conferences = await publicMethods.getObjects(models.Conference, { teamID: conferenceOrTeamID })
+      if (conferences && conferences.length !== 0) {
+        for (const conference of conferences) {
+          await models.UserConference.destroy({
+            where: {
+              userID: userID,
+              conferenceID: conference.id
+            }
+          })
+        }
+      }
     } else if (conferenceOrTeam === IS_CONFERENCE) {
       await models.UserConference.destroy({
         where: {
@@ -230,6 +258,38 @@ module.exports = function (server) {
   io.on('connection', (socket) => {
     console.log('userConnected')
 
+    socket.on('deleteCommentBlock', async (commentBlockID, conferenceID) => {
+      const commentBlock = await models.CommentBlock.findOne({ where: { commentBlockID: commentBlockID } })
+      await models.CommentBlock.destroy({ where: { commentBlockID: commentBlockID } })
+      await models.CommentItem.destroy({ where: { commentBlockID: commentBlockID } })
+      let type
+      if (commentBlock.stickBlockID === null || commentBlock.stickBlockID === undefined) {
+        type = 'free'
+      } else {
+        type = 'block'
+      }
+      io.to('conference' + conferenceID).emit('deleteCommentBlock', commentBlockID, type, commentBlock.stickBlockID)
+    })
+    socket.on('addCommentBlock', async (data) => {
+      const commentBlock = await models.CommentBlock.create(data)
+      io.to('conference' + data.conferenceID).emit('newCommentBlock', commentBlock)
+    })
+    socket.on('revokeComment', async (type, comment, conferenceID) => {
+      await models.CommentItem.destroy({ where: { commentItemID: comment.commentItemID } })
+      io.to('conference' + conferenceID).emit('deleteComment', comment, type)
+    })
+    socket.on('addComment', async (comment, conferenceID) => {
+      comment = await models.CommentItem.create(comment)
+      const commentBlock = await models.CommentBlock.findOne({ where: { commentBlockID: comment.commentBlockID } })
+      let type
+      if (commentBlock.stickBlockID === null || commentBlock.stickBlockID === undefined) {
+        type = 'free'
+      } else {
+        type = 'block'
+      }
+      io.to('conference' + conferenceID).emit('newComment', comment, type)
+    })
+
     // 新建文档同步
     socket.on('newDocumentBlock', (params) => {
       models.ConferenceBlock.create({
@@ -287,6 +347,45 @@ module.exports = function (server) {
 
     // 上传文件同步
     socket.on('newPdfFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('newPdfFile', { fileContent: params.fileContent, fileID: params.fileID, left: params.left, top: params.top })
+      models.ConferenceFile.create({
+        conferenceID: params.conferenceID,
+        fileID: params.fileID,
+        fileContent: params.fileContent,
+        fileLeft: params.left,
+        fileTop: params.top
+      })
+    })
+
+    // 移动文件
+    socket.on('moveFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('moveFile', { left: params.left, top: params.top, fileID: params.fileID })
+    })
+
+    socket.on('dragFileStop', (params) => {
+      models.ConferenceFile.update({
+        fileLeft: params.left,
+        fileTop: params.top
+      }, {
+        where: {
+          fileID: params.fileID
+        }
+      })
+    })
+
+    // 删除PDF文件
+    socket.on('removeFile', (params) => {
+      socket.to('conference' + params.conferenceID).emit('removeFile', params.fileID)
+      models.ConferenceFile.destroy({
+        where: {
+          conferenceID: params.conferenceID,
+          fileID: params.fileID
+        }
+      })
+    })
+
+    // 上传文件同步
+    socket.on('newPdfFile', (params) => {
       socket.to('conference' + params.conferenceID).emit('newPdfFile', { fileContent: params.fileContent, fileID: params.fileID })
       models.ConferenceFile.create({
         conferenceID: params.conferenceID,
@@ -324,13 +423,25 @@ module.exports = function (server) {
       })
     })
 
+    socket.on('userIntoApp', userID => {
+      noticeMethods.storeOnlineUsers(userID, socket)
+    })
+
     socket.on('login', function (userID) {
       noticeMethods.storeOnlineUsers(userID, socket)
     })
 
-    socket.on('enterConference', enterConference)
+    socket.on('enterConference', async (userID, conferenceID) => {
+      await enterConference(userID, conferenceID)
+      // 通知会议室其他成员有人进入
+      socket.to('conference' + conferenceID).emit('enter')
+    })
 
-    socket.on('exitConference', exitConference)
+    socket.on('exitConference', async (userID, conferenceID) => {
+      await exitConference(userID, conferenceID)
+      // 通知会议室其他成员有人退出
+      socket.to('conference' + conferenceID).emit('exit')
+    })
 
     socket.on('rejectNotice', rejectGroupHandler)
 
@@ -370,15 +481,36 @@ module.exports = function (server) {
       noticeMethods.deleteOnlineSocket(userID)
     })
 
-    socket.on('enterCanvas', async (conferenceID) => {
+    socket.on('enterCanvas', async (conferenceID, userID) => {
+      noticeMethods.storeOnlineUsers(userID, socket)
       socket.join('conference' + conferenceID)
       const objects = await publicMethods.getObjects(models.ConferenceBoard, { conferenceID: conferenceID })
       const itemsOfCanvas = objects.map(object => { return Object.getOwnPropertyDescriptors(object).dataValues.value.itemDetails })
       const blocks = await publicMethods.getObjects(models.ConferenceBlock, { conferenceID: conferenceID })
       const blocksOfCanvas = blocks.map(block => { return Object.getOwnPropertyDescriptors(block).dataValues.value })
+      const commentBlocks = await publicMethods.getObjects(models.CommentBlock, { conferenceID: conferenceID })
+      const blockComments = []
+      const freeComments = []
+      for (const commentBlock of commentBlocks) {
+        const comments = await publicMethods.getObjects(models.CommentItem, { commentBlockID: commentBlock.commentBlockID })
+        if (commentBlock.stickBlockID === null || commentBlock.stickBlockID === undefined) {
+          for (const comment of comments) {
+            freeComments.push(comment)
+          }
+        } else {
+          for (const comment of comments) {
+            blockComments.push(comment)
+          }
+        }
+      }
       const files = await publicMethods.getObjects(models.ConferenceFile, { conferenceID: conferenceID })
       const filesOfCanvas = files.map(file => { return Object.getOwnPropertyDescriptors(file).dataValues.value })
-      socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas, filesOfCanvas)
+      socket.emit('initCanvas', itemsOfCanvas, blocksOfCanvas, filesOfCanvas, commentBlocks, blockComments, freeComments)
+    })
+
+    socket.on('shareMyView', async (toWhomID, params) => {
+      const toSocket = noticeMethods.findOnlineSocket(toWhomID)
+      toSocket.emit('shareViewInvitation', params)
     })
 
     socket.on('enterVideo', async (userID, conferenceID) => {

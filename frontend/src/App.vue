@@ -1,10 +1,18 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
+<script>
+export default {
+  mounted () {
+    this.$io.emit('userIntoApp', parseInt(localStorage.getItem('userID')))
+  }
+}
+</script>
+
 <style lang="scss">
-@import './common/font/font.css';
+@import 'assets/font/font.css';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

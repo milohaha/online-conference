@@ -5,7 +5,7 @@
     hide-footer
     backdrop
     no-stacking
-    no-close-on-backdrop>
+    centered>
     <template #modal-title>加入团队</template>
 <b-alert
     :show="dismissCountDown"
@@ -21,17 +21,18 @@
       class="get-team-id"
       :state="validationTeamID"
       required
-      ref="inputTeamID"
     ></b-form-input>
     <b-form-invalid-feedback :state="validationTeamID">
       团队ID为数字
     </b-form-invalid-feedback>
-    <b-button variant="outline-primary" class="join-team-btn" @click="teamJoin">加入团队</b-button>
+    <div class="d-flex align-items-center justify-content-center">
+      <b-button variant="outline-primary" class="join-team-btn" @click="teamJoin">加入团队</b-button>
+    </div>
   </b-modal>
   <b-modal
     id="bv-modal-join-team-notice"
-    ref="modal-join-team-notice"
     backdrop
+    centered
     hide-footer>
     <template #modal-title>
       加入团队
@@ -41,7 +42,7 @@
     </div>
     <div>
       <b-button
-        block variant="success"
+        block variant="outline-success"
         class="modal-close-button"
         @click="$bvModal.hide('bv-modal-join-team-notice')">
         点我关闭

@@ -2,16 +2,27 @@
   <div class="message">
     <strong>{{ notice.title }}</strong>
     <div class="message-card">
-      <p>{{ notice.createdAt }}:</p>
-    <div class="message-content">
-      <p>{{ notice.content }}</p>
-      <b-button variant="outline-primary" size="sm" @click="read">已读</b-button>
-    </div>
+      <div class="message-time text-success">
+        {{ notice.createdAt }}
+      </div>
+      <div class="message-content text-primary">
+        {{ notice.content }}
+      </div>
+      <div class="operation-button">
+        <b-button
+          variant="primary"
+          class="mx-1"
+          size="sm"
+          @click="read">
+          已读
+        </b-button>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
+import timeFormat from '../../../methods/publicMethods.js'
 export default {
   name: 'message',
   props: {
@@ -20,7 +31,10 @@ export default {
   computed: {
     ...mapState({
       userID: (state) => state.Login.userID
-    })
+    }),
+    time () {
+      return timeFormat.methods.getTime(this.notice.createdAt)
+    }
   },
   methods: {
     read () {
@@ -39,19 +53,21 @@ strong {
 
 .message-card {
   background-color: #d3e8e1;
-  padding: 15px;
   margin: 5px 10px;
-  color: #e44a66;
-  border-radius: 4px;
-}
-
-p {
-  margin: 0;
-  width: 465px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px #7f7f7f;
 }
 
 .message-content {
-  display: flex;
-  align-items: center;
+  padding: 0 15px 5px;
+}
+
+.message-time {
+  padding-top: 10px;
+  padding-left: 5px;
+}
+
+.operation-button {
+  padding-bottom: 5px;
 }
 </style>

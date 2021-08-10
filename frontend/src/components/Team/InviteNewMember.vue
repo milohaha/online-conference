@@ -1,12 +1,21 @@
 <template>
   <div class="invite-member">
+<!--    <b-modal-->
+<!--      v-if="!hasMemberToInvite"-->
+<!--      hide-footer-->
+<!--      :id="inviteType"-->
+<!--    >-->
+<!--      暂时没有可以邀请的成员-->
+<!--      <b-button-->
+<!--      @click="noOneToInvite"-->
+<!--      >确定</b-button>-->
+<!--    </b-modal>-->
     <b-modal
       :id="inviteType"
       ref="my-modal-invite-member"
       scrollable
-      hide-backdrop
-      centered
       hide-footer
+      centered
       no-close-on-backdrop
       hide-header-close
     >
@@ -22,59 +31,71 @@
             @selectMember="selectMember"
           ></member-to-invite>
         </b-list-group>
+        <div class="no-member-img" v-if="membersToInvite.length === 0">
+          <strong>好像没有人可以邀请欸</strong>
+        </div>
       </div>
       <div class="d-flex justify-content-center">
         <b-button
           size="lg"
           pill
+          v-if="membersToInvite.length !== 0"
           variant="outline-success"
-          class="modal-invite-button mt-2"
+          class="modal-invite-button mt-2 mx-2"
           @click="inviteCheck">
           确认
         </b-button>
         <b-button
           size="lg"
           pill
-          variant="outline-success"
-          class="modal-invite-button mt-2"
+          v-if="membersToInvite.length !== 0"
+          variant="outline-warning"
+          class="modal-invite-button mt-2 mx-2"
           @click="cancelInviting">
           取消
+        </b-button>
+        <b-button
+          size="lg"
+          pill
+          v-else
+          variant="outline-success"
+          class="mt-2"
+          @click="cancelInviting">
+          确定
         </b-button>
       </div>
     </b-modal>
     <b-modal
       :id="inviteInformation.confirmNoticeID"
-      ref="my-modal-invite-team-member-check"
-      hide-backdrop
-      centered
-      hide-footer
-      no-close-on-backdrop>
+      no-close-on-backdrop
+      centered>
       <template #modal-title>
         {{ inviteInformation.inviteContent }}
       </template>
       <div class="d-block text-center member-to-invite">
         您确认要邀请这些成员吗？
       </div>
-      <b-button @click="inviteMember">
-        确认
-      </b-button>
-      <b-button @click="cancelInvitingCheck">
-        取消
-      </b-button>
+      <template #modal-footer>
+        <b-button @click="inviteMember" variant="outline-success">
+          确认
+        </b-button>
+        <b-button @click="cancelInvitingCheck" variant="outline-warning">
+          取消
+        </b-button>
+      </template>
     </b-modal>
     <b-modal
       :id="inviteInformation.inviteResultNoticeID"
-      hide-backdrop
-      centered
-      hide-footer
       no-close-on-backdrop
-    >
+      centered>
       <div class="d-block text-center">
         邀请成功！
       </div>
-      <b-button @click="inviteMemberSuccess">
-        确认
-      </b-button>
+      <template #modal-footer>
+        <b-button @click="inviteMemberSuccess" variant="outline-success">
+          确认
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -85,7 +106,7 @@ import MemberToInvite from './MemberToInvite.vue'
 export default {
   props: {
     inviteType: String,
-    conferenceName: String
+    groupID: Number
   },
   data () {
     return {
@@ -95,22 +116,30 @@ export default {
   },
   computed: {
     ...mapState({
-      userID: (state) => state.Login.userID,
-      teamID: (state) => state.Team.teamID
+      userID: (state) => state.Login.userID
     }),
     inviteInformation: function () {
       return this.inviteType === 'invite-team-member' ? {
         inviteContent: '邀请成员加入团队',
         confirmNoticeID: 'invite-team-member-check',
-        inviteResultNoticeID: 'invite-team-success'
+        inviteResultNoticeID: 'invite-team-success',
+        groupType: 'Team'
       } : {
-        inviteContent: '请选择与会成员',
+        inviteContent: '邀请成员加入会议室',
         confirmNoticeID: 'invite-conference-member-check',
-        inviteResultNoticeID: 'invite-conference-success'
+        inviteResultNoticeID: 'invite-conference-success',
+        groupType: 'Conference'
       }
+    },
+    hasMemberToInvite: function () {
+      return this.membersToInvite.length !== 0
     }
   },
   methods: {
+    noOneToInvite () {
+      this.$emit('noOneToInvite')
+      this.$bvModal.hide(this.inviteType)
+    },
     inviteCheck () {
       this.$bvModal.show(this.inviteInformation.confirmNoticeID)
     },
@@ -130,7 +159,6 @@ export default {
         .then(response => {
           this.membersToInvite = response.data.members
         })
-        .catch((error) => console.log(error))
     },
     getConferenceMemberToInvite () {
       Api.getMembers({
@@ -142,7 +170,6 @@ export default {
           this.membersToInvite = response.data.members
           this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
         })
-        .catch((error) => console.log(error))
     },
     selectMember (memberID) {
       if (this.membersSelected.findIndex((memberSelected) => memberSelected === memberID) !== -1) {
@@ -157,18 +184,19 @@ export default {
       this.$io.emit('sendVerification',
         this.userID,
         this.membersSelected,
-        this.teamID,
+        this.groupID,
         'invitation')
     },
     inviteConferenceMember () {
       this.$store.dispatch('inviteConferenceMember', {
-        conferenceName: this.conferenceName,
+        conferenceID: this.groupID,
         memberIDs: this.membersSelected
       })
-        .catch((error) => console.log(error))
     },
     inviteMember () {
       this.inviteType === 'invite-team-member' ? this.inviteTeamMember() : this.inviteConferenceMember()
+      this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
+      this.$bvModal.hide(this.inviteType)
       this.$bvModal.show(this.inviteInformation.inviteResultNoticeID)
     },
     inviteMemberSuccess () {
@@ -176,13 +204,37 @@ export default {
       this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
       this.$bvModal.hide(this.inviteInformation.inviteResultNoticeID)
       this.membersSelected = []
+      this.$emit('inviteSuccess')
+    },
+    getMemberToInvite () {
+      Api.getMembers({
+        groupID: this.groupID,
+        inGroup: false,
+        groupType: this.inviteInformation.groupType
+      })
+        .then(response => {
+          this.membersToInvite = response.data.members
+          const index = this.membersToInvite.findIndex(member => member.id === this.userID)
+          if (index !== -1) {
+            this.membersToInvite.splice(index, 1)
+          }
+        })
     }
   },
   components: {
     MemberToInvite
   },
   created: function () {
-    return this.inviteType === 'invite-team-member' ? this.getTeamMemberToInvite() : this.getConferenceMemberToInvite()
+    this.getMemberToInvite()
   }
 }
 </script>
+<style scoped>
+.no-member-img {
+  width: 466px;
+  height: 278px;
+  background-image: url("../../assets/picture/login.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+</style>

@@ -50,5 +50,8 @@ export default {
   },
   checkConferenceToken: function (data) {
     return instance.post(process.env.VUE_APP_API_BASE + '/team/checkConferenceToken', data)
+  },
+  getUserInfo: function (data) {
+    return instance.post(process.env.VUE_APP_API_BASE + '/getUserInfo', data)
   }
 }

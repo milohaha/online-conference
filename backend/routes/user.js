@@ -20,7 +20,7 @@ router.post('/login', async (request, response, next) => {
   if (user && user.length !== 0) {
     const userID = user[0].id
     const token = jsonwebtoken.sign({ userID: userID, userName: userName }, constant.PRIVATE_KEY, { expiresIn: constant.EXPIRED })
-    const expireTime = (Date.now() + constant.EXPIRED * 1000).toString()
+    const expireTime = (Date.now() + constant.EXPIRED * 2000).toString()
     response.json({
       code: constant.CODE_SUCCESS,
       message: 'USER_LOGIN',
@@ -94,5 +94,9 @@ router.post('/deleteObjects', async (request, response, next) => {
   await model.destroy({ where: condition })
   response.json({ message: 'ok' })
 })
-
+router.post('/getUserInfo', async (request, response, next) => {
+  const userID = request.body.userID
+  const user = await publicMethods.getObjects(models.User, { id: userID })
+  response.json({ userID: user[0].id, userName: user[0].userName, email: user[0].email })
+})
 module.exports = router

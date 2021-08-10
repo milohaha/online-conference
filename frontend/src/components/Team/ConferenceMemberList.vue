@@ -9,7 +9,7 @@
         <member-item
           :member="activeMember"
           :founderID="founderID"
-          @removeMember="removeActiveMember"
+          @removeMember="removeMember"
           :isActive="true"
         >
         </member-item>
@@ -24,7 +24,7 @@
         <member-item
           :member="member"
           :founderID="founderID"
-          @removeMember="removeGroupMember"
+          @removeMember="removeMember"
         ></member-item>
       </b-list-group-item>
       </div>
@@ -55,11 +55,20 @@ export default {
     this.getGroupInformation()
   },
   methods: {
-    removeActiveMember (userID) {
-      // TODO 移除在线成员
-    },
-    removeGroupMember (userID) {
-      this.sortMembers.splice(this.sortMembers.findIndex((member) => member.id === userID), 1)
+    removeMember (userID) {
+      let index = this.sortMembers.findIndex((member) => member.id === userID)
+      if (index !== -1) {
+        this.sortMembers.splice(index, 1)
+      } else {
+        index = this.sortActiveMembers.findIndex((member) => member.id === userID)
+        this.sortActiveMembers.splice(index, 1)
+      }
+      this.$io.emit('leaveNotice',
+        userID,
+        this.$constant.REMOVE,
+        this.$constant.IS_CONFERENCE,
+        this.conferenceID
+      )
     },
     getMembers () {
       Api.getMembers({

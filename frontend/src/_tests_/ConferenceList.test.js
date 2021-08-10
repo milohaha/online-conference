@@ -21,7 +21,7 @@ describe('ConferenceList组件测试', () => {
   test('测试查看会议室列表--已有会议室', async () => {
     const response = new Promise(resolve => {
       resolve({ data: { conferences: [{ id: 1 }, { id: 2 }] } })
-    }, reject => { reject('error') })
+    }, () => 0)
     Api.checkConference = jest.fn().mockReturnValue(response)
     await wrapper.vm.checkConference()
     expect(wrapper.vm.conferences.length).toBe(2)

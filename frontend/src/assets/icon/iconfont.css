@@ -113,6 +113,24 @@
   font-size: 22px;
   color: #1424b3;
 }
+.fmt-upload:before {
+  content: "\e876";
+  font-size: 22px;
+}
+.fmt-upload:hover {
+  content: "\e876";
+  font-size: 22px;
+  color: #1424b3;
+}
+.fmt-drag:before {
+  content: "\e601";
+  font-size: 22px;
+}
+.fmt-drag:hover {
+  content: "\e601";
+  font-size: 22px;
+  color: #1424b3;
+}
 /*left-top*/
 .fmt-share:before {
   font-size: 20px;
@@ -210,4 +228,7 @@
   content: "\e721";
   font-size: 80px;
   color: #1424b3;
+}
+.fmt-close:before {
+  content: "\e60c";
 }

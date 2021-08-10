@@ -3,7 +3,7 @@
   <div class="logo bg-light">
     <logo/>
     <div class="notice-user">
-      <notification id="notification"></notification>
+      <notice-side-bar></notice-side-bar>
       <user-logo/>
     </div>
   </div>
@@ -14,7 +14,7 @@
           icon='file-earmark-richtext'
           size="md"
           class="mx-2"></b-icon>
-        <b-link class="recent-file" to="/team/recentfile">
+        <b-link class="recent-file">
           <span>最近文件</span>
         </b-link>
       </div>
@@ -36,14 +36,14 @@
 </div>
 </template>
 <script>
-import Notification from '../../components/PublicComponents/Notice/Notification.vue'
 import Logo from '../../components/PublicComponents/Logos/Logo.vue'
 import UserLogo from '../../components/PublicComponents/Logos/UserLogo.vue'
+import NoticeSideBar from '../../components/PublicComponents/Notice/NoticeSideBar'
 export default {
   components: {
-    Notification,
     Logo,
-    UserLogo
+    UserLogo,
+    NoticeSideBar
   }
 }
 </script>
@@ -54,7 +54,7 @@ export default {
 
 .logo {
   padding: 10px;
-  height: 10vh;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;

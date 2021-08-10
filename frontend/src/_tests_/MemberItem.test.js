@@ -18,10 +18,11 @@ describe('测试成员', () => {
       }
     })
     vm = wrapper.vm
+    jest.mock('../api')
   })
   test('发送移除成员事件', () => {
     vm.$emit = jest.fn()
-    vm.removeTeamMember()
+    vm.removeMember()
     expect(vm.$emit).toBeCalledTimes(1)
   })
 })
