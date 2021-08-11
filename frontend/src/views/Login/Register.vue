@@ -1,6 +1,7 @@
 <template>
   <div class="register-father">
-    <div class="nav-logo-login my-2 d-flex align-items-center justify-content-between">
+    <div class="nav-logo-login my-2 d-flex
+     align-items-center justify-content-between">
       <div class="logo mx-5">
         <b-link
           class="logo-content"
@@ -40,7 +41,8 @@
         <div class="form-header">
           注册
         </div>
-        <b-form-group class="input-group-email" label="邮箱地址:" label-for="input-email">
+        <b-form-group class="input-group-email"
+                      label="邮箱地址:" label-for="input-email">
           <b-form-input
             id="input-email"
             ref="inputEmail"
@@ -49,11 +51,13 @@
             required
             placeholder="输入邮箱"
           ></b-form-input>
-          <b-form-invalid-feedback class="email-feedback" :state="validationEmail">
+          <b-form-invalid-feedback class="email-feedback"
+                                   :state="validationEmail">
             请输入正确的邮箱格式
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
+        <b-form-group class="input-group-user-name" label="用户名:"
+                      label-for="input-user-name">
           <b-form-input
             id="input-user-name"
             ref="inputUserName"
@@ -62,11 +66,13 @@
             required
             placeholder="输入用户名"
           ></b-form-input>
-          <b-form-invalid-feedback class="username-feedback" :state="validationUsername">
+          <b-form-invalid-feedback class="username-feedback"
+                                   :state="validationUsername">
             你的用户名长度必须在5-12个字符之间
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group class="input-group-password" label="密码:" label-for="input-password">
+        <b-form-group class="input-group-password" label="密码:"
+                      label-for="input-password">
           <b-form-input
             id="input-password"
             v-model="user.password"
@@ -76,11 +82,13 @@
             type="password"
             placeholder="输入密码"
           ></b-form-input>
-          <b-form-invalid-feedback class="password-feedback" :state="validationPassword">
+          <b-form-invalid-feedback class="password-feedback"
+                                   :state="validationPassword">
             你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group class="input-group-password-check" label="验证密码:" label-for="input-password-check">
+        <b-form-group class="input-group-password-check"
+                      label="验证密码:" label-for="input-password-check">
           <b-form-input
             id="input-password-check"
             v-model="user.passwordCheck"
@@ -90,7 +98,8 @@
             type="password"
             placeholder="再次输入密码"
           ></b-form-input>
-          <b-form-invalid-feedback class="password-check-feedback" :state="validationPasswordCheck">
+          <b-form-invalid-feedback class="password-check-feedback"
+                                   :state="validationPasswordCheck">
             密码不一致
           </b-form-invalid-feedback>
         </b-form-group>
@@ -150,7 +159,8 @@ export default {
       return false
     },
     isSubmitReady () {
-      return this.isNameReady && this.isPasswordReady && this.isEmailReady && this.isPassCheckReady
+      return this.isNameReady && this.isPasswordReady &&
+        this.isEmailReady && this.isPassCheckReady
     },
     isEmailReady () {
       return this.$refs.inputEmail.state

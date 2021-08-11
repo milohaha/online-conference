@@ -3,7 +3,7 @@
     <strong>{{ notice.title }}</strong>
     <div class="message-card">
       <div class="message-time text-success">
-        {{ notice.createdAt }}
+        {{ time }}
       </div>
       <div class="message-content text-primary">
         {{ notice.content }}
@@ -13,7 +13,8 @@
           variant="primary"
           class="mx-1"
           size="sm"
-          @click="read">
+          @click="read"
+        >
           已读
         </b-button>
       </div>
@@ -22,7 +23,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import timeFormat from '../../../methods/publicMethods.js'
+import TimeFormat from '../../../methods/publicMethods.js'
 export default {
   name: 'message',
   props: {
@@ -33,7 +34,7 @@ export default {
       userID: (state) => state.Login.userID
     }),
     time () {
-      return timeFormat.methods.getTime(this.notice.createdAt)
+      return TimeFormat.methods.getTime(this.notice.createdAt)
     }
   },
   methods: {
@@ -41,7 +42,7 @@ export default {
       this.$io.emit('readNotice',
         this.userID,
         this.notice.id)
-      this.$emit('read', this.notice.id)
+      this.$emit('read')
     }
   }
 }

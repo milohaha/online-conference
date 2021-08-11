@@ -1,15 +1,5 @@
 <template>
   <div class="invite-member">
-<!--    <b-modal-->
-<!--      v-if="!hasMemberToInvite"-->
-<!--      hide-footer-->
-<!--      :id="inviteType"-->
-<!--    >-->
-<!--      暂时没有可以邀请的成员-->
-<!--      <b-button-->
-<!--      @click="noOneToInvite"-->
-<!--      >确定</b-button>-->
-<!--    </b-modal>-->
     <b-modal
       :id="inviteType"
       ref="my-modal-invite-member"
@@ -17,8 +7,7 @@
       hide-footer
       centered
       no-close-on-backdrop
-      hide-header-close
-    >
+      hide-header-close>
       <template #modal-title>
         {{ inviteInformation.inviteContent }}
       </template>
@@ -28,8 +17,8 @@
             v-for="memberToInvite in membersToInvite"
             :key="memberToInvite.id"
             :memberToInvite="memberToInvite"
-            @selectMember="selectMember"
-          ></member-to-invite>
+            @selectMember="selectMember">
+          </member-to-invite>
         </b-list-group>
         <div class="no-member-img" v-if="membersToInvite.length === 0">
           <strong>好像没有人可以邀请欸</strong>
@@ -119,27 +108,24 @@ export default {
       userID: (state) => state.Login.userID
     }),
     inviteInformation: function () {
-      return this.inviteType === 'invite-team-member' ? {
-        inviteContent: '邀请成员加入团队',
-        confirmNoticeID: 'invite-team-member-check',
-        inviteResultNoticeID: 'invite-team-success',
-        groupType: 'Team'
-      } : {
-        inviteContent: '邀请成员加入会议室',
-        confirmNoticeID: 'invite-conference-member-check',
-        inviteResultNoticeID: 'invite-conference-success',
-        groupType: 'Conference'
-      }
+      return this.inviteType === 'invite-team-member'
+        ? {
+          inviteContent: '邀请成员加入团队',
+          confirmNoticeID: 'invite-team-member-check',
+          inviteResultNoticeID: 'invite-team-success',
+          groupType: 'Team'
+        } : {
+          inviteContent: '邀请成员加入会议室',
+          confirmNoticeID: 'invite-conference-member-check',
+          inviteResultNoticeID: 'invite-conference-success',
+          groupType: 'Conference'
+        }
     },
     hasMemberToInvite: function () {
       return this.membersToInvite.length !== 0
     }
   },
   methods: {
-    noOneToInvite () {
-      this.$emit('noOneToInvite')
-      this.$bvModal.hide(this.inviteType)
-    },
     inviteCheck () {
       this.$bvModal.show(this.inviteInformation.confirmNoticeID)
     },
@@ -150,16 +136,6 @@ export default {
     cancelInvitingCheck () {
       this.$bvModal.hide(this.inviteInformation.confirmNoticeID)
     },
-    getTeamMemberToInvite () {
-      Api.getMembers({
-        groupID: this.teamID,
-        groupType: 'Team',
-        inGroup: false
-      })
-        .then(response => {
-          this.membersToInvite = response.data.members
-        })
-    },
     getConferenceMemberToInvite () {
       Api.getMembers({
         groupID: this.teamID,
@@ -168,7 +144,9 @@ export default {
       })
         .then(response => {
           this.membersToInvite = response.data.members
-          this.membersToInvite.splice(this.membersToInvite.findIndex(member => member.id === this.userID), 1)
+          this.membersToInvite.splice(this.membersToInvite.findIndex(member => {
+            return member.id === this.userID
+          }), 1)
         })
     },
     selectMember (memberID) {

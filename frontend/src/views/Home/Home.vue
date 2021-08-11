@@ -44,12 +44,15 @@
             v-if="isLogin"
             v-b-popover.hover.bottom="'个人主页'">
             <template v-slot:button-content>
-              <img src="../../assets/picture/astronaut.png" alt="userLogo" class="user-logo">
+              <img src="../../assets/picture/astronaut.png"
+                   alt="userLogo" class="user-logo">
             </template>
             <b-dropdown-item>
               <div class="d-flex align-items-center">
                 <div>
-                  <b-avatar variant="info" src="https://placekitten.com/300/300" class="mx-1"></b-avatar>
+                  <b-avatar variant="info"
+                            src="https://placekitten.com/300/300"
+                            class="mx-1"></b-avatar>
                 </div>
                 <div class="flex-column">
                   <div>
@@ -62,7 +65,8 @@
               </div>
             </b-dropdown-item>
             <b-dd-divider></b-dd-divider>
-            <b-dropdown-item-button @click="enterTeam" class="enter-team-button">
+            <b-dropdown-item-button @click="enterTeam"
+                                    class="enter-team-button">
               进入团队
             </b-dropdown-item-button>
           </b-dropdown>

@@ -1,32 +1,32 @@
 <template>
-      <b-modal
-      class="modal fade"
-      id="share-view"
-      hide-header-close
-      scrollable
-      v-if="hasMemberToInvite"
-    >
-      <template #modal-header>
-        <h4>请选择成员进行共享视角</h4>
-      </template>
-      <member-to-invite
-        v-for="member in sortActiveMembers"
-        :key="member.id"
-        :memberToInvite="member"
-        @selectMember="selectMember"
-        :ref="member.id"
-      ></member-to-invite>
-      <template #modal-footer>
-        <b-button @click="shareView" variant="light">确定</b-button>
-        <b-button @click="cancelSharing" variant="light">取消</b-button>
-      </template>
-    </b-modal>
-    <b-modal v-else id="share-view">
-      暂时没有成员可以邀请
-      <template #modal-footer>
-        <b-button @click="cancelSharing">确定</b-button>
-      </template>
-    </b-modal>
+  <b-modal
+    class="modal fade"
+    id="share-view"
+    hide-header-close
+    scrollable
+    v-if="hasMemberToInvite"
+  >
+    <template #modal-header>
+      <h4>请选择成员进行共享视角</h4>
+    </template>
+    <member-to-invite
+      v-for="member in sortActiveMembers"
+      :key="member.id"
+      :memberToInvite="member"
+      @selectMember="selectMember"
+      :ref="member.id"
+    ></member-to-invite>
+    <template #modal-footer>
+      <b-button @click="shareView" variant="light">确定</b-button>
+      <b-button @click="cancelSharing" variant="light">取消</b-button>
+    </template>
+  </b-modal>
+  <b-modal v-else id="share-view">
+    暂时没有成员可以邀请
+    <template #modal-footer>
+      <b-button @click="cancelSharing">确定</b-button>
+    </template>
+  </b-modal>
 </template>
 <script>
 import MemberToInvite from '../../components/Team/MemberToInvite.vue'

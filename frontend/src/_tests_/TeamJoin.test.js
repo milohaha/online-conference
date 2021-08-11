@@ -13,13 +13,13 @@ localVue.use(BootstrapVue)
 localVue.use(Vuex)
 let wrapper
 let vm
-const notjoined = new Promise(resolve => { resolve({ data: { message: 'NOT_JOINED' } }) },
+const notJoined = new Promise(resolve => { resolve({ data: { message: 'NOT_JOINED' } }) },
   reject => reject('error'))
-const notexist = new Promise(resolve => { resolve({ data: { message: 'NOT_EXIST' } }) },
+const notExist = new Promise(resolve => { resolve({ data: { message: 'NOT_EXIST' } }) },
   reject => reject('error'))
-const hasjoined = new Promise(resolve => { resolve({ data: { message: 'HAS_JOINED' } }) },
+const hasJoined = new Promise(resolve => { resolve({ data: { message: 'HAS_JOINED' } }) },
   reject => reject('error'))
-const innerresponse = new Promise(resolve => { resolve({ data: { objects: [{ founderID: 1 }] } }) },
+const innerResponse = new Promise(resolve => { resolve({ data: { objects: [{ founderID: 1 }] } }) },
   reject => reject('error'))
 describe('测试加入团队', () => {
   beforeEach(() => {
@@ -46,8 +46,8 @@ describe('测试加入团队', () => {
     expect(vm.$bvModal.show).toBeCalledTimes(1)
   })
   test('加入团队-成功', async () => {
-    Api.joinTeam = jest.fn().mockReturnValue(notjoined)
-    Api.getObjects = jest.fn().mockReturnValue(innerresponse)
+    Api.joinTeam = jest.fn().mockReturnValue(notJoined)
+    Api.getObjects = jest.fn().mockReturnValue(innerResponse)
     vm.$io.emit = jest.fn()
     vm.showModal = jest.fn()
     const mockfn = jest.fn()
@@ -55,14 +55,14 @@ describe('测试加入团队', () => {
     expect(vm.showModal).toBeCalledTimes(1)
   })
   test('加入团队-团队不存在', async () => {
-    Api.joinTeam = jest.fn().mockReturnValue(notexist)
+    Api.joinTeam = jest.fn().mockReturnValue(notExist)
     vm.showAlert = jest.fn()
     await vm.teamJoin()
     expect(vm.showAlert).toBeCalledTimes(1)
     expect(vm.alertMessage).toBe('查询不到团队ID')
   })
   test('加入团队-已加入', async () => {
-    Api.joinTeam = jest.fn().mockReturnValue(hasjoined)
+    Api.joinTeam = jest.fn().mockReturnValue(hasJoined)
     vm.showAlert = jest.fn()
     await vm.teamJoin()
     expect(vm.showAlert).toBeCalledTimes(1)

@@ -6,7 +6,8 @@
         variant="info"
         src="https://placekitten.com/300/300"
         class="mx-3"
-        size="4rem"></b-avatar>
+        size="4rem">
+      </b-avatar>
       <div class="user-information mx-2">
         <div
           class="text-lg-start d-flex align-items-center justify-content-between">
@@ -16,12 +17,12 @@
         <span class="text-lg-start mt-2">邮箱: {{ member.email }}</span>
       </div>
     </div>
-      <remove-member
-        :userID="member.id"
-        :modalID="member.userName"
-        v-if="userID === founderID && member.id !== founderID"
-        @remove="removeMember"
-      ></remove-member>
+    <remove-member
+      :userID="member.id"
+      :modalID="member.userName"
+      v-if="userID === founderID && member.id !== founderID"
+      @remove="removeMember">
+    </remove-member>
   </div>
 </template>
 <script>

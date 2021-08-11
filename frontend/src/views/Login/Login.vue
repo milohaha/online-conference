@@ -1,6 +1,7 @@
 <template>
   <div class="login-father">
-    <div class="nav-logo-register my-2 d-flex align-items-center justify-content-between">
+    <div class="nav-logo-register my-2 d-flex
+    align-items-center justify-content-between">
       <div class="logo mx-5">
         <b-link
           class="logo-content"
@@ -29,7 +30,8 @@
         <div class="form-header">
           登录
         </div>
-        <b-form-group class="input-group-user-name" label="用户名:" label-for="input-user-name">
+        <b-form-group class="input-group-user-name" label="用户名:"
+                      label-for="input-user-name">
           <b-form-input
             id="input-user-name"
             ref="inputUserName"
@@ -38,11 +40,13 @@
             required
             placeholder="输入用户名"
           ></b-form-input>
-        <b-form-invalid-feedback class="username-feedback" :state="validationUsername">
+        <b-form-invalid-feedback class="username-feedback"
+                                 :state="validationUsername">
           你的用户名长度必须在5-12个字符之间
         </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group class="input-group-password" label="密码:" label-for="input-password">
+        <b-form-group class="input-group-password" label="密码:"
+                      label-for="input-password">
           <b-form-input
             id="input-password"
             v-model="user.password"
@@ -52,7 +56,8 @@
             type="password"
             placeholder="输入密码"
           ></b-form-input>
-          <b-form-invalid-feedback class="password-feedback" :state="validationPassword">
+          <b-form-invalid-feedback class="password-feedback"
+                                   :state="validationPassword">
             你的密码长度必须要在8-20个字符之间，只能包含字母，数字和下划线
           </b-form-invalid-feedback>
         </b-form-group>

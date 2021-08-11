@@ -2,30 +2,27 @@
   <div>
     <b-list-group>
       <div>
-      <b-list-group-item
+        <b-list-group-item
         v-for="activeMember in sortActiveMembers"
-        :key="activeMember.id"
-      >
+        :key="activeMember.id">
         <member-item
           :member="activeMember"
           :founderID="founderID"
           @removeMember="removeMember"
-          :isActive="true"
-        >
+          :isActive="true">
         </member-item>
       </b-list-group-item>
       </div>
       <div>
-      <b-list-group-item
+        <b-list-group-item
         v-for="member in sortMembers"
         :key="member.id"
-        class="text-muted"
-      >
+        class="text-muted">
         <member-item
           :member="member"
           :founderID="founderID"
-          @removeMember="removeMember"
-        ></member-item>
+          @removeMember="removeMember">
+        </member-item>
       </b-list-group-item>
       </div>
     </b-list-group>
@@ -65,7 +62,7 @@ export default {
       }
       this.$io.emit('leaveNotice',
         userID,
-        this.$constant.REMOVE,
+        this.$constant.REMOVED,
         this.$constant.IS_CONFERENCE,
         this.conferenceID
       )

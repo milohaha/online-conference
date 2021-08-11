@@ -15,7 +15,11 @@ describe('createGroup', () => {
       expect(result.message).toBe('USER_ERROR')
     })
     test('if team created, return created', async () => {
-      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
+      const user = await User.create({
+        userName: 'testname_teamMethods',
+        password: 'testpassword_teamMethods',
+        email: 'testemail_teamMethods'
+      })
       const result = await teamMethods.createGroup('testteam_teamMethods', user.id)
       await Team.destroy({
         where: {
@@ -38,7 +42,11 @@ describe('createGroup', () => {
   })
   describe('createConference', () => {
     test('if teamID not found,return Team Not Found', async () => {
-      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
+      const user = await User.create({
+        userName: 'testname_teamMethods',
+        password: 'testpassword_teamMethods',
+        email: 'testemail_teamMethods'
+      })
       const result = await teamMethods.createGroup('hello', user.id, 2)
       await User.destroy({
         where: {
@@ -50,11 +58,19 @@ describe('createGroup', () => {
       expect(result.message).toEqual('TEAM_NOT_FOUND')
     })
     test('if Conference created,return Created', async () => {
-      const user = await User.create({ userName: 'testname_teamMethods', password: 'testpassword_teamMethods', email: 'testemail_teamMethods' })
+      const user = await User.create({
+        userName: 'testname_teamMethods',
+        password: 'testpassword_teamMethods',
+        email: 'testemail_teamMethods'
+      })
       await teamMethods.createGroup('testteam_teamMethods', user.id)
-      const team = await Team.findAll({ where: { teamName: 'testteam_teamMethods', founderID: user.id } })
+      const team = await Team.findAll({
+        where: { teamName: 'testteam_teamMethods', founderID: user.id }
+      })
       const result = await teamMethods.createGroup('hello', user.id, team[0].id)
-      await Conference.destroy({ where: { conferenceName: 'hello', founderID: user.id, teamID: team[0].id } })
+      await Conference.destroy({
+        where: { conferenceName: 'hello', founderID: user.id, teamID: team[0].id }
+      })
       await Team.destroy({
         where: {
           teamName: 'testteam_teamMethods'

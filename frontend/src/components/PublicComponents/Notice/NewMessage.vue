@@ -1,6 +1,9 @@
 <template>
   <div>
-    <span class="fmtfont fmt-notice" @click="updateMessages"></span>
+    <span
+      class="fmtfont fmt-notice"
+      @click="updateMessages"
+    ></span>
     <div class="message-num" v-show="newMessageNum > 0">
       <p>{{ newMessageNum }}</p>
     </div>

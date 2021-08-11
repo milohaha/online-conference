@@ -45,7 +45,11 @@ describe('getObjects', () => {
     expect(objects).toEqual([])
   })
   test('find one object ', async () => {
-    await User.create({ userName: 'testname_publicMethods', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    await User.create({
+      userName: 'testname_publicMethods',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const objects = await publicMethods.getObjects(User, { userName: 'testname_publicMethods' })
     const expectResult = await User.findAll({
       where: { userName: 'testname_publicMethods' }
@@ -60,8 +64,16 @@ describe('getObjects', () => {
     expect(objects).toEqual(expectResult)
   })
   test('find many objects ', async () => {
-    await User.create({ userName: 'testname1_getObjects', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
-    await User.create({ userName: 'testname2_getObjects', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    await User.create({
+      userName: 'testname1_getObjects',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
+    await User.create({
+      userName: 'testname2_getObjects',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const objects = await publicMethods.getObjects(User, { userName: 'testname1_getObjects' })
     const expectedResults = await User.findAll({
       where: { userName: 'testname1_getObjects' }
@@ -86,7 +98,11 @@ describe('getObjects', () => {
 
 describe('getObjectID', () => {
   test('find objectID that exists', async () => {
-    await User.create({ userName: 'testname_getObjectID', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    await User.create({
+      userName: 'testname_getObjectID',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const actualID = await publicMethods.getObjectID(User, { userName: 'testname_getObjectID' })
     const expectedObject = await User.findAll({
       where: {
@@ -126,7 +142,11 @@ describe('getNameByID', () => {
     expect(result).toBe('')
   })
   test('get a existing userName by his/her id', async () => {
-    const user = await User.create({ userName: 'testname_getNameByID', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname_getNameByID',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const result = await publicMethods.getNameByID(User, user.id)
     await User.destroy({
       where: {
@@ -140,7 +160,11 @@ describe('getNameByID', () => {
     expect(result).toBe('')
   })
   test('get a existing TeamName by its id', async () => {
-    const user = await User.create({ userName: 'testname2_getNameByID', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname2_getNameByID',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const team = await Team.create({ teamName: 'testname2_getNameByID', founderID: user.id })
     const result = await publicMethods.getNameByID(Team, team.id)
     await User.destroy({
@@ -156,9 +180,17 @@ describe('getNameByID', () => {
     expect(result).toBe('testname2_getNameByID')
   })
   test('get a existing conferenceName by its id', async () => {
-    const user = await User.create({ userName: 'testname3_getNameByID', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname3_getNameByID',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const team = await Team.create({ teamName: 'testname3_getNameByID', founderID: user.id })
-    const conference = await Conference.create({ conferenceName: 'testname3_getNameByID', founderID: user.id, teamID: team.id })
+    const conference = await Conference.create({
+      conferenceName: 'testname3_getNameByID',
+      founderID: user.id,
+      teamID: team.id
+    })
     const result = await publicMethods.getNameByID(Conference, conference.id)
     await User.destroy({
       where: {
@@ -189,7 +221,11 @@ describe('findGroup', () => {
     expect(result).toEqual([])
   })
   test('find a existing team', async () => {
-    const user = await User.create({ userName: 'testname_findGroup', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname_findGroup',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const team = await Team.create({ teamName: 'testname_findGroup', founderID: user.id })
     const result = await publicMethods.findGroup(IS_TEAM, team.id)
     const expectedResults = await Team.findAll({
@@ -208,9 +244,17 @@ describe('findGroup', () => {
     expect(result).toEqual(expectedResults)
   })
   test('find a existing conference', async () => {
-    const user = await User.create({ userName: 'testname2_findGroup', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname2_findGroup',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const team = await Team.create({ teamName: 'testname2_findGroup', founderID: user.id })
-    const conference = await Conference.create({ conferenceName: 'testname2_findGroup', founderID: user.id, teamID: team.id })
+    const conference = await Conference.create({
+      conferenceName: 'testname2_findGroup',
+      founderID: user.id,
+      teamID: team.id
+    })
     const result = await publicMethods.findGroup(IS_CONFERENCE, conference.id)
     const expectedResults = await Conference.findAll({
       where: { conferenceName: 'testname2_findGroup' }
@@ -248,7 +292,11 @@ describe('findGroupUserIDs', () => {
     expect(result).toEqual([])
   })
   test('find ids of team members', async () => {
-    const user = await User.create({ userName: 'testname_findGroupUserIDs', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
+    const user = await User.create({
+      userName: 'testname_findGroupUserIDs',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
     const team = await Team.create({ teamName: 'testname_findGroupUserIDs', founderID: user.id })
     await UserTeam.create({ userID: user.id, teamID: team.id })
     const result = await publicMethods.findGroupUserIDs(IS_TEAM, team.id)
@@ -271,9 +319,20 @@ describe('findGroupUserIDs', () => {
     expect(result).toEqual([user.id])
   })
   test('find ids of conference members', async () => {
-    const user = await User.create({ userName: 'testname2_findGroupUserIDs', password: 'testpassword_publicMethods', email: 'testemail_publicMethods' })
-    const team = await Team.create({ teamName: 'testname2_findGroupUserIDs', founderID: user.id })
-    const conference = await Conference.create({ conferenceName: 'testname2_findGroupUserIDs', founderID: user.id, teamID: team.id })
+    const user = await User.create({
+      userName: 'testname2_findGroupUserIDs',
+      password: 'testpassword_publicMethods',
+      email: 'testemail_publicMethods'
+    })
+    const team = await Team.create({
+      teamName: 'testname2_findGroupUserIDs',
+      founderID: user.id
+    })
+    const conference = await Conference.create({
+      conferenceName: 'testname2_findGroupUserIDs',
+      founderID: user.id,
+      teamID: team.id
+    })
     await UserConference.create({ userID: user.id, conferenceID: conference.id })
     const result = await publicMethods.findGroupUserIDs(IS_CONFERENCE, conference.id)
     await User.destroy({

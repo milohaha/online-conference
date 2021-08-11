@@ -8,8 +8,7 @@
       :groupID="teamID"
       v-if="isInviting"
       @inviteSuccess="isInviting = false"
-      @noOneToInvite="isInviting = false"
-    >
+      @noOneToInvite="isInviting = false">
     </invite-new-member>
     <div class="team-info-area mx-3">
       <b-card
@@ -17,8 +16,7 @@
         class="team-info-card mx-4"
         img-src="https://placekitten.com/380/200"
         img-alt="Image"
-        img-top
-      >
+        img-top>
         <template #header>
           <h4 class="mb-1">{{ teamName }}</h4>
         </template>
@@ -34,26 +32,25 @@
           <b-list-group-item
             button
             v-b-modal.invite-team-member
-            style="text-align: center;"
-            @click="isInviting = true"
-          >
+            class="group-item-invite"
+            @click="isInviting = true">
             邀请新成员
           </b-list-group-item>
           <b-list-group-item
             button
             v-b-modal.create-new-group
-            style="text-align: center;">
+            class="group-item-create">
             新建会议室
           </b-list-group-item>
           <b-list-group-item
             v-b-modal.bv-modal-dismiss-group
-            style="text-align: center;"
+            class="group-item-dismiss"
             v-show="isFounder">
             解散团队
           </b-list-group-item>
           <b-list-group-item
             v-b-modal.bv-modal-leave-group
-            style="text-align: center;"
+            class="group-item-leave"
             v-show="!isFounder">
             离开团队
           </b-list-group-item>
@@ -154,5 +151,12 @@ export default {
   max-width: 22rem;
   border-radius: 5px;
   box-shadow: 1px 1px 5px #7f7f7f;
+}
+
+.group-item-create,
+.group-item-invite,
+.group-item-dismiss,
+.group-item-leave {
+  text-align: center;
 }
 </style>

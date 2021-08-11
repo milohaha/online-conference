@@ -12,10 +12,7 @@ localVue.use(BootstrapVue)
 localVue.use(Vuex)
 localVue.prototype.$constant = Constants
 localVue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
-let wrapper
-let vm
-let mockhide
-let mockshow
+let wrapper, vm, mockHide, mockShow
 describe('测试移除团队成员', () => {
   beforeEach(() => {
     wrapper = shallowMount(RemoveMember, {
@@ -27,10 +24,10 @@ describe('测试移除团队成员', () => {
       }
     })
     vm = wrapper.vm
-    mockhide = jest.fn()
-    mockshow = jest.fn()
-    vm.$bvModal.hide = mockhide
-    vm.$bvModal.show = mockshow
+    mockHide = jest.fn()
+    mockShow = jest.fn()
+    vm.$bvModal.hide = mockHide
+    vm.$bvModal.show = mockShow
   })
   test('移除团队成员', () => {
     vm.$io.emit = jest.fn()

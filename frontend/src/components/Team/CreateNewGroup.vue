@@ -10,14 +10,17 @@
         <b-button @click="checkInput" variant="outline-success">确定</b-button>
         <b-button
           @click="$bvModal.hide('create-new-group')"
-          variant="outline-warning">取消</b-button>
+          variant="outline-warning">
+          取消
+        </b-button>
       </template>
       <div class="create-new-group-content">
-        <b-form-input class="get-group-name"
-                      placeholder="请输入名称"
-                      v-model="inputName"
-                      :state='nameState'
-                      aria-describedby="wrong-feedback">
+        <b-form-input
+          class="get-group-name"
+          placeholder="请输入名称"
+          v-model="inputName"
+          :state='nameState'
+          aria-describedby="wrong-feedback">
         </b-form-input>
         <b-form-invalid-feedback :state="nameState" id='wrong-feedback'>
           请输入4-10字的名称
@@ -25,13 +28,11 @@
         <img
           src="../../assets/picture/conference.png"
           alt="conference"
-          v-if="groupType === 'Conference'"
-        >
+          v-if="groupType === 'Conference'">
         <img
           src="../../assets/picture/team.png"
           alt="team"
-          v-if="groupType === 'Team'"
-        >
+          v-if="groupType === 'Team'">
       </div>
     </b-modal>
     <b-modal
@@ -56,8 +57,7 @@
       :inviteType="inviteType"
       :groupID="groupID"
       v-if="createResult === 'CREATED'"
-      @inviteSuccess="createResult = ''"
-    >
+      @inviteSuccess="createResult = ''">
     </invite-member>
   </div>
 </template>
@@ -75,7 +75,8 @@ export default {
       inputName: '',
       notice: '',
       noticeStyle: '',
-      createResult: ''
+      createResult: '',
+      groupID: ''
     }
   },
   computed: {
@@ -83,7 +84,9 @@ export default {
       return this.groupType === 'Team' ? '创建团队' : '新建会议室'
     },
     groupInfo () {
-      return this.groupType === 'Team' ? { groupName: this.inputName } : { groupName: this.inputName, teamID: this.teamID }
+      return this.groupType === 'Team'
+        ? { groupName: this.inputName }
+        : { groupName: this.inputName, teamID: this.teamID }
     },
     nameState () {
       return this.inputName.length > 3 && this.inputName.length < 11
@@ -115,7 +118,7 @@ export default {
               this.createResult = result
               this.$emit('createSuccess')
               this.noticeStyle = 'success'
-            } else if (this.createResult === 'EXISTS') {
+            } else if (response.data.message === 'EXISTS') {
               this.notice = '创建失败，该名称已存在'
               this.noticeStyle = 'danger'
             } else {

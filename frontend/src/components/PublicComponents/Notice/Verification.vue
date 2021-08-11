@@ -2,7 +2,7 @@
   <div>
     <div class="verification-card my-3">
       <div class="verification-time text-success">
-        {{ verification.createdAt }}
+        {{ time }}
       </div>
       <div class="verification-content text-primary">
         {{ verification.content }}
@@ -12,14 +12,16 @@
           variant="info"
           class="agree-button mx-1"
           size="sm"
-          @click="accept">
+          @click="accept"
+        >
           同意
         </b-button>
         <b-button
           variant="warning"
           class="reject-button mx-1"
           size="sm"
-          @click="reject">
+          @click="reject"
+        >
           拒绝
         </b-button>
       </div>
@@ -28,7 +30,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import timeFormat from '../../../methods/publicMethods.js'
+import TimeFormat from '../../../methods/publicMethods.js'
 export default {
   name: 'Verification',
   props: {
@@ -39,7 +41,7 @@ export default {
       userID: (state) => state.Login.userID
     }),
     time: function () {
-      return timeFormat.methods.getTime(this.verification.createdAt)
+      return TimeFormat.methods.getTime(this.verification.createdAt)
     }
   },
   methods: {
@@ -47,13 +49,13 @@ export default {
       this.$io.emit('acceptNotice',
         this.userID,
         this.verification.id)
-      this.$emit('solveVerification', this.verification.id)
+      this.$emit('solveVerification')
     },
     reject () {
       this.$io.emit('rejectNotice',
         this.userID,
         this.verification.id)
-      this.$emit('solveVerification', this.verification.id)
+      this.$emit('solveVerification')
     }
   }
 }

@@ -13,8 +13,7 @@ localVue.use(Vuex)
 localVue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
 const response = new Promise(resolve => {
   resolve({ data: { members: [{ id: 1 }, { id: 2 }] } })
-},
-reject => { reject('error') })
+}, reject => { reject('error') })
 let wrapper
 let vm
 

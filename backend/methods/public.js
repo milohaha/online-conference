@@ -12,8 +12,8 @@ module.exports = {
   checkString: function (string) {
     return !(string === undefined || string.toString() === '')
   },
-  getObjects: async function (Model, condition) {
-    if (Model === undefined || condition === undefined) {
+  getObjects: async function (model, condition) {
+    if (model === undefined || condition === undefined) {
       return []
     }
     let objects
@@ -21,7 +21,7 @@ module.exports = {
       Object.keys(condition).forEach(key => {
         condition[key] = condition[key].toString()
       })
-      objects = await Model.findAll({
+      objects = await model.findAll({
         where: condition
       })
     } catch (error) {
@@ -29,16 +29,16 @@ module.exports = {
     }
     return objects
   },
-  createOrUpdateObject: async function (Model, condition, values) {
-    if (Model === undefined || condition === undefined || values === undefined) {
+  createOrUpdateObject: async function (model, condition, values) {
+    if (model === undefined || condition === undefined || values === undefined) {
       return null
     }
-    const objects = await Model.findOne({ where: condition })
+    const objects = await model.findOne({ where: condition })
     if (objects) { return objects.update(values) }
-    return Model.create({ ...values, ...condition })
+    return model.create({ ...values, ...condition })
   },
-  getObjectID: async function (Model, condition) {
-    const objects = await this.getObjects(Model, condition)
+  getObjectID: async function (model, condition) {
+    const objects = await this.getObjects(model, condition)
     try {
       return objects[0].id
     } catch (error) {

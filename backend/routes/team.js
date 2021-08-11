@@ -176,7 +176,6 @@ router.post('/generateConferenceToken', async function (request, response, next)
     response.json({ message: 'INVALID' })
   } else {
     const conferenceToken = uuid()
-    console.log((Date.now() + constant.EXPIRED * 1000).toString())
     await models.ConferenceToken.create({
       conferenceID: object.id,
       conferenceToken: conferenceToken,

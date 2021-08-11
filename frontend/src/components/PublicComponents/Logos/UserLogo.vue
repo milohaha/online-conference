@@ -2,12 +2,20 @@
   <div>
     <b-dropdown no-caret right variant='light'>
       <template v-slot:button-content>
-        <img src="../../../assets/picture/astronaut.png" alt="userLogo" class="user-logo">
+        <img
+          src="../../../assets/picture/astronaut.png"
+          alt="userLogo"
+          class="user-logo"
+        >
       </template>
       <b-dropdown-item>
         <div class="d-flex align-items-center">
           <div>
-            <b-avatar variant="info" src="https://placekitten.com/300/300" class="mx-1"></b-avatar>
+            <b-avatar
+              variant="info"
+              src="https://placekitten.com/300/300"
+              class="mx-1"
+            ></b-avatar>
           </div>
           <div class="flex-column">
             <div>

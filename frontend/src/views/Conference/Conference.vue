@@ -2,7 +2,11 @@
 <div>
   <div v-if="isValid">
     <div class="canvas-container">
-      <canvas id="canvas" width="1536px" height="754px"></canvas>
+      <canvas
+        id="canvas"
+        width="1792px"
+        height="1120px">
+      </canvas>
       <div class='document-block-container'>
         <document-block v-for="docID in documentArray"
                         @mousedown="documentDrag"
@@ -52,7 +56,6 @@
       </div>
       <span class="file-selector-wrapper">
           <input type="file"
-                 style="display: none;"
                  id="file-selector"
                  accept="application/pdf"
                  @change="loadFileHandler">
@@ -73,7 +76,8 @@
               {{ conferenceName }}
             </b-link>
           </div>
-          <div class="px-3 py-2 flex-fill" v-b-popover.hover.rightbottom="'导出文件'">
+          <div class="px-3 py-2 flex-fill"
+               v-b-popover.hover.rightbottom="'导出文件'">
             <span class="fmtfont fmt-share"></span>
           </div>
       </div>
@@ -99,7 +103,8 @@
       </b-button-group>
     </div>
       <div class="right-top">
-        <b-button-group class="setting-toolbar d-flex align-items-center justify-content-around">
+        <b-button-group class="setting-toolbar d-flex
+         align-items-center justify-content-around">
           <div class="d-flex align-items-center share-button">
             <b-button
               id="copyURL"
@@ -117,7 +122,8 @@
           <notice-side-bar
             @clickSideBar="clickSideBar">
           </notice-side-bar>
-          <b-dropdown no-caret right variant="light" v-b-popover.hover.bottomright="'设置'">
+          <b-dropdown no-caret right variant="light"
+                      v-b-popover.hover.bottomright="'设置'">
             <template #button-content>
               <span class="fmtfont fmt-setting"></span>
             </template>
@@ -131,28 +137,24 @@
     </div>
     <div class="left-center">
       <b-button-group vertical class="button-toolbar">
-        <!--        鼠标-->
         <b-button
           class="fmtfont fmt-mouse"
           variant="light"
           v-b-popover.hover.right="'鼠标'"
           @click="switchToCursor">
         </b-button>
-        <!--          拖拽-->
         <b-button
           class="fmtfont fmt-drag"
           variant="light"
           v-b-popover.hover.right="'拖拽'"
           @click="switchToDrag">
         </b-button>
-        <!--        笔-->
         <b-button
           class="fmtfont fmt-pen"
           variant="light"
           @click="switchToPen"
           v-b-popover.hover.right="'画笔'">
         </b-button>
-        <!--        图形-->
         <b-dropdown
           no-caret
           variant="light"
@@ -162,32 +164,25 @@
           <template #button-content>
             <span class="fmtfont fmt-shape"></span>
           </template>
-          <!--            矩形-->
           <b-dropdown-item-button
-            style="width: 50px;"
             name="rectangle"
             @click="addShape"
             button-class="fmtfont fmt-rectangle"
             v-b-popover.hover.right="'矩形'">
           </b-dropdown-item-button>
-          <!--            圆-->
           <b-dropdown-item-button
-            style="width: 50px;"
             name="circle"
             @click="addShape"
             button-class="fmtfont fmt-circle"
             v-b-popover.hover.right="'圆'">
           </b-dropdown-item-button>
-          <!--            三角形-->
           <b-dropdown-item-button
-            style="width: 50px;"
             name="triangle"
             @click="addShape"
             button-class="fmtfont fmt-triangle"
             v-b-popover.hover.right="'三角形'">
           </b-dropdown-item-button>
         </b-dropdown>
-        <!--        文本-->
         <b-button
           name="itext"
           @click="addShape"
@@ -195,21 +190,18 @@
           class="fmtfont fmt-text"
           v-b-popover.hover.right="'文本'">
         </b-button>
-        <!--        橡皮擦-->
         <b-button
           @click="switchToEraser"
           class="fmtfont fmt-eraser"
           variant="light"
           v-b-popover.hover.right="'橡皮擦'">
         </b-button>
-        <!--          注释-->
         <b-button
           class="fmtfont fmt-comment"
           variant="light"
           @click="switchToComment"
           v-b-popover.hover.right="'注释'">
         </b-button>
-        <!--        上传-->
         <b-button
           class="fmtfont fmt-upload"
           variant="light"
@@ -221,14 +213,12 @@
     <div class="left-bottom">
       <b-button-group
         class="extra-button-toolbar">
-        <!--        视频-->
         <b-button
           class="fmtfont fmt-video"
           variant="light"
           v-b-popover.hover.top="'音视频'"
           @click="toggleMediaDeviceTest">
         </b-button>
-        <!--        代码块-->
         <b-dropdown
           no-caret
           variant="light"
@@ -238,17 +228,30 @@
           <template #button-content>
             <span class="fmtfont fmt-codeblock"></span>
           </template>
-          <b-dropdown-item @click="addDocumentBlock('code','javascript')">JavaScript</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-python')">Python</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-csrc')">C</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-c++src')">C++</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-java')">Java</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-sh')">Shell</b-dropdown-item>
-          <b-dropdown-item @click="addDocumentBlock('code','x-sql')">SQL</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','javascript')">
+            JavaScript</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-python')">
+            Python</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-csrc')">
+            C</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-c++src')">
+            C++</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-java')">
+            Java</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-sh')">
+            Shell</b-dropdown-item>
+          <b-dropdown-item
+            @click="addDocumentBlock('code','x-sql')">
+            SQL</b-dropdown-item>
 
         </b-dropdown>
 
-        <!--        文档-->
         <b-button
           class="fmtfont fmt-document"
           @click="addDocumentBlock('text')"
@@ -258,7 +261,7 @@
       </b-button-group>
     </div>
     <div id="video-container">
-      <div id="me" style="display: none;"></div>
+      <div id="me"></div>
       <div id="remote-container"></div>
     </div>
     <div class="right-bottom-center d-flex justify-content-between">
@@ -347,7 +350,6 @@
       :conferenceID="conferenceID"
       :isFounder="founderID === userID">
     </conference-information>
-    <!-- Modal -->
     <b-modal
       class="modal fade"
       id="media-device-test"
@@ -366,11 +368,12 @@
           <div class="input-group mb-3">
             <b-dropdown
               id="mics-dropdown"
-              style="width: 82px;"
               text="Mics"
-              @click.native="(event) => switchMicrophone(event.target.outerText)">
+              @click.native="(event) =>
+              switchMicrophone(event.target.outerText)">
               <template v-for="(mic,index) in mics" >
-                <b-dropdown-item v-bind:key="index">{{ mic.label }}</b-dropdown-item>
+                <b-dropdown-item
+                  v-bind:key="index">{{ mic.label }}</b-dropdown-item>
               </template>
             </b-dropdown>
             <input
@@ -393,22 +396,25 @@
           <div class="input-group mb-3">
             <b-dropdown
               id="cams-dropdown"
-              style="width: 82px;"
               text="Cams"
               @click.native="(event) => switchCamera(event.target.outerText)">
               <template v-for="(cam,index) in cams" >
-                <b-dropdown-item v-bind:key="index">{{ cam.label }}</b-dropdown-item>
+                <b-dropdown-item
+                  v-bind:key="index">{{ cam.label }}</b-dropdown-item>
               </template>
 
             </b-dropdown>
-            <input type="text" class="cam-input form-control" aria-label="Text input with dropdown button" readonly>
+            <input type="text" class="cam-input form-control"
+                   aria-label="Text input with dropdown button" readonly>
           </div>
           <div id="pre-local-player" class="player"></div>
         </div>
       </template>
       <template #modal-footer="{}">
-        <button type="button" class="btn btn-secondary" @click="joinChannel(false)">关闭摄像头与麦克风后进入</button>
-        <button type="button" class="btn btn-primary" @click="joinChannel(true)" >进入会议室</button>
+        <button type="button" class="btn btn-secondary"
+                @click="joinChannel(false)">关闭摄像头与麦克风后进入</button>
+        <button type="button" class="btn btn-primary"
+                @click="joinChannel(true)" >进入会议室</button>
       </template>
     </b-modal>
     <share-view-list
@@ -418,7 +424,8 @@
       v-if="isSharing"
       @shareView="shareMyView"
     ></share-view-list>
-    <share-my-view-check @agree="agreeToShareMyView" @reject="rejectToShareMyView"></share-my-view-check>
+    <share-my-view-check @agree="agreeToShareMyView"
+                         @reject="rejectToShareMyView"></share-my-view-check>
   </div>
   <div v-else class="invalid-token">
     <p>链接已失效</p>
@@ -436,14 +443,13 @@ import { fabric } from 'fabric'
 import '../../components/Conference/eraser_brush.mixin'
 import { v1 as uuid } from 'uuid'
 import DocumentBlock from '../../components/Conference/DocumentBlock'
-import AgoraRTC from 'agora-rtc-sdk-ng'
 import InviteNewMember from '../../components/Team/InviteNewMember.vue'
-import AgoraRTC from 'agora-rtc-sdk-ng'
 import NoticeSideBar from '../../components/PublicComponents/Notice/NoticeSideBar'
 import CommentBlock from '../../components/Conference/CommentBlock'
 import UploadFile from '../../components/Conference/UploadFile'
 import ShareViewList from '../../components/Conference/ShareViewList'
 import ShareMyViewCheck from '../../components/Conference/ShareMyViewCheck'
+import AgoraRTC from 'agora-rtc-sdk-ng'
 export default {
   data: function () {
     return {
@@ -467,7 +473,6 @@ export default {
       isInviting: false,
       isSharing: false,
       paramsForSharingView: '',
-      // for video
       videoClient: undefined,
       localTracks: {
         videoTrack: null,
@@ -477,10 +482,10 @@ export default {
         appID: 'a72e28c547214bb7a8c03c136be2ff11',
         token: null
       },
-      mics: [], // all microphones devices you can use
-      cams: [], // all cameras devices you can use
-      currentMic: undefined, // the microphone you are using
-      currentCam: undefined, // the camera you are using
+      mics: [],
+      cams: [],
+      currentMic: undefined,
+      currentCam: undefined,
       volumeAnimation: undefined,
       dragging: false,
       dragMode: false,
@@ -489,7 +494,6 @@ export default {
       relativeY: 0,
       fileArray: [],
       initFile: undefined,
-      // for comment
       blockComments: [],
       freeComments: [],
       currentComments: [],
@@ -498,7 +502,9 @@ export default {
       blocks: [],
       initCommentBlocks: undefined,
       commentMode: false,
-      documentBlockOfComment: undefined
+      documentBlockOfComment: undefined,
+      windowWidth: '',
+      windowHeight: ''
     }
   },
   computed: {
@@ -537,6 +543,8 @@ export default {
     }
   },
   mounted () {
+    this.windowHeight = window.innerHeight + 'px'
+    this.windowWidth = window.innerWidth + 'px'
     AgoraRTC.setLogLevel(4)
     this.uuid = uuid()
     this.remoteUUID = this.uuid
@@ -563,43 +571,57 @@ export default {
     this.$io.on('exit', () => {
       this.updateMemberList()
     })
-    this.$io.on('initCanvas', (itemsOfCanvas, blocksOfCanvas, filesOfCanvas, blocks, blockComments, freeComments) => {
-      for (const item of itemsOfCanvas) {
-        this.updateBoard(this.canvas, item, 0)
-      }
-      for (const block of blocksOfCanvas) {
-        this.documentArray.push(block.itemID)
-        // 不直接更新位置是因为此时document-block未渲染完毕,无法根据id拿到它
-        this.initBlocksOfCanvas.set(block.itemID,
-          { left: block.itemLeft, top: block.itemTop, type: block.type, language: block.language, zoom: this.zoom })
-      }
-      for (const file of filesOfCanvas) {
-        this.fileArray.push(file.fileID)
-        this.initFile.set(file.fileID, { left: file.fileLeft, top: file.fileTop, fileContent: file.fileContent, zoom: this.zoom })
-      }
-      for (const block of blocks) {
-        if (block.stickBlockID === null || block.stickBlockID === undefined) {
-          this.blocks.push(block.commentBlockID)
-          this.initCommentBlocks.set(block.commentBlockID,
-            {
-              left: block.left,
-              top: block.top,
-              commentBlockID: block.commentBlockID,
-              conferenceID: block.conferenceID,
-              stickBlockID: block.stickBlockID
-            })
-        } else {
-          const object = this.initBlocksOfCanvas.get(block.stickBlockID)
-          this.initBlocksOfCanvas.set(block.stickBlockID, { ...object, commentID: block.commentBlockID })
+    this.$io.on('initCanvas',
+      (itemsOfCanvas, blocksOfCanvas, filesOfCanvas,
+        blocks, blockComments, freeComments) => {
+        for (const item of itemsOfCanvas) {
+          this.updateBoard(this.canvas, item, 0)
         }
-      }
-      for (let index = blockComments.length - 1; index >= 0; index--) {
-        this.blockComments.push(blockComments[index])
-      }
-      for (let index = freeComments.length - 1; index >= 0; index--) {
-        this.freeComments.push(freeComments[index])
-      }
-    })
+        for (const block of blocksOfCanvas) {
+          this.documentArray.push(block.itemID)
+          this.initBlocksOfCanvas.set(block.itemID,
+            {
+              left: block.itemLeft,
+              top: block.itemTop,
+              type: block.type,
+              language: block.language,
+              zoom: this.zoom
+            })
+        }
+        for (const file of filesOfCanvas) {
+          this.fileArray.push(file.fileID)
+          this.initFile.set(file.fileID, {
+            left: file.fileLeft,
+            top: file.fileTop,
+            fileContent: file.fileContent,
+            zoom: this.zoom
+          })
+        }
+        for (const block of blocks) {
+          if (block.stickBlockID === null ||
+            block.stickBlockID === undefined) {
+            this.blocks.push(block.commentBlockID)
+            this.initCommentBlocks.set(block.commentBlockID,
+              {
+                left: block.left,
+                top: block.top,
+                commentBlockID: block.commentBlockID,
+                conferenceID: block.conferenceID,
+                stickBlockID: block.stickBlockID
+              })
+          } else {
+            const object = this.initBlocksOfCanvas.get(block.stickBlockID)
+            this.initBlocksOfCanvas.set(block.stickBlockID,
+              { ...object, commentID: block.commentBlockID })
+          }
+        }
+        for (let index = blockComments.length - 1; index >= 0; index--) {
+          this.blockComments.push(blockComments[index])
+        }
+        for (let index = freeComments.length - 1; index >= 0; index--) {
+          this.freeComments.push(freeComments[index])
+        }
+      })
     this.$io.on('shareViewInvitation', (params) => {
       this.$bvModal.show('share-view-check')
       this.paramsForSharingView = params
@@ -630,7 +652,6 @@ export default {
           break
       }
     })
-    // 移动缩放监听
     this.canvas.on({
       'mouse:down': (event) => {
         if (event.target === null && this.dragMode) {
@@ -650,22 +671,28 @@ export default {
           this.relativeX += event.e.movementX / this.zoom
           this.relativeY += event.e.movementY / this.zoom
           this.canvas.relativePan(delta)
-          for (let index = this.documentArray.length - 1; index >= 0; index--) {
-            const block = this.getElementById('docContainer' + this.documentArray[index])
+          for (let index = this.documentArray.length - 1;
+            index >= 0; index--) {
+            const block = this.getElementById('docContainer' +
+              this.documentArray[index])
             const left = block.style.left
             const top = block.style.top
-            block.style.left = Number(left.substr(0, left.length - 2)) + event.e.movementX + 'px'
-            block.style.top = Number(top.substr(0, top.length - 2)) + event.e.movementY + 'px'
+            block.style.left = Number(left.substr(0, left.length - 2)) +
+              event.e.movementX + 'px'
+            block.style.top = Number(top.substr(0, top.length - 2)) +
+              event.e.movementY + 'px'
           }
           for (let index = this.blocks.length - 1; index >= 0; index--) {
-            const comment = this.getElementById('commentBlock' + this.blocks[index])
+            const comment = this.getElementById('comment-block' +
+              this.blocks[index])
             const left = parseFloat(comment.style.left)
             const top = parseFloat(comment.style.top)
             comment.style.left = left + event.e.movementX + 'px'
             comment.style.top = top + event.e.movementY + 'px'
           }
           for (let index = this.fileArray.length - 1; index >= 0; index--) {
-            const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+            const fileItem = this.getElementById('pdf-wrapper' +
+              this.fileArray[index])
             const left = parseFloat(fileItem.style.left)
             const top = parseFloat(fileItem.style.top)
             fileItem.style.left = left + event.e.movementX + 'px'
@@ -677,13 +704,16 @@ export default {
         mouseEvent.e.preventDefault()
         mouseEvent.e.stopPropagation()
         const oldZoom = this.canvas.getZoom()
-        let zoom = (event.deltaY > 0 ? -0.1 : 0.1) + this.canvas.getZoom()
+        let zoom = (event.deltaY > 0 ? -0.05 : 0.05) + this.canvas.getZoom()
         zoom = Math.max(0.1, zoom)
         zoom = Math.min(10, zoom)
         this.zoom = zoom
-        this.relativeX = mouseEvent.pointer.x / zoom - (mouseEvent.pointer.x - this.relativeX * oldZoom) / oldZoom
-        this.relativeY = mouseEvent.pointer.y / zoom - (mouseEvent.pointer.y - this.relativeY * oldZoom) / oldZoom
-        const zoomPoint = new fabric.Point(mouseEvent.pointer.x, mouseEvent.pointer.y)
+        this.relativeX = mouseEvent.pointer.x / zoom -
+          (mouseEvent.pointer.x - this.relativeX * oldZoom) / oldZoom
+        this.relativeY = mouseEvent.pointer.y / zoom -
+          (mouseEvent.pointer.y - this.relativeY * oldZoom) / oldZoom
+        const zoomPoint = new fabric.Point(mouseEvent.pointer.x,
+          mouseEvent.pointer.y)
         this.canvas.zoomToPoint(zoomPoint, zoom)
         for (let index = this.documentArray.length - 1; index >= 0; index--) {
           const docRef = 'doc' + this.documentArray[index]
@@ -693,45 +723,75 @@ export default {
           left = left === '0' ? 0 : Number(left.substr(0, left.length - 2))
           let top = documentComponent.getContainer().style.top
           top = top === '0' ? 0 : Number(top.substr(0, top.length - 2))
-          documentComponent.getContainer().style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
-          documentComponent.getContainer().style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
+          documentComponent.getContainer().style.left =
+            zoom / oldZoom * (left - mouseEvent.pointer.x) +
+            mouseEvent.pointer.x + 'px'
+          documentComponent.getContainer().style.top =
+            zoom / oldZoom * (top - mouseEvent.pointer.y) +
+            mouseEvent.pointer.y + 'px'
           block.setSize(400 * zoom, 400 * zoom)
-          documentComponent.getContainer().style.fontSize = Math.ceil(14 * zoom) + 'px'
+          documentComponent.getContainer().style.fontSize =
+            Math.ceil(14 * zoom) + 'px'
         }
         for (let index = this.blocks.length - 1; index >= 0; index--) {
-          const comment = this.getElementById('commentBlock' + this.blocks[index])
+          const comment = this.getElementById(
+            'comment-block' + this.blocks[index])
           const left = parseFloat(comment.style.left)
           const top = parseFloat(comment.style.top)
-          comment.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
-          comment.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
+          comment.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) +
+            mouseEvent.pointer.x + 'px'
+          comment.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) +
+            mouseEvent.pointer.y + 'px'
           comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
         }
         for (let index = this.fileArray.length - 1; index >= 0; index--) {
-          const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
+          const fileItem = this.getElementById(
+            'pdf-wrapper' + this.fileArray[index])
           const left = parseFloat(fileItem.style.left)
           const top = parseFloat(fileItem.style.top)
-          fileItem.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) + mouseEvent.pointer.x + 'px'
-          fileItem.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) + mouseEvent.pointer.y + 'px'
-          fileItem.style.width = parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
-          fileItem.style.height = parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
+          fileItem.style.left =
+            zoom / oldZoom * (left - mouseEvent.pointer.x) +
+            mouseEvent.pointer.x + 'px'
+          fileItem.style.top =
+            zoom / oldZoom * (top - mouseEvent.pointer.y) +
+            mouseEvent.pointer.y + 'px'
+          fileItem.style.width =
+            parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
+          fileItem.style.height =
+            parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
         }
       }
     })
     const that = this
     this.$io.on('newDocumentBlock', (params) => {
       that.documentArray.push(params.docID)
-      this.initBlocksOfCanvas.set(params.docID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, type: params.type, language: params.language, zoom: this.zoom })
+      this.initBlocksOfCanvas.set(params.docID, {
+        left: (params.left + this.relativeX) * this.zoom,
+        top: (params.top + this.relativeY) * this.zoom,
+        type: params.type,
+        language: params.language,
+        zoom: this.zoom
+      })
     })
     this.$io.on('moveDocumentBlock', (params) => {
       const targetDoc = this.$refs[`doc${params.docID}`][0].$el
-      targetDoc.setAttribute('style', `position: absolute; left: ${(params.left + this.relativeX) * this.zoom}px; top: ${(params.top + this.relativeY) * this.zoom}px`)
+      targetDoc.setAttribute('style',
+        `position: absolute;
+        left: ${(params.left + this.relativeX) * this.zoom}px;
+         top: ${(params.top + this.relativeY) * this.zoom}px`)
     })
     this.$io.on('deleteDocumentBlock', (docID) => {
-      that.documentArray.splice(that.documentArray.findIndex(document => document === docID), 1)
+      that.documentArray.splice(
+        that.documentArray.findIndex(document => document === docID), 1)
     })
     this.$io.on('newPdfFile', (params) => {
       that.fileArray.push(params.fileID)
-      that.initFile.set(params.fileID, { left: (params.left + this.relativeX) * this.zoom, top: (params.top + this.relativeY) * this.zoom, fileContent: params.fileContent, zoom: this.zoom })
+      that.initFile.set(params.fileID, {
+        left: (params.left + this.relativeX) * this.zoom,
+        top: (params.top + this.relativeY) * this.zoom,
+        fileContent: params.fileContent,
+        zoom: this.zoom
+      })
     })
     this.$io.on('moveFile', (params) => {
       const targetFile = that.$refs[`file${params.fileID}`][0].$el
@@ -740,7 +800,8 @@ export default {
       targetFile.style.top = (params.top + this.relativeY) * this.zoom + 'px'
     })
     this.$io.on('removeFile', (fileID) => {
-      that.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
+      that.fileArray.splice(
+        this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
     })
 
     this.$io.on('initVideo', this.initVideo)
@@ -799,9 +860,13 @@ export default {
     })
     this.$io.on('deleteComment', (comment, type) => {
       if (type === 'block') {
-        this.blockComments.splice(this.blockComments.findIndex(data => data.commentItemID === comment.commentItemID), 1)
+        this.blockComments.splice(
+          this.blockComments.findIndex(
+            data => data.commentItemID === comment.commentItemID), 1)
       } else {
-        this.freeComments.splice(this.freeComments.findIndex(data => data.commentItemID === comment.commentItemID), 1)
+        this.freeComments.splice(
+          this.freeComments.findIndex(
+            data => data.commentItemID === comment.commentItemID), 1)
       }
       if (comment.commentBlockID === this.currentBlockID) {
         this.refresh(this.currentCommentType, this.currentBlockID)
@@ -809,7 +874,8 @@ export default {
     })
     this.$io.on('deleteCommentBlock', (commentBlockID, type, documentBlockID) => {
       if (type === 'free') {
-        this.blocks.splice(this.blocks.findIndex(block => block === commentBlockID), 1)
+        this.blocks.splice(
+          this.blocks.findIndex(block => block === commentBlockID), 1)
       } else {
         const ref = 'doc' + documentBlockID
         this.$refs[ref][0].setComment(false)
@@ -890,7 +956,8 @@ export default {
         block.setSize(400 * zoom, 400 * zoom)
       }
       for (let index = this.blocks.length - 1; index >= 0; index--) {
-        const comment = this.getElementById('commentBlock' + this.blocks[index])
+        const comment = this.getElementById(
+          'comment-block' + this.blocks[index])
         const left = parseFloat(comment.style.left)
         const top = parseFloat(comment.style.top)
         comment.style.left = zoom / oldZoom * left + 'px'
@@ -898,29 +965,45 @@ export default {
         comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
       }
       for (let index = this.fileArray.length - 1; index >= 0; index--) {
-        const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
-        fileItem.style.width = parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
-        fileItem.style.height = parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
-        fileItem.style.left = zoom / oldZoom * parseFloat(fileItem.style.left) + 'px'
-        fileItem.style.top = zoom / oldZoom * parseFloat(fileItem.style.top) + 'px'
+        const fileItem = this.getElementById(
+          'pdf-wrapper' + this.fileArray[index])
+        fileItem.style.width =
+          parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
+        fileItem.style.height =
+          parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
+        fileItem.style.left =
+          zoom / oldZoom * parseFloat(fileItem.style.left) + 'px'
+        fileItem.style.top =
+          zoom / oldZoom * parseFloat(fileItem.style.top) + 'px'
       }
       const oldViewportTransform = this.canvas.viewportTransform
 
       this.canvas.viewportTransform = viewportTransform
       for (let index = this.documentArray.length - 1; index >= 0; index--) {
-        const block = this.getElementById('docContainer' + this.documentArray[index])
-        block.style.left = parseFloat(block.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
-        block.style.top = parseFloat(block.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+        const block = this.getElementById(
+          'docContainer' + this.documentArray[index])
+        block.style.left =
+          parseFloat(block.style.left) + viewportTransform[4] -
+          oldViewportTransform[4] + 'px'
+        block.style.top =
+          parseFloat(block.style.top) + viewportTransform[5] -
+          oldViewportTransform[5] + 'px'
       }
       for (let index = this.blocks.length - 1; index >= 0; index--) {
-        const comment = this.getElementById('commentBlock' + this.blocks[index])
-        comment.style.left = parseFloat(comment.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
-        comment.style.top = parseFloat(comment.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+        const comment = this.getElementById(
+          'comment-block' + this.blocks[index])
+        comment.style.left = parseFloat(comment.style.left) +
+          viewportTransform[4] - oldViewportTransform[4] + 'px'
+        comment.style.top = parseFloat(comment.style.top) +
+          viewportTransform[5] - oldViewportTransform[5] + 'px'
       }
       for (let index = this.fileArray.length - 1; index >= 0; index--) {
-        const fileItem = this.getElementById('pdf-wrapper' + this.fileArray[index])
-        fileItem.style.left = parseFloat(fileItem.style.left) + viewportTransform[4] - oldViewportTransform[4] + 'px'
-        fileItem.style.top = parseFloat(fileItem.style.top) + viewportTransform[5] - oldViewportTransform[5] + 'px'
+        const fileItem = this.getElementById(
+          'pdf-wrapper' + this.fileArray[index])
+        fileItem.style.left = parseFloat(fileItem.style.left) +
+          viewportTransform[4] - oldViewportTransform[4] + 'px'
+        fileItem.style.top = parseFloat(fileItem.style.top) +
+          viewportTransform[5] - oldViewportTransform[5] + 'px'
       }
       this.canvas.renderAll()
     },
@@ -931,15 +1014,27 @@ export default {
       this.commentMode = false
       const ID = uuid()
       if (stickBlockID === null || stickBlockID === undefined) {
-        this.$io.emit('addCommentBlock', { conferenceID: this.conferenceID, commentBlockID: ID, left: -this.relativeX + event.pointer.x / this.zoom, top: -this.relativeY + event.pointer.y / this.zoom })
+        this.$io.emit('addCommentBlock', {
+          conferenceID: this.conferenceID,
+          commentBlockID: ID,
+          left: -this.relativeX + event.pointer.x / this.zoom,
+          top: -this.relativeY + event.pointer.y / this.zoom
+        })
       } else {
         const ref = 'doc' + stickBlockID
         if (!this.$refs[ref][0].commentID) {
-          this.$io.emit('addCommentBlock', { conferenceID: this.conferenceID, commentBlockID: ID, stickBlockID: stickBlockID, left: -this.relativeX + event.x / this.zoom, top: -this.relativeY + event.y / this.zoom })
+          this.$io.emit('addCommentBlock', {
+            conferenceID: this.conferenceID,
+            commentBlockID: ID,
+            stickBlockID: stickBlockID,
+            left: -this.relativeX + event.x / this.zoom,
+            top: -this.relativeY + event.y / this.zoom
+          })
         }
       }
     },
-    deleteCommentBlock: function (event, type, currentBlockID, documentBlockOfComment) {
+    deleteCommentBlock: function (event, type,
+      currentBlockID, documentBlockOfComment) {
       if (type === 'block') {
         const ref = 'doc' + documentBlockOfComment
         this.$refs[ref][0].setComment(false)
@@ -949,9 +1044,11 @@ export default {
     revokeComment: function (commentID, type) {
       let comment
       if (type === 'block') {
-        comment = this.blockComments.find(data => data.commentItemID === commentID)
+        comment =
+          this.blockComments.find(data => data.commentItemID === commentID)
       } else {
-        comment = this.freeComments.find(data => data.commentItemID === commentID)
+        comment =
+          this.freeComments.find(data => data.commentItemID === commentID)
       }
       this.$io.emit('revokeComment', type, comment, this.conferenceID)
     },
@@ -965,7 +1062,6 @@ export default {
       }, this.conferenceID)
     },
     displayComment: function (e, type, commentID, documentID) {
-      console.log('display:', e, type, commentID, documentID)
       let commentBlock
       if (type === 'block') {
         this.documentBlockOfComment = documentID
@@ -1004,17 +1100,24 @@ export default {
         const top = -this.relativeY + (ev.clientY - disY) / this.zoom
         docDiv.style.left = ev.clientX - disX + 'px'
         docDiv.style.top = ev.clientY - disY + 'px'
-        this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: left, top: top, docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+        this.$io.emit('moveDocumentBlock', {
+          conferenceID: this.conferenceID,
+          left: left,
+          top: top,
+          docID: docDiv.id.substr(12, docDiv.id.length - 12)
+        })
       }
-      // 避免频繁更新数据库
-      document.onmouseup = (e) => {
+      document.onmouseup = (event) => {
         document.onmousemove = null
         document.onmouseup = null
-        this.$io.emit('dragBlockStop', { left: parseFloat(docDiv.style.left) / this.zoom - this.relativeX, top: parseFloat(docDiv.style.top) / this.zoom - this.relativeY, docID: docDiv.id.substr(12, docDiv.id.length - 12) })
+        this.$io.emit('dragBlockStop', {
+          left: parseFloat(docDiv.style.left) / this.zoom - this.relativeX,
+          top: parseFloat(docDiv.style.top) / this.zoom - this.relativeY,
+          docID: docDiv.id.substr(12, docDiv.id.length - 12)
+        })
       }
     },
     fileDrag: function (e, fileDiv) {
-      console.log('fileDrag')
       const disX = e.clientX - fileDiv.offsetLeft
       const disY = e.clientY - fileDiv.offsetTop
       document.onmousemove = (ev) => {
@@ -1022,14 +1125,21 @@ export default {
         const top = -this.relativeY + (ev.clientY - disY) / this.zoom
         fileDiv.style.left = ev.clientX - disX + 'px'
         fileDiv.style.top = ev.clientY - disY + 'px'
-        this.$io.emit('moveFile', { left: left, top: top, fileID: fileDiv.id.substr(11, fileDiv.id.length - 11), conferenceID: this.conferenceID })
+        this.$io.emit('moveFile', {
+          left: left,
+          top: top,
+          fileID: fileDiv.id.substr(11, fileDiv.id.length - 11),
+          conferenceID: this.conferenceID
+        })
       }
-      // 避免频繁更新数据库
-      document.onmouseup = (e) => {
+      document.onmouseup = (event) => {
         document.onmousemove = null
         document.onmouseup = null
-        console.log('dragFileStop', fileDiv.id, fileDiv.id.substr(11, fileDiv.id.length - 11))
-        this.$io.emit('dragFileStop', { left: parseFloat(fileDiv.style.left) / this.zoom - this.relativeX, top: parseFloat(fileDiv.style.top) / this.zoom - this.relativeY, fileID: fileDiv.id.substr(11, fileDiv.id.length - 11) })
+        this.$io.emit('dragFileStop', {
+          left: parseFloat(fileDiv.style.left) / this.zoom - this.relativeX,
+          top: parseFloat(fileDiv.style.top) / this.zoom - this.relativeY,
+          fileID: fileDiv.id.substr(11, fileDiv.id.length - 11)
+        })
       }
     },
     shareConference () {
@@ -1038,7 +1148,8 @@ export default {
       })
         .then((response) => {
           if (response.data.message === 'SUCCESS') {
-            this.URL = process.env.VUE_APP_CONFERENCE_BASE + '?conferenceToken=' + response.data.conferenceToken +
+            this.URL = process.env.VUE_APP_CONFERENCE_BASE +
+              '?conferenceToken=' + response.data.conferenceToken +
                        '&' + 'conferenceID=' + this.conferenceID
             this.$copyText(this.URL).then(this.copySuccess, this.copyFail)
           }
@@ -1059,7 +1170,6 @@ export default {
       }, 1500)
     },
     updateMemberList () {
-      // this.$refs.memberList.getMembers()
       this.$refs.memberList.getMembers()
     },
     exitConference () {
@@ -1092,7 +1202,9 @@ export default {
         }
       }
       if (isMultiActive) {
-        const { addX, addY } = this.getPoint(group.width * group.scaleX / 2, group.height * group.scaleY / 2, group.angle)
+        const { addX, addY } = this.getPoint(
+          group.width * group.scaleX / 2,
+          group.height * group.scaleY / 2, group.angle)
         const X = (setOption.left - group.left - addX) / group.scaleX
         const Y = (setOption.top - group.top - addY) / group.scaleY
         const relativePoint = this.getPoint(X, Y, -group.angle)
@@ -1147,7 +1259,6 @@ export default {
         }
         return
       }
-      // 手动klass化clipPath
       if (object.clipPath) {
         const klass = fabric.util.getKlass(object.clipPath.type)
         if (klass) {
@@ -1197,9 +1308,12 @@ export default {
         if (state === 'modified' && options.target._objects !== undefined) {
           const activeObjects = this.canvas.getActiveObjects()
           const group = activeObjects[0].group
-          const { addX, addY } = this.getPoint(group.width * group.scaleX / 2, group.height * group.scaleY / 2, group.angle)
+          const { addX, addY } = this.getPoint(
+            group.width * group.scaleX / 2,
+            group.height * group.scaleY / 2, group.angle)
           for (const activeObject of activeObjects) {
-            const relativePoint = this.getPoint(activeObject.left, activeObject.top, group.angle)
+            const relativePoint = this.getPoint(
+              activeObject.left, activeObject.top, group.angle)
             this.sendObjectToGroup(activeObject, state,
               {
                 left: relativePoint.addX * group.scaleX + group.left + addX,
@@ -1226,7 +1340,8 @@ export default {
             })
           }
         })(object.toJSON)
-        this.$io.emit('sendObjectOfCanvas', object, this.conferenceID, this.uuid, setOption)
+        this.$io.emit('sendObjectOfCanvas',
+          object, this.conferenceID, this.uuid, setOption)
       }
     },
     switchToComment: function () {
@@ -1290,19 +1405,35 @@ export default {
         fabricItem = new fabric.IText('Tap and Type', { left: 100, top: 100 })
         fabricItem.set({ erasable: false })
       }
-      fabricItem.set({ left: -this.canvas.viewportTransform[4] + window.innerWidth / 2, top: -this.canvas.viewportTransform[5] + window.innerHeight / 2 })
+      fabricItem.set({
+        left: -this.canvas.viewportTransform[4] + window.innerWidth / 2,
+        top: -this.canvas.viewportTransform[5] + window.innerHeight / 2
+      })
       this.canvas.add(fabricItem)
       this.canvas.renderAll()
     },
     addDocumentBlock: function (type, language) {
       const docID = uuid()
       this.documentArray.push(docID)
-      this.initBlocksOfCanvas.set(docID, { left: window.innerWidth / 2, top: window.innerHeight / 2, type: type, language: language, zoom: this.zoom })
-      // 通知会议室里其他socket
-      this.$io.emit('newDocumentBlock', { conferenceID: this.conferenceID, docID: docID, type: type, left: window.innerWidth / 2 / this.zoom - this.relativeX, top: window.innerHeight / 2 / this.zoom - this.relativeY, language: language })
+      this.initBlocksOfCanvas.set(docID, {
+        left: window.innerWidth / 2,
+        top: window.innerHeight / 2,
+        type: type,
+        language: language,
+        zoom: this.zoom
+      })
+      this.$io.emit('newDocumentBlock', {
+        conferenceID: this.conferenceID,
+        docID: docID,
+        type: type,
+        left: window.innerWidth / 2 / this.zoom - this.relativeX,
+        top: window.innerHeight / 2 / this.zoom - this.relativeY,
+        language: language
+      })
     },
     removeDocumentBlock: function (docID) {
-      this.documentArray.splice(this.documentArray.findIndex(document => document === docID), 1)
+      this.documentArray.splice(
+        this.documentArray.findIndex(document => document === docID), 1)
       this.$io.emit('deleteDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
     },
     loadFileHandler: function () {
@@ -1313,19 +1444,35 @@ export default {
         const that = this
         reader.onload = () => {
           const fileID = uuid()
-          const fileContent = reader.result.split('base64,')[1] // base64码
+          const fileContent = reader.result.split('base64,')[1]
           that.fileArray.push(fileID)
-          console.log('loadFileHandler zoom', this.zoom)
-          that.initFile.set(fileID, { left: window.innerWidth / 2, top: window.innerHeight / 2, fileContent: fileContent, zoom: this.zoom })
-          that.$io.emit('newPdfFile', { conferenceID: that.conferenceID, fileContent: fileContent, fileID: fileID, left: window.innerWidth / 2 / this.zoom - this.relativeX, top: window.innerHeight / 2 / this.zoom - this.relativeY })
+          that.initFile.set(fileID, {
+            left: window.innerWidth / 2,
+            top: window.innerHeight / 2,
+            fileContent: fileContent,
+            zoom: this.zoom
+          })
+          that.$io.emit('newPdfFile', {
+            conferenceID: that.conferenceID,
+            fileContent: fileContent,
+            fileID: fileID,
+            left: window.innerWidth / 2 / this.zoom - this.relativeX,
+            top: window.innerHeight / 2 / this.zoom - this.relativeY
+          })
         }
       }
     },
     notifyMoveFile: function (params) {
-      this.$io.emit('moveFile', { conferenceID: this.conferenceID, left: params.left, top: params.top, fileID: params.fileID })
+      this.$io.emit('moveFile', {
+        conferenceID: this.conferenceID,
+        left: params.left,
+        top: params.top,
+        fileID: params.fileID
+      })
     },
     removeFile: function (fileID) {
-      this.fileArray.splice(this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
+      this.fileArray.splice(
+        this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
       this.$io.emit('removeFile', { conferenceID: this.conferenceID, fileID: fileID })
     },
     clickFileSelector: function () {
@@ -1366,7 +1513,8 @@ export default {
           conferenceToken: conferenceToken
         })
           .then((response) => {
-            if (response.data.message === 'VALID' && response.data.expired === false) {
+            if (response.data.message === 'VALID' &&
+              response.data.expired === false) {
               this.isValid = true
             } else {
               this.isValid = false
@@ -1378,7 +1526,12 @@ export default {
       }
     },
     notifyMove: function (params) {
-      this.$io.emit('moveDocumentBlock', { conferenceID: this.conferenceID, left: params.left, top: params.top, docID: params.docID })
+      this.$io.emit('moveDocumentBlock', {
+        conferenceID: this.conferenceID,
+        left: params.left,
+        top: params.top,
+        docID: params.docID
+      })
     },
     mediaDeviceTest: async function () {
       if (this.localTracks.audioTrack && this.localTracks.videoTrack) {
@@ -1387,27 +1540,36 @@ export default {
         this.localTracks.audioTrack.stop()
         this.localTracks.audioTrack.close()
       }
-      // get mics
       this.mics = await AgoraRTC.getMicrophones()
       this.currentMic = this.mics[0]
       const micLabel = document.getElementsByClassName('mic-input')[0]
       if (this.currentMic) {
-        this.localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack()
+        this.localTracks.audioTrack =
+          await AgoraRTC.createMicrophoneAudioTrack()
         this.volumeAnimation = requestAnimationFrame(this.setVolumeWave)
-        if (micLabel) { micLabel.setAttribute('value', this.currentMic.label) }
+        if (micLabel) {
+          micLabel.setAttribute('value', this.currentMic.label)
+        }
       } else {
-        if (micLabel) { micLabel.setAttribute('value', 'Not found, please check') }
+        if (micLabel) {
+          micLabel.setAttribute('value', 'Not found, please check')
+        }
       }
-      // get cameras
       this.cams = await AgoraRTC.getCameras()
       this.currentCam = this.cams[0]
       const camLabel = document.getElementsByClassName('cam-input')[0]
       if (this.currentCam) {
         this.localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack()
         this.localTracks.videoTrack.play('pre-local-player')
-        if (camLabel) { camLabel.setAttribute('value', this.currentCam.label) }
+        if (camLabel) {
+          camLabel.setAttribute(
+            'value', this.currentCam.label)
+        }
       } else {
-        if (camLabel) { camLabel.setAttribute('value', 'Not found, please check') }
+        if (camLabel) {
+          camLabel.setAttribute(
+            'value', 'Not found, please check')
+        }
       }
     },
     joinChannel: async function (withCamera) {
@@ -1416,13 +1578,16 @@ export default {
       }
       this.$bvModal.hide('media-device-test')
       if (!this.videoClient._joinInfo) {
-        await this.videoClient.join(this.videoOptions.appID, 'Conference' + this.conferenceID, this.videoOptions.token, this.userID)
+        await this.videoClient.join(this.videoOptions.appID,
+          'Conference' + this.conferenceID,
+          this.videoOptions.token, this.userID)
       }
       if (withCamera) {
         if (this.localTracks.videoTrack && this.localTracks.audioTrack) {
           document.getElementById('me').style.display = 'block'
           this.localTracks.videoTrack.play('me')
-          await this.videoClient.publish([this.localTracks.audioTrack, this.localTracks.videoTrack])
+          await this.videoClient.publish(
+            [this.localTracks.audioTrack, this.localTracks.videoTrack])
         }
       } else {
         document.getElementById('me').style.display = 'none'
@@ -1441,19 +1606,23 @@ export default {
     },
     switchCamera: async function (label) {
       this.currentCam = this.cams.find(cam => cam.label === label)
-      document.getElementsByClassName('cam-input')[0].setAttribute('value', this.currentCam.label)
+      document.getElementsByClassName('cam-input')[0].setAttribute(
+        'value', this.currentCam.label)
       await this.localTracks.videoTrack.setDevice(this.currentCam.deviceId)
     },
     switchMicrophone: async function (label) {
       this.currentMic = this.mics.find(mic => mic.label === label)
-      document.getElementsByClassName('mic-input')[0].setAttribute('value', this.currentMic.label)
+      document.getElementsByClassName('mic-input')[0].setAttribute(
+        'value', this.currentMic.label)
       await this.localTracks.audioTrack.setDevice(this.currentMic.deviceId)
     },
     setVolumeWave: function () {
       this.volumeAnimation = requestAnimationFrame(this.setVolumeWave)
       const progressBar = document.getElementsByClassName('progress-bar')[0]
-      progressBar.style.width = this.localTracks.audioTrack.getVolumeLevel() * 100 + '%'
-      progressBar.setAttribute('aria-valuenow', this.localTracks.audioTrack.getVolumeLevel() * 100)
+      progressBar.style.width =
+        this.localTracks.audioTrack.getVolumeLevel() * 100 + '%'
+      progressBar.setAttribute('aria-valuenow',
+        this.localTracks.audioTrack.getVolumeLevel() * 100)
     },
     initVideo: async function (videoToken) {
       this.videoOptions.token = videoToken
@@ -1462,14 +1631,10 @@ export default {
         codec: 'vp8'
       })
       this.videoClient.on('user-published', async (user, mediaType) => {
-        // 开始订阅远端用户。
         await this.videoClient.subscribe(user, mediaType)
         if (mediaType === 'video') {
-          // 订阅完成后，从 `user` 中获取远端视频轨道对象。
           const remoteVideoTrack = user.videoTrack
-          // 动态插入一个 DIV 节点作为播放远端视频轨道的容器。
           const playerContainer = document.createElement('div')
-          // 给这个 DIV 节点指定一个 ID，这里指定的是远端用户的 UID。
           playerContainer.id = user.uid.toString()
           playerContainer.style.width = '200px'
           playerContainer.style.height = '200px'
@@ -1478,8 +1643,6 @@ export default {
           playerContainer.style.marginLeft = '10px'
           document.getElementById('remote-container').append(playerContainer)
           remoteVideoTrack.play(playerContainer)
-          // 也可以只传入该 DIV 节点的 ID。
-          // remoteVideoTrack.play(playerContainer.id);
         }
         if (mediaType === 'audio') {
           const remoteAudioTrack = user.audioTrack
@@ -1511,6 +1674,7 @@ export default {
 </script>
 <style scoped>
 .canvas-container {
+  position: relative;
   margin: 0;
   overflow: hidden;
   width: 100%;
@@ -1524,44 +1688,52 @@ export default {
   top: 5px;
   left: 1%;
 }
+
 .left-center {
   z-index: 100;
   position: fixed;
   left: 1%;
   top: 23%;
 }
+
 .left-bottom {
   z-index: 100;
   position: fixed;
   bottom: 5px;
   left: 1%;
 }
+
 .right-top-center {
   z-index: 100;
   position: fixed;
   top: 5px;
   right: 2%;
 }
+
 .right-bottom-center {
   z-index: 100;
   position: fixed;
   right: 5px;
   bottom: 5px;
 }
+
 .conference-name {
   border-left: #a0a0a0 dashed 1px;
   border-right: #7f7f7f dashed 1px;
 }
+
 .conference-name-link {
   text-decoration: none;
   color: #111;
   font-size: 20px;
 }
+
 .conference-name-link:hover {
   text-decoration: none;
   color: #0a20dc;
   font-size: 20px;
 }
+
 .button-toolbar,
 .extra-button-toolbar,
 .user-list,
@@ -1570,25 +1742,31 @@ export default {
   border-radius: 5px;
   box-shadow: 1px 1px 5px #7f7f7f;
 }
+
 .share-button {
   margin-right: 20px;
   margin-left: 10px;
 }
-.dropdown-shape {
+
+>>> .dropdown-shape {
   min-width: 0;
 }
+
 >>> .dropdown-code {
   min-width: 0;
 }
+
 .logo span {
   font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
   font-size: 30px;
 }
+
 .color-picker {
   position: fixed;
   right: 5px;
   bottom: 55px;
 }
+
 .current-color {
   display: inline-block;
   width: 50px;
@@ -1598,6 +1776,7 @@ export default {
   right: 5px;
   bottom: 5px;
 }
+
 .detail-display-container {
   width: 200px;
   height: 200px;
@@ -1610,6 +1789,7 @@ export default {
   background-color: #eee;
   filter: blur(19px);
 }
+
 .detail-line-height {
   border-radius: 50%;
   position: fixed;
@@ -1617,32 +1797,37 @@ export default {
   left: 50%;
   color: rgba(255, 255, 255, 0.7);
 }
-/* 视频 */
+
 #video-container {
   position: fixed;
   bottom: 5px;
   left: 200px;
   display: flex;
 }
+
 #me {
+  display: none;
   position: relative;
   width: 200px;
   height: 200px;
   margin: 0 auto;
-  display: block;
   border: #4a9ee9 2px solid;
 }
+
 #me video {
   position: relative !important;
   width: 200px;
 }
+
 #remote-container {
   display: flex;
 }
+
 #remote-container video {
   height: auto;
   position: relative !important;
 }
+
 .invalid-token {
   display: flex;
   flex-direction: column;
@@ -1650,6 +1835,7 @@ export default {
   justify-content: center;
   margin-top: 50px;
 }
+
 .invalid-token img {
   width: 800px;
 }
@@ -1658,24 +1844,29 @@ input {
   width: 100%;
   margin-bottom: 2px;
 }
+
 .player {
   width: 480px;
   height: 320px;
 }
+
 #pre-local-player {
   width: 240px;
   height: 180px;
 }
+
 .progress {
   margin-bottom: 10px;
 }
+
 .progress-bar {
   transition-duration: 0.3s;
 }
 
-#notice-sidebar{
+#notice-sidebar {
   z-index: 101;
 }
+
 @media (max-width: 640px) {
   .player {
     width: 320px;
@@ -1683,4 +1874,15 @@ input {
   }
 }
 
+#file-selector {
+  display: none;
+}
+
+#mics-dropdown {
+  width: 82px;
+}
+
+#cams-dropdown {
+  width: 82px;
+}
 </style>

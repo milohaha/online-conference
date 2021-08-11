@@ -1,13 +1,13 @@
 <template>
   <div class="comment">
     <span
-      :id="'commentBlock'+identifier"
+      :id="'comment-block'+identifier"
       class="fmtfont fmt-comment comment-container"
       @click="displayComment">
     </span>
     <b-popover
       custom-class="popover-container"
-      :target="'commentBlock'+identifier"
+      :target="'comment-block'+identifier"
       triggers="click"
       :show.sync="popoverShow"
       placement="auto"
@@ -87,8 +87,8 @@ export default {
     setCommentContent (comments) {
       this.comments = comments
     },
-    displayComment: function (e, type = 'free') {
-      this.$emit('click', e, type, this.identifier)
+    displayComment: function (event, type = 'free') {
+      this.$emit('click', event, type, this.identifier)
     },
     onClose () {
       this.popoverShow = false
@@ -118,7 +118,7 @@ export default {
     }
   },
   mounted () {
-    const commentBlock = document.getElementById(`commentBlock${this.identifier}`)
+    const commentBlock = document.getElementById(`comment-block${this.identifier}`)
     if (this.initParams !== undefined) {
       const { left, top } = this.initParams
       commentBlock.style.left = left + 'px'
@@ -133,24 +133,30 @@ export default {
   width: 30px;
   height: 30px;
 }
+
 .comment-container {
   font-size: 14px;
   position: absolute;
 }
+
 .popover-container {
   max-width: 320px;
 }
+
 .card-container {
   max-height: 220px;
   overflow-y: scroll;
 }
+
 .single-card {
   width: 250px;
 }
+
 .close-btn {
   display: inline-block;
   font-size: 20px;
 }
+
 .card-close-btn {
   display: inline-block;
   font-size: 10px;
@@ -158,6 +164,7 @@ export default {
   top: 3px;
   right: 3px;
 }
+
 .card-text {
   max-width: 20rem;
 }

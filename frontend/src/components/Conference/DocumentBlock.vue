@@ -1,6 +1,6 @@
 <template>
-  <div class="container"
-       :id="'doc-container'+identifier"
+  <div class="Container"
+       :id="'docContainer'+identifier"
        ref="documentDiv"
        @click="click"
        @mousedown="mousedown"
@@ -14,7 +14,6 @@
       @addComment="addComment"
       @deleteCommentBlock="deleteCommentBlock"
       @revokeComment="revokeComment"></CommentBlock>
-<!--    <span class="block-comment fmtfont fmt-comment" @click="blockComment" ref="block-comment" :id="'commentBlock'+identifier"></span>-->
     <textarea ref="documentBlock" id="'textarea'+identifier"></textarea>
   </div>
 </template>
@@ -25,7 +24,6 @@ import CodeMirror from 'codemirror/lib/codemirror.js'
 import 'codemirror/theme/darcula.css'
 import ot from '../../ot.js'
 import socketio from 'socket.io-client'
-// 语法高亮库
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/python/python.js'
@@ -71,8 +69,8 @@ export default {
     revokeComment (commentID, type) {
       this.$emit('revokeComment', commentID, 'block')
     },
-    displayComment (e, type, identifier) {
-      this.$emit('displayComment', e, 'block', identifier, this.identifier)
+    displayComment (event, type, identifier) {
+      this.$emit('displayComment', event, 'block', identifier, this.identifier)
     },
     setCommentContent (comments) {
       const ref = 'commentBlock' + this.commentID
@@ -84,21 +82,20 @@ export default {
     setComment (display) {
       this.commentDisplay = display
     },
-    click (e) {
-      this.$emit('click', { x: e.x, y: e.y }, this.identifier)
+    click (event) {
+      this.$emit('click', { x: event.x, y: event.y }, this.identifier)
     },
-    blockComment (e) {
-      this.$emit('blockComment', e, 'block', this.commentID, this.identifier)
+    blockComment (event) {
+      this.$emit('blockComment', event, 'block', this.commentID, this.identifier)
     },
-    mousedown (e) {
-      this.$emit('mousedown', e, document.getElementById(`docContainer${this.identifier}`))
+    mousedown (event) {
+      this.$emit('mousedown', event, document.getElementById(`docContainer${this.identifier}`))
     },
     getContainer () {
       return this.$refs.documentDiv
     }
   },
   mounted () {
-    // Initialize
     const docDiv = document.getElementById(`docContainer${this.identifier}`)
     const { left, top, type, language, zoom, commentID } = this.initParams
     docDiv.style.left = left + 'px'
@@ -109,7 +106,7 @@ export default {
     }
     const ioClient = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
     const that = this
-    ioClient.emit('enterDocumentBlock', this.identifier) // docID
+    ioClient.emit('enterDocumentBlock', this.identifier)
     this.$nextTick(() => {
       ioClient.on('doc', function (data) {
         let options
@@ -132,7 +129,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.Container {
   border: #2c3e50 1px solid;
   font-size: 14px;
 }

@@ -9,11 +9,12 @@ import socketio from 'socket.io-client'
 import Constants from './constants'
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
-import './assets/icon/iconfont.css' // Vuesax styles
+import './assets/icon/iconfont.css'
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
 import VueClipBoard from 'vue-clipboard2'
 Vue.use(Vuesax, {})
-Vue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE, { transports: ['websocket'] })
+Vue.prototype.$io = socketio.connect(process.env.VUE_APP_WEB_BASE,
+  { transports: ['websocket'] })
 Vue.prototype.$constant = Constants
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

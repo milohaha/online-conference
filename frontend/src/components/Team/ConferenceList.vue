@@ -13,8 +13,8 @@
         :key="conference.id">
         <conference-in-list
           :conferenceName="conference.conferenceName"
-          :conferenceID="conference.id"
-        ></conference-in-list>
+          :conferenceID="conference.id">
+        </conference-in-list>
       </b-list-group-item>
     </b-list-group>
     <div v-if="!hasConference" class="no-conference">

@@ -18,9 +18,9 @@ const sendUniqueNotice = async function (toWhom, title, content) {
 }
 
 const broadcastGroupNotice = async function (conferenceOrTeam, conferenceOrTeamID, title, content) {
-  const toWhoms = await publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
-  if (toWhoms && toWhoms.length !== 0) {
-    for (const toWhom of toWhoms) {
+  const toUsers = await publicMethods.findGroupUserIDs(conferenceOrTeam, conferenceOrTeamID)
+  if (toUsers && toUsers.length !== 0) {
+    for (const toWhom of toUsers) {
       sendUniqueNotice(toWhom, title, content)
       // socket通知前端
       const toSocket = noticeMethods.findOnlineSocket(toWhom)
@@ -49,7 +49,12 @@ const verificationHandler = async function (acceptOrReject, userID, verification
       sendUniqueNotice(solvedVerification[0].senderID, title, content)
       // 处理其他多余的消息
       const sameVerifications = await publicMethods.getObjects(models.Verification,
-        { type: solvedVerification[0].type, senderID: solvedVerification[0].senderID, receiverID: solvedVerification[0].receiverID, teamID: solvedVerification[0].teamID })
+        {
+          type: solvedVerification[0].type,
+          senderID: solvedVerification[0].senderID,
+          receiverID: solvedVerification[0].receiverID,
+          teamID: solvedVerification[0].teamID
+        })
       if (sameVerifications && sameVerifications.length !== 0) {
         for (const sameVerification of sameVerifications) {
           await models.UserVerification.update(
@@ -181,6 +186,11 @@ const dismissHandler = async function (conferenceOrTeam, conferenceOrTeamID) {
           teamID: conferenceOrTeamID
         }
       })
+      await models.Conference.destroy({
+        where: {
+          teamID: conferenceOrTeamID
+        }
+      })
     } else if (conferenceOrTeam === IS_CONFERENCE) {
       await models.Conference.destroy({
         where: {
@@ -256,8 +266,6 @@ module.exports = function (server) {
   const editorServers = new Map()
 
   io.on('connection', (socket) => {
-    console.log('userConnected')
-
     socket.on('deleteCommentBlock', async (commentBlockID, conferenceID) => {
       const commentBlock = await models.CommentBlock.findOne({ where: { commentBlockID: commentBlockID } })
       await models.CommentBlock.destroy({ where: { commentBlockID: commentBlockID } })
@@ -300,7 +308,14 @@ module.exports = function (server) {
         itemTop: params.top,
         language: params.language
       })
-      socket.to('conference' + params.conferenceID).emit('newDocumentBlock', { type: params.type, docID: params.docID, left: params.left, top: params.top, language: params.language })
+      socket.to('conference' + params.conferenceID).emit('newDocumentBlock',
+        {
+          type: params.type,
+          docID: params.docID,
+          left: params.left,
+          top: params.top,
+          language: params.language
+        })
     })
 
     socket.on('enterDocumentBlock', async (docID) => {
@@ -319,7 +334,12 @@ module.exports = function (server) {
 
     // 移动文档同步
     socket.on('moveDocumentBlock', (params) => {
-      socket.to('conference' + params.conferenceID).emit('moveDocumentBlock', { left: params.left, top: params.top, docID: params.docID })
+      socket.to('conference' + params.conferenceID).emit('moveDocumentBlock',
+        {
+          left: params.left,
+          top: params.top,
+          docID: params.docID
+        })
     })
 
     // 移动文档停止
@@ -347,7 +367,13 @@ module.exports = function (server) {
 
     // 上传文件同步
     socket.on('newPdfFile', (params) => {
-      socket.to('conference' + params.conferenceID).emit('newPdfFile', { fileContent: params.fileContent, fileID: params.fileID, left: params.left, top: params.top })
+      socket.to('conference' + params.conferenceID).emit('newPdfFile',
+        {
+          fileContent: params.fileContent,
+          fileID: params.fileID,
+          left: params.left,
+          top: params.top
+        })
       models.ConferenceFile.create({
         conferenceID: params.conferenceID,
         fileID: params.fileID,
@@ -359,46 +385,11 @@ module.exports = function (server) {
 
     // 移动文件
     socket.on('moveFile', (params) => {
-      socket.to('conference' + params.conferenceID).emit('moveFile', { left: params.left, top: params.top, fileID: params.fileID })
-    })
-
-    socket.on('dragFileStop', (params) => {
-      models.ConferenceFile.update({
-        fileLeft: params.left,
-        fileTop: params.top
-      }, {
-        where: {
-          fileID: params.fileID
-        }
+      socket.to('conference' + params.conferenceID).emit('moveFile', {
+        left: params.left,
+        top: params.top,
+        fileID: params.fileID
       })
-    })
-
-    // 删除PDF文件
-    socket.on('removeFile', (params) => {
-      socket.to('conference' + params.conferenceID).emit('removeFile', params.fileID)
-      models.ConferenceFile.destroy({
-        where: {
-          conferenceID: params.conferenceID,
-          fileID: params.fileID
-        }
-      })
-    })
-
-    // 上传文件同步
-    socket.on('newPdfFile', (params) => {
-      socket.to('conference' + params.conferenceID).emit('newPdfFile', { fileContent: params.fileContent, fileID: params.fileID })
-      models.ConferenceFile.create({
-        conferenceID: params.conferenceID,
-        fileID: params.fileID,
-        fileContent: params.fileContent,
-        fileLeft: 0,
-        fileTop: 0
-      })
-    })
-
-    // 移动文件
-    socket.on('moveFile', (params) => {
-      socket.to('conference' + params.conferenceID).emit('moveFile', { left: params.left, top: params.top, fileID: params.fileID })
     })
 
     socket.on('dragFileStop', (params) => {
@@ -520,10 +511,6 @@ module.exports = function (server) {
       const privilegeExpiredTs = currentTimestamp + constant.EXPIRED
       const videoToken = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, userID, role, privilegeExpiredTs)
       socket.emit('initVideo', videoToken)
-    })
-
-    socket.on('disconnect', () => {
-      console.log('userDisconnected')
     })
   })
 }

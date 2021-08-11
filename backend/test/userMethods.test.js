@@ -15,7 +15,11 @@ test('two paras return Email Error', async () => {
   expect(result).toBe('EMAIL_ERROR')
 })
 test('if user has been created return USER_EXIST', async () => {
-  await User.create({ userName: 'name_userMethods', password: 'password_userMethods', email: 'email_userMethods' })
+  await User.create({
+    userName: 'name_userMethods',
+    password: 'password_userMethods',
+    email: 'email_userMethods'
+  })
   const result = await userMethods.createUser('name_userMethods', 'password_userMethods', 'email_userMethods')
   await User.destroy({
     where: {

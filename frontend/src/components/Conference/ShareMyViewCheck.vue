@@ -1,12 +1,13 @@
 <template>
   <b-modal
   hide-header
-  id="share-view-check">
-  接收到共享视角邀请，是否同意？
+  id="share-view-check"
+  >
+    接收到共享视角邀请，是否同意？
     <template #modal-footer>
-    <b-button variant="light" @click="agree">确定</b-button>
-    <b-button variant="light" @click="reject">取消</b-button>
-  </template>
+      <b-button variant="light" @click="agree">确定</b-button>
+      <b-button variant="light" @click="reject">取消</b-button>
+    </template>
   </b-modal>
 </template>
 <script>

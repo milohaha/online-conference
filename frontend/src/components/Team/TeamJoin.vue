@@ -7,21 +7,20 @@
     no-stacking
     centered>
     <template #modal-title>加入团队</template>
-<b-alert
-    :show="dismissCountDown"
-    variant="warning"
-    @dismissed="dismissCountDown=0"
-    @dismiss-count-down="countDownChanged"
->
-    {{ alertMessage }}
-</b-alert>
+    <b-alert
+      :show="dismissCountDown"
+      variant="warning"
+      @dismissed="dismissCountDown=0"
+      @dismiss-count-down="countDownChanged">
+      {{ alertMessage }}
+    </b-alert>
     <h4>团队id：</h4>
     <b-form-input
       v-model="teamID"
       class="get-team-id"
       :state="validationTeamID"
-      required
-    ></b-form-input>
+      required>
+    </b-form-input>
     <b-form-invalid-feedback :state="validationTeamID">
       团队ID为数字
     </b-form-invalid-feedback>
@@ -123,7 +122,6 @@ export default {
   margin: 0;
 }
 
-.title,
 .get-team-id {
   margin-bottom: 20px;
 }

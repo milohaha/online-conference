@@ -10,8 +10,10 @@ export default {
   methods: {
     getTime (createdAt) {
       const dateTime = new Date(createdAt)
-      return timeFormat(dateTime.getFullYear()) + '-' + timeFormat(dateTime.getMonth() + 1) + '-' +
-              timeFormat(dateTime.getDate()) + ' ' + timeFormat(dateTime.getHours()) +
+      return timeFormat(dateTime.getFullYear()) + '-' +
+        timeFormat(dateTime.getMonth() + 1) + '-' +
+              timeFormat(dateTime.getDate()) + ' ' +
+        timeFormat(dateTime.getHours()) +
               ':' + timeFormat(dateTime.getMinutes()) +
               ':' + timeFormat(dateTime.getSeconds())
     },

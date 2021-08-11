@@ -9,13 +9,12 @@
       <b-list-group class="member-list-group">
         <b-list-group-item
           v-for="member in sortMembers"
-          :key="member.id"
-        >
+          :key="member.id">
           <member-item
             :member="member"
             :founderID="founderID"
-            @removeMember="removeMember"
-          ></member-item>
+            @removeMember="removeMember">
+          </member-item>
         </b-list-group-item>
       </b-list-group>
     </b-card>

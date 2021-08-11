@@ -51,16 +51,11 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
   props: {
     type: Number
   },
   computed: {
-    ...mapState({
-      teamID: state => state.Team.teamID,
-      conferenceID: state => state.Team.conferenceID
-    }),
     typeName () {
       return this.type === this.$constant.IS_TEAM ? '团队' : '会议室'
     }
@@ -73,7 +68,8 @@ export default {
     },
     dismissGroupSuccess () {
       this.$bvModal.hide('bv-modal-dismiss-group-notice')
-      this.$router.push({ path: '/team/teamofuser' })
+      const path = this.type === this.$constant.IS_TEAM ? '/team/teampage' : '/team/teamofuser'
+      this.$router.push({ path: path })
     }
   }
 }

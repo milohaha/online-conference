@@ -5,8 +5,7 @@
     @click="selectMember">
     <member-item
       :member="memberToInvite"
-      :founderID="0"
-    >
+      :founderID="0">
     </member-item>
     <b-icon icon="check" class="h1" variant="success" v-if="isSelected"></b-icon>
   </b-list-group-item>

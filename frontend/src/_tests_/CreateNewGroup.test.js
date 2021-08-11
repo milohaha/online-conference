@@ -95,7 +95,7 @@ describe('测试显示创建结果信息', () => {
   test('名称存在', async () => {
     Api.createGroup = jest.fn().mockReturnValue(exists)
     await wrapper.vm.checkInput()
-    expect(wrapper.vm.notice).toBe('创建失败，请稍后再尝试')
+    expect(wrapper.vm.notice).toBe('创建失败，该名称已存在')
   })
   test('失败', async () => {
     Api.createGroup = jest.fn().mockReturnValue(error)
@@ -105,13 +105,13 @@ describe('测试显示创建结果信息', () => {
 })
 describe('测试弹窗', () => {
   test('创建成功-显示邀请成员', () => {
-    const mockhide = jest.fn()
-    const mockshow = jest.fn()
+    const mockHide = jest.fn()
+    const mockShow = jest.fn()
     wrapper.vm.createResult = 'CREATED'
-    wrapper.vm.$bvModal.hide = mockhide
-    wrapper.vm.$bvModal.show = mockshow
+    wrapper.vm.$bvModal.hide = mockHide
+    wrapper.vm.$bvModal.show = mockShow
     wrapper.vm.showInvitingMember()
-    expect(mockhide).toBeCalledTimes(1)
-    expect(mockshow).toBeCalledTimes(1)
+    expect(mockHide).toBeCalledTimes(1)
+    expect(mockShow).toBeCalledTimes(1)
   })
 })

@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="bell">
-      <span class="fmtfont fmt-notice" v-b-toggle.notice-sidebar @click="clickSideBar"></span>
+      <span
+        class="fmtfont fmt-notice"
+        v-b-toggle.notice-sidebar
+        @click="clickSideBar"
+      ></span>
       <div
         class="message-badge"
         v-b-toggle.notice-sidebar
@@ -16,7 +20,8 @@
       sidebar-class="notice-sidebar"
       width="400px"
       shadow="lg"
-      no-header-close>
+      no-header-close
+    >
       <template #header>
         <div
           class="d-flex align-items-center justify-content-between sidebar-header">
@@ -27,8 +32,12 @@
             variant="light"
             menu-class="dropdown-menu"
             @click="updateMessages">
-            <b-dropdown-item-button @click="pickNotice">通知消息</b-dropdown-item-button>
-            <b-dropdown-item-button @click="pickVerification">验证消息</b-dropdown-item-button>
+            <b-dropdown-item-button @click="pickNotice">
+              通知消息
+            </b-dropdown-item-button>
+            <b-dropdown-item-button @click="pickVerification">
+              验证消息
+            </b-dropdown-item-button>
           </b-dropdown>
           <span
             v-b-toggle.notice-sidebar
@@ -140,10 +149,10 @@ export default {
       await this.updateNotices()
       await this.updateVerifications()
     },
-    async readNotice (noticeID) {
+    async readNotice () {
       await this.updateNotices()
     },
-    async solveVerification (noticeID) {
+    async solveVerification () {
       setTimeout(() => {
         this.updateMessages()
       }, 100)
@@ -160,7 +169,7 @@ export default {
 }
 </script>
 <style scoped>
->>> .dropdown-menu {
+.dropdown-menu {
   border-radius: 5px;
   box-shadow: 1px 1px 1px #afaeae;
 }
@@ -187,6 +196,7 @@ export default {
   width: 100%;
   font-size: 24px;
 }
+
 .notice-sidebar {
   position: absolute;
   z-index: 200;
