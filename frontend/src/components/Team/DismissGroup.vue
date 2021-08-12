@@ -53,7 +53,8 @@
 <script>
 export default {
   props: {
-    type: Number
+    type: Number,
+    groupID: Number
   },
   computed: {
     typeName () {

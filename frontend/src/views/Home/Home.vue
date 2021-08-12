@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <div class="nav-bar d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center">
       <div class="logo">
         <b-link
           class="logo-content mx-3"
@@ -73,13 +73,12 @@
         </div>
       </div>
     </div>
-
     <div class="slogan">
       <div class="header my-2">
-        <img src="../../assets/picture/slogan-1.png" alt="Slogan 1">
+        <p>富媒体实时协作平台</p>
       </div>
       <div class="leader text-center my-2">
-        <img src="../../assets/picture/slogan-2.png" alt="Slogan 2">
+        <p>让线上会议成为可能</p>
       </div>
     </div>
   </div>
@@ -126,14 +125,24 @@ export default {
 }
 </script>
 <style scoped>
+.header {
+  font-size: 60px;
+}
+
+.leader {
+  font-size: 30px;
+}
+
 .home-page {
   background-image: url("../../assets/picture/bkgdpic.png");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-color: #04294f;
   height: 100vh;
+  width: auto;
 }
 
 .nav-bar {
+  padding: 10px;
   width: 100%;
   height: 70px;
   position: fixed;
@@ -143,7 +152,7 @@ export default {
 
 .right-bar {
   width: 300px;
-  font-family: KaiTi, serif, sans-serif, cursive, fantasy, monospace;
+  font-family: Simsun, serif, sans-serif, cursive, fantasy, monospace;
   color: #eee;
   font-size: 30px;
 }
@@ -158,9 +167,10 @@ export default {
 
 .logo-content {
   font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-size: 60px;
+  font-size: 50px;
   text-decoration: none;
   color: #3d493d;
+  padding: 20px;
 }
 
 .home-link {

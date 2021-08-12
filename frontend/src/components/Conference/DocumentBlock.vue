@@ -132,6 +132,7 @@ export default {
 .Container {
   border: #2c3e50 1px solid;
   font-size: 14px;
+  z-index: 10;
 }
 
 </style>

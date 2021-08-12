@@ -11,8 +11,8 @@ describe('Register', () => {
     stubs: ['router-view'],
     localVue
   })
-  it('returns false if userName is shorter than 5', () => {
-    wrapper.vm.user.userName = 'moon'
+  it('returns false if userName is shorter than 2', () => {
+    wrapper.vm.user.userName = 'm'
     expect(wrapper.vm.validationUsername).toBe(false)
   })
   it('returns false if userName is longer than 12', () => {

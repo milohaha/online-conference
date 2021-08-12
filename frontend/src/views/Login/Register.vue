@@ -68,7 +68,7 @@
           ></b-form-input>
           <b-form-invalid-feedback class="username-feedback"
                                    :state="validationUsername">
-            你的用户名长度必须在5-12个字符之间
+            你的用户名长度必须在2-12个字符之间
           </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group class="input-group-password" label="密码:"
@@ -143,10 +143,10 @@ export default {
     }),
     validationEmail () {
       const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
-      return reg.test(this.user.email)
+      return reg.test(this.user.email) && this.user.email.length < 30
     },
     validationUsername () {
-      return this.user.userName.length > 4 && this.user.userName.length < 13
+      return this.user.userName.length > 1 && this.user.userName.length < 13
     },
     validationPassword () {
       const reg = /^(\w){8,20}$/
@@ -245,9 +245,9 @@ export default {
 .register {
   width: 460px;
   height: 700px;
-  font-family: KaiTi, serif, sans-serif, cursive, fantasy, monospace;
-  font-size: 30px;
-  margin-top: 8%;
+  font-family: Simsun, serif, sans-serif, cursive, fantasy, monospace;
+  font-size: 18px;
+  margin-top: 5%;
 }
 
 .form-header {
@@ -258,7 +258,7 @@ export default {
 .username-feedback,
 .password-feedback,
 .password-check-feedback {
-  font-size: 22px;
+  font-size: 16px;
 }
 
 .register-button,

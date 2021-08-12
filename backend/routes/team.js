@@ -189,12 +189,31 @@ router.post('/generateConferenceToken', async function (request, response, next)
 })
 
 router.post('/checkConferenceToken', async function (request, response, next) {
+  const userID = request.user.userID
+  const conferenceID = request.body.conferenceID
   const conferenceToken = request.body.conferenceToken
+  if (conferenceID === undefined) {
+    response.json({ message: 'UNDEFINED' })
+  }
+  const authority = await models.UserConference.findOne({
+    where: {
+      userID: userID,
+      conferenceID: conferenceID
+    }
+  })
+  if (authority) {
+    response.json({
+      message: 'VALID',
+      expired: false,
+      isVisitor: false
+    })
+  }
   if (conferenceToken === undefined) {
     response.json({ message: 'UNDEFINED' })
   }
   const object = await models.ConferenceToken.findOne({
     where: {
+      conferenceID: conferenceID,
       conferenceToken: conferenceToken
     }
   })
@@ -203,7 +222,8 @@ router.post('/checkConferenceToken', async function (request, response, next) {
   } else {
     response.json({
       message: 'VALID',
-      expired: object.expiredTime < Date.now()
+      expired: object.expiredTime < Date.now(),
+      isVisitor: true
     })
   }
 })

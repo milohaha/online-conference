@@ -86,6 +86,7 @@ export default {
                 condition: { id: Number(this.teamID) }
               })
                 .then(innerResponse => {
+                  this.founderID = []
                   this.founderID.push(Number(innerResponse.data.objects[0].founderID))
                 }).then(() => {
                   this.$io.emit('sendVerification',

@@ -33,12 +33,14 @@ import { mapState } from 'vuex'
 import MemberItem from './MemberItem.vue'
 import Api from '../../api'
 export default {
+  props: {
+    founderID: Number,
+    groupID: Number
+  },
   data: function () {
     return {
       sortMembers: [],
-      sortActiveMembers: [],
-      founderID: '',
-      groupID: ''
+      sortActiveMembers: []
     }
   },
   computed: {
@@ -49,7 +51,7 @@ export default {
     })
   },
   created () {
-    this.getGroupInformation()
+    this.getMembers()
   },
   methods: {
     removeMember (userID) {
@@ -91,17 +93,6 @@ export default {
           }
         })
       })
-    },
-    getGroupInformation () {
-      this.groupID = this.conferenceID
-      Api.getObjects({
-        model: 'Conference',
-        condition: { id: this.groupID }
-      })
-        .then(response => {
-          this.founderID = response.data.objects[0].founderID
-          this.getMembers()
-        })
     },
     sortMemberByID (members, founderID) {
       return members.sort(function (a, b) {

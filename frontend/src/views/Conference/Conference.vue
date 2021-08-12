@@ -1,78 +1,66 @@
 <template>
-<div>
-  <div v-if="isValid">
-    <div class="canvas-container">
-      <canvas
-        id="canvas"
-        width="1792px"
-        height="1120px">
-      </canvas>
-      <div class='document-block-container'>
-        <document-block v-for="docID in documentArray"
-                        @mousedown="documentDrag"
-                        @click="addCommentBlock"
-                        @displayComment="displayComment"
-                        :key="docID"
-                        :identifier="docID"
-                        :ref="'doc'+docID"
-                        :init-params="initBlocksOfCanvas.get(docID)"
-                        @remove="removeDocumentBlock"
+  <div>
+    <div v-if="isValid">
+      <div class="canvas-container">
+        <canvas id="canvas"
+                :width="windowWidth+'px'"
+                :height="windowHeight+'px'">
+        </canvas>
+        <div class='document-block-container'>
+          <document-block v-for="docID in documentArray"
+                          @mousedown="documentDrag"
+                          @click="addCommentBlock"
+                          @displayComment="displayComment"
+                          :key="docID"
+                          :identifier="docID"
+                          :ref="'doc'+docID"
+                          :init-params="initBlocksOfCanvas.get(docID)"
+                          @remove="removeDocumentBlock"
+                          @addComment="addComment"
+                          @deleteCommentBlock="deleteCommentBlock"
+                          @revokeComment="revokeComment">
+          </document-block>
+        </div>
+        <div class="file-container">
+          <upload-file v-for="fileID in fileArray"
+                       @mousedown="fileDrag"
+                       :key="fileID"
+                       :identifier="fileID"
+                       :ref="'file'+fileID"
+                       :init-params="initFile.get(fileID)"
+                       @remove="removeFile"></upload-file>
+        </div>
+
+        <div class="comment-block-container">
+          <CommentBlock v-for="commentBlockID in blocks"
+                        :key="commentBlockID"
+                        :identifier="commentBlockID"
+                        :ref="'commentBlock'+commentBlockID"
+                        :init-params="initCommentBlocks.get(commentBlockID)"
+                        @click="displayComment"
                         @addComment="addComment"
                         @deleteCommentBlock="deleteCommentBlock"
                         @revokeComment="revokeComment">
-        </document-block>
-      </div>
-      <div class="file-container">
-        <upload-file v-for="fileID in fileArray"
-                     @mousedown="fileDrag"
-                     :key="fileID"
-                     :identifier="fileID"
-                     :ref="'file'+fileID"
-                     :init-params="initFile.get(fileID)"
-                     @remove="removeFile"></upload-file>
-      </div>
-
-      <div class="comment-block-container">
-      <CommentBlock v-for="commentBlockID in blocks"
-                    :key="commentBlockID"
-                    :identifier="commentBlockID"
-                    :ref="'commentBlock'+commentBlockID"
-                    :init-params="initCommentBlocks.get(commentBlockID)"
-                    @click="displayComment"
-                    @addComment="addComment"
-                    @deleteCommentBlock="deleteCommentBlock"
-                    @revokeComment="revokeComment">
-      </CommentBlock>
-    </div>
-
-      <div class="file-container">
-        <upload-file v-for="fileID in fileArray"
-                     :key="fileID"
-                     :identifier="fileID"
-                     :ref="'file'+fileID"
-                     :init-params="initFile.get(fileID)"
-                     @moveFile="notifyMoveFile"
-                     @remove="removeFile"></upload-file>
-      </div>
-      <span class="file-selector-wrapper">
+          </CommentBlock>
+        </div>
+        <span class="file-selector-wrapper">
           <input type="file"
                  id="file-selector"
                  accept="application/pdf"
                  @change="loadFileHandler">
-      </span>
-    </div>
-    <div class="left-top">
-      <div class="d-flex align-items-center logo-bar">
+        </span>
+      </div>
+      <div class="left-top">
+        <div class="d-flex align-items-center logo-bar">
           <div class="px-3 py-2 flex-fill logo">
-            <logo v-if="false" logo-color="black"/>
+            <logo v-if="false"
+                  logo-color="black" />
             <span>FMT</span>
           </div>
-          <div
-            class="conference-name px-3 flex-fill"
-            v-b-popover.hover.bottom="'会议室信息'">
-            <b-link
-              class="conference-name-link"
-              @click="$bvModal.show('bv-modal-conference-information')">
+          <div class="conference-name px-3 flex-fill"
+               v-b-popover.hover.bottom="'会议室信息'">
+            <b-link class="conference-name-link"
+                    @click="$bvModal.show('bv-modal-conference-information')">
               {{ conferenceName }}
             </b-link>
           </div>
@@ -80,32 +68,29 @@
                v-b-popover.hover.rightbottom="'导出文件'">
             <span class="fmtfont fmt-share"></span>
           </div>
+        </div>
       </div>
-    </div>
-    <div class="right-top-center d-flex">
-      <div class="top-center mx-4">
-      <b-button-group class="user-list">
-        <b-button
-          v-b-popover.hover.bottomleft="'共享视角'"
-          variant="light"
-          v-b-modal.share-view
-          @click="isSharing = true"
-        >
-          <span class="fmtfont fmt-user"></span>
-        </b-button>
-        <b-button
-          @click="updateMemberList"
-          v-b-toggle.member-list
-          class="fmtfont fmt-userlist"
-          variant="light"
-          v-b-popover.hover.bottomleft="'会议室成员列表'">
-        </b-button>
-      </b-button-group>
-    </div>
-      <div class="right-top">
-        <b-button-group class="setting-toolbar d-flex
+      <div class="right-top-center d-flex">
+        <div class="top-center mx-4">
+          <b-button-group class="user-list">
+            <b-button v-b-popover.hover.bottomleft="'共享视角'"
+                      variant="light"
+                      v-b-modal.share-view
+                      @click="isSharing = true">
+              <span class="fmtfont fmt-user"></span>
+            </b-button>
+            <b-button @click="updateMemberList"
+                      v-b-toggle.member-list
+                      class="fmtfont fmt-userlist"
+                      variant="light"
+                      v-b-popover.hover.bottomleft="'会议室成员列表'">
+            </b-button>
+          </b-button-group>
+        </div>
+        <div class="right-top">
+          <b-button-group class="setting-toolbar d-flex
          align-items-center justify-content-around">
-          <div class="d-flex align-items-center share-button">
+            <div class="d-flex align-items-center share-button">
             <b-button
               id="copyURL"
               @click="shareConference"
@@ -115,225 +100,202 @@
               分享
             </b-button>
             <b-popover triggers="hover" target="copyURL" placement="bottom">
-              点击分享复制会议室链接
+              <p class="copy-notice">{{ copyNotice }}</p>
             </b-popover>
 
-          </div>
-          <notice-side-bar
-            @clickSideBar="clickSideBar">
-          </notice-side-bar>
-          <b-dropdown no-caret right variant="light"
-                      v-b-popover.hover.bottomright="'设置'">
+            </div>
+            <notice-side-bar @clickSideBar="clickSideBar">
+            </notice-side-bar>
+            <b-dropdown no-caret
+                        right
+                        variant="light"
+                        v-b-popover.hover.bottomright="'设置'">
+              <template #button-content>
+                <span class="fmtfont fmt-setting"></span>
+              </template>
+              <b-dropdown-item @click="exitConference">
+                <span class="fmtfont fmt-exit mx-2"></span>
+                退出会议室
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-button-group>
+        </div>
+      </div>
+      <div class="left-center">
+        <b-button-group vertical
+                        class="button-toolbar">
+          <b-button class="fmtfont fmt-mouse"
+                    variant="light"
+                    v-b-popover.hover.right="'鼠标'"
+                    @click="switchToCursor">
+          </b-button>
+          <b-button class="fmtfont fmt-drag"
+                    variant="light"
+                    v-b-popover.hover.right="'拖拽'"
+                    @click="switchToDrag">
+          </b-button>
+          <b-button class="fmtfont fmt-pen"
+                    variant="light"
+                    @click="switchToPen"
+                    v-b-popover.hover.right="'画笔'">
+          </b-button>
+          <b-dropdown no-caret
+                      variant="light"
+                      dropright
+                      v-b-popover.hover.right="'图形'"
+                      menu-class="dropdown-shape">
             <template #button-content>
-              <span class="fmtfont fmt-setting"></span>
+              <span class="fmtfont fmt-shape"></span>
             </template>
-            <b-dropdown-item @click="exitConference">
-              <span class="fmtfont fmt-exit mx-2"></span>
-              退出会议室
-            </b-dropdown-item>
+            <b-dropdown-item-button name="rectangle"
+                                    @click="addShape"
+                                    button-class="fmtfont fmt-rectangle"
+                                    v-b-popover.hover.right="'矩形'">
+            </b-dropdown-item-button>
+            <b-dropdown-item-button name="circle"
+                                    @click="addShape"
+                                    button-class="fmtfont fmt-circle"
+                                    v-b-popover.hover.right="'圆'">
+            </b-dropdown-item-button>
+            <b-dropdown-item-button name="triangle"
+                                    @click="addShape"
+                                    button-class="fmtfont fmt-triangle"
+                                    v-b-popover.hover.right="'三角形'">
+            </b-dropdown-item-button>
           </b-dropdown>
+          <b-button name="itext"
+                    @click="addShape"
+                    variant="light"
+                    class="fmtfont fmt-text"
+                    v-b-popover.hover.right="'文本'">
+          </b-button>
+          <b-button @click="switchToEraser"
+                    class="fmtfont fmt-eraser"
+                    variant="light"
+                    v-b-popover.hover.right="'橡皮擦'">
+          </b-button>
+          <b-button class="fmtfont fmt-comment"
+                    variant="light"
+                    @click="switchToComment"
+                    v-b-popover.hover.right="'注释'">
+          </b-button>
+          <b-button class="fmtfont fmt-upload"
+                    variant="light"
+                    id="upload-file-button"
+                    @click="clickFileSelector">
+          </b-button>
+          <b-popover triggers="hover"
+                     target="upload-file-button"
+                     placement="right">
+            <p class="upload-file-notice">上传PDF文件<br>(大小不超过10M)</p>
+          </b-popover>
         </b-button-group>
       </div>
-    </div>
-    <div class="left-center">
-      <b-button-group vertical class="button-toolbar">
-        <b-button
-          class="fmtfont fmt-mouse"
-          variant="light"
-          v-b-popover.hover.right="'鼠标'"
-          @click="switchToCursor">
-        </b-button>
-        <b-button
-          class="fmtfont fmt-drag"
-          variant="light"
-          v-b-popover.hover.right="'拖拽'"
-          @click="switchToDrag">
-        </b-button>
-        <b-button
-          class="fmtfont fmt-pen"
-          variant="light"
-          @click="switchToPen"
-          v-b-popover.hover.right="'画笔'">
-        </b-button>
-        <b-dropdown
-          no-caret
-          variant="light"
-          dropright
-          v-b-popover.hover.right="'图形'"
-          menu-class="dropdown-shape">
-          <template #button-content>
-            <span class="fmtfont fmt-shape"></span>
-          </template>
-          <b-dropdown-item-button
-            name="rectangle"
-            @click="addShape"
-            button-class="fmtfont fmt-rectangle"
-            v-b-popover.hover.right="'矩形'">
-          </b-dropdown-item-button>
-          <b-dropdown-item-button
-            name="circle"
-            @click="addShape"
-            button-class="fmtfont fmt-circle"
-            v-b-popover.hover.right="'圆'">
-          </b-dropdown-item-button>
-          <b-dropdown-item-button
-            name="triangle"
-            @click="addShape"
-            button-class="fmtfont fmt-triangle"
-            v-b-popover.hover.right="'三角形'">
-          </b-dropdown-item-button>
-        </b-dropdown>
-        <b-button
-          name="itext"
-          @click="addShape"
-          variant="light"
-          class="fmtfont fmt-text"
-          v-b-popover.hover.right="'文本'">
-        </b-button>
-        <b-button
-          @click="switchToEraser"
-          class="fmtfont fmt-eraser"
-          variant="light"
-          v-b-popover.hover.right="'橡皮擦'">
-        </b-button>
-        <b-button
-          class="fmtfont fmt-comment"
-          variant="light"
-          @click="switchToComment"
-          v-b-popover.hover.right="'注释'">
-        </b-button>
-        <b-button
-          class="fmtfont fmt-upload"
-          variant="light"
-          @click="clickFileSelector"
-          v-b-popover.hover.right="'上传文件'">
-        </b-button>
-      </b-button-group>
-    </div>
-    <div class="left-bottom">
-      <b-button-group
-        class="extra-button-toolbar">
-        <b-button
-          class="fmtfont fmt-video"
-          variant="light"
-          v-b-popover.hover.top="'音视频'"
-          @click="toggleMediaDeviceTest">
-        </b-button>
-        <b-dropdown
-          no-caret
-          variant="light"
-          droptop
-          v-b-popover.hover.top="'协同编辑代码'"
-          menu-class="dropdown-code">
-          <template #button-content>
-            <span class="fmtfont fmt-codeblock"></span>
-          </template>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','javascript')">
-            JavaScript</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-python')">
-            Python</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-csrc')">
-            C</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-c++src')">
-            C++</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-java')">
-            Java</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-sh')">
-            Shell</b-dropdown-item>
-          <b-dropdown-item
-            @click="addDocumentBlock('code','x-sql')">
-            SQL</b-dropdown-item>
+      <div class="left-bottom">
+        <b-button-group class="extra-button-toolbar">
+          <b-button class="fmtfont fmt-video"
+                    variant="light"
+                    v-b-popover.hover.top="'音视频'"
+                    @click="toggleMediaDeviceTest">
+          </b-button>
+          <b-dropdown no-caret
+                      variant="light"
+                      droptop
+                      v-b-popover.hover.top="'协同编辑代码'"
+                      menu-class="dropdown-code">
+            <template #button-content>
+              <span class="fmtfont fmt-codeblock"></span>
+            </template>
+            <b-dropdown-item @click="addDocumentBlock('code','javascript')">
+              JavaScript</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-python')">
+              Python</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-csrc')">
+              C</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-c++src')">
+              C++</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-java')">
+              Java</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-sh')">
+              Shell</b-dropdown-item>
+            <b-dropdown-item @click="addDocumentBlock('code','x-sql')">
+              SQL</b-dropdown-item>
 
-        </b-dropdown>
+          </b-dropdown>
 
-        <b-button
-          class="fmtfont fmt-document"
-          @click="addDocumentBlock('text')"
-          variant="light"
-          v-b-popover.hover.top="'协同编辑文档'">
-        </b-button>
-      </b-button-group>
-    </div>
-    <div id="video-container">
-      <div id="me"></div>
-      <div id="remote-container"></div>
-    </div>
-    <div class="right-bottom-center d-flex justify-content-between">
-      <div class="bottom-center mx-5">
-        <div class="detail-options-container mx-2" ref="lineHeight">
-          <vs-slider
-            v-if="!isMessageSideBarOpen"
-            v-model="size"
-            color="black"
-            max="20"
-            @change="toggleLineHeight"></vs-slider>
+          <b-button class="fmtfont fmt-document"
+                    @click="addDocumentBlock('text')"
+                    variant="light"
+                    v-b-popover.hover.top="'协同编辑文档'">
+          </b-button>
+        </b-button-group>
+      </div>
+      <div id="video-container">
+        <div id="me"></div>
+        <div id="remote-container"></div>
+      </div>
+      <div class="right-bottom-center d-flex justify-content-between">
+        <div class="bottom-center mx-5">
+          <div class="detail-options-container mx-2"
+               ref="lineHeight">
+            <vs-slider v-if="!isMessageSideBarOpen"
+                       v-model="size"
+                       color="black"
+                       max="20"
+                       @change="toggleLineHeight"></vs-slider>
+          </div>
+        </div>
+        <div class="right-bottom m-2">
+          <div v-if="!isMessageSideBarOpen"
+               class="color-container"
+               ref="colorContainer">
+            <color-panel class="color-picker"
+                         v-model="color"
+                         v-if="displayPicker"></color-panel>
+            <span class="current-color"
+                  v-b-popover.hover.lefttop="'调色盘'"
+                  :style="'background-color: ' + color"
+                  @click="togglePicker"></span>
+          </div>
         </div>
       </div>
-      <div class="right-bottom m-2">
-        <div
-          v-if="!isMessageSideBarOpen"
-          class="color-container"
-          ref="colorContainer">
-          <color-panel
-            class="color-picker"
-            v-model="color"
-            v-if="displayPicker"></color-panel>
-          <span
-            class="current-color"
-            v-b-popover.hover.lefttop="'调色盘'"
-            :style="'background-color: ' + color"
-            @click="togglePicker"></span>
-        </div>
+      <div class="detail-display-container"
+           v-if="displayLineHeight">
       </div>
-    </div>
-    <div class="detail-display-container"
-      v-if="displayLineHeight">
-    </div>
-    <div class="detail-line-height"
-    v-if="displayLineHeight"
-    :style="{'width':size+'px',
+      <div class="detail-line-height"
+           v-if="displayLineHeight"
+           :style="{'width':size+'px',
     'height':size+'px',
     'background-color':color,
     'margin-top':-size/2+'px',
     'margin-left':-size/2+'px'}">
-  </div>
-    <b-sidebar
-      id="member-list"
-      right
-      width="500px"
-      shadow="lg"
-      backdrop
-      z-index="99">
-      <template #header>
-        <div
-          class="d-flex align-items-center justify-content-between"
-          :style="{ 'width':500 + 'px' }">
-          <div class="d-flex align-items-center justify-content-start">
-            <div>成员列表</div>
-            <div class="mx-3">
-              <b-button
-                variant="outline-info"
-                size="md"
-                @click="inviteNewMember"
-              >
-              邀请新成员
-              </b-button>
+      </div>
+      <b-sidebar id="member-list"
+                 right
+                 width="500px"
+                 shadow="lg"
+                 backdrop>
+        <template #header>
+          <div class="d-flex align-items-center justify-content-between"
+               :style="{ 'width':500 + 'px' }">
+            <div class="d-flex align-items-center justify-content-start">
+              <div>成员列表</div>
+              <div class="mx-3">
+                <b-button variant="outline-info"
+                          size="md"
+                          @click="inviteNewMember">
+                  邀请新成员
+                </b-button>
+              </div>
+              <span v-b-toggle.member-list
+                    class="fmtfont fmt-close close-button mx-2">
+              </span>
             </div>
           </div>
-          <span
-            v-b-toggle.member-list
-            class="fmtfont fmt-close close-button mx-2">
-          </span>
-        </div>
       </template>
       <member-list
-        groupType="Conference"
+        :founderID="founderID"
+        :groupID="conferenceID"
         ref="memberList"
       ></member-list>
     </b-sidebar>
@@ -357,7 +319,8 @@
       tabindex="-1"
       role="dialog"
       aria-labelledby="staticBackdropLabel"
-      aria-hidden="true">
+      aria-hidden="true"
+      no-close-on-backdrop>>
       <template #modal-header="{ }">
         <h5 class="modal-title" id="modal-label">Media Device Test</h5>
       </template>
@@ -371,67 +334,68 @@
               text="Mics"
               @click.native="(event) =>
               switchMicrophone(event.target.outerText)">
-              <template v-for="(mic,index) in mics" >
-                <b-dropdown-item
-                  v-bind:key="index">{{ mic.label }}</b-dropdown-item>
-              </template>
-            </b-dropdown>
-            <input
-              type="text"
-              class="mic-input form-control"
-              aria-label="Text input with dropdown button"
-              readonly>
-          </div>
-          <div class="progress">
-            <div
-              class="progress-bar bg-success"
-              role="progressbar"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100">
+                <template v-for="(mic,index) in mics">
+                  <b-dropdown-item v-bind:key="index">{{ mic.label }}</b-dropdown-item>
+                </template>
+              </b-dropdown>
+              <input type="text"
+                     class="mic-input form-control"
+                     aria-label="Text input with dropdown button"
+                     readonly>
             </div>
-          </div>
-          <h5 class="device-name">Camera</h5>
-          <p>Move in front of the camera to check if it works.</p>
-          <div class="input-group mb-3">
-            <b-dropdown
-              id="cams-dropdown"
-              text="Cams"
-              @click.native="(event) => switchCamera(event.target.outerText)">
-              <template v-for="(cam,index) in cams" >
-                <b-dropdown-item
-                  v-bind:key="index">{{ cam.label }}</b-dropdown-item>
-              </template>
+            <div class="progress">
+              <div class="progress-bar bg-success"
+                   role="progressbar"
+                   aria-valuenow="0"
+                   aria-valuemin="0"
+                   aria-valuemax="100">
+              </div>
+            </div>
+            <h5 class="device-name">Camera</h5>
+            <p>Move in front of the camera to check if it works.</p>
+            <div class="input-group mb-3">
+              <b-dropdown id="cams-dropdown"
+                          text="Cams"
+                          @click.native="(event) => switchCamera(event.target.outerText)">
+                <template v-for="(cam,index) in cams">
+                  <b-dropdown-item v-bind:key="index">{{ cam.label }}</b-dropdown-item>
+                </template>
 
-            </b-dropdown>
-            <input type="text" class="cam-input form-control"
-                   aria-label="Text input with dropdown button" readonly>
-          </div>
-          <div id="pre-local-player" class="player"></div>
+              </b-dropdown>
+              <input type="text"
+                     class="cam-input form-control"
+                     aria-label="Text input with dropdown button"
+                     readonly>
+            </div>
+            <div id="pre-local-player"
+                 class="player">
+            </div>
         </div>
-      </template>
-      <template #modal-footer="{}">
-        <button type="button" class="btn btn-secondary"
-                @click="joinChannel(false)">关闭摄像头与麦克风后进入</button>
-        <button type="button" class="btn btn-primary"
-                @click="joinChannel(true)" >进入会议室</button>
-      </template>
-    </b-modal>
-    <share-view-list
-      :conferenceID="conferenceID"
-      :userID="userID"
-      :founderID="founderID"
-      v-if="isSharing"
-      @shareView="shareMyView"
-    ></share-view-list>
-    <share-my-view-check @agree="agreeToShareMyView"
-                         @reject="rejectToShareMyView"></share-my-view-check>
+        </template>
+        <template #modal-footer="{}">
+          <button type="button"
+                  class="btn btn-secondary"
+                  @click="joinChannel(false)">关闭摄像头与麦克风后进入</button>
+          <button type="button"
+                  class="btn btn-primary"
+                  @click="joinChannel(true)">进入会议室</button>
+        </template>
+      </b-modal>
+      <share-view-list :conferenceID="conferenceID"
+                       :userID="userID"
+                       :founderID="founderID"
+                       v-if="isSharing"
+                       @shareView="shareMyView"></share-view-list>
+      <share-my-view-check @agree="agreeToShareMyView"
+                           @reject="rejectToShareMyView"></share-my-view-check>
+    </div>
+    <div v-else
+         class="invalid-token">
+      <p>链接已失效</p>
+      <img src="../../assets/picture/error404.png"
+           alt="链接失效">
+    </div>
   </div>
-  <div v-else class="invalid-token">
-    <p>链接已失效</p>
-    <img src="../../assets/picture/error404.png" alt="链接失效">
-  </div>
-</div>
 </template>
 <script>
 import Logo from '../../components/PublicComponents/Logos/Logo.vue'
@@ -459,6 +423,7 @@ export default {
       displayPicker: false,
       displayLineHeight: false,
       conferenceInformation: {},
+      conferenceToken: '',
       conferenceName: '',
       founderID: 0,
       canvas: undefined,
@@ -466,10 +431,11 @@ export default {
       remoteUUID: undefined,
       documentArray: [],
       initBlocksOfCanvas: undefined,
-      copyNotice: '',
+      copyNotice: '点击复制会议室链接',
       URL: '',
-      isValid: true,
+      isValid: false,
       isVisitor: '',
+      invalidMessage: '',
       isInviting: false,
       isSharing: false,
       paramsForSharingView: '',
@@ -503,8 +469,8 @@ export default {
       initCommentBlocks: undefined,
       commentMode: false,
       documentBlockOfComment: undefined,
-      windowWidth: '',
-      windowHeight: ''
+      windowWidth: undefined,
+      windowHeight: undefined
     }
   },
   computed: {
@@ -521,11 +487,38 @@ export default {
       this.canvas.freeDrawingBrush.width = this.size
     }
   },
-  created () {
+  async created () {
+    this.windowWidth = window.innerWidth
+    this.windowHeight = window.innerHeight
     this.conferenceID = Number(this.$route.query.conferenceID)
-    if (this.conferenceID) {
+    this.conferenceToken = this.$route.query.conferenceToken
+    await Api.checkConferenceToken({
+      userID: this.userID,
+      conferenceID: this.conferenceID,
+      conferenceToken: this.conferenceToken
+    })
+      .then((response) => {
+        const message = response.data.message
+        if (message === 'UNDEFINED') {
+          this.isValid = false
+          this.invalidMessage = '链接不合法，请检查您的链接'
+        } else if (message === 'INVALID') {
+          this.isValid = false
+          this.invalidMessage = '您没有访问权限'
+        } else if (message === 'VALID') {
+          const expired = response.data.expired
+          if (expired) {
+            this.isValid = false
+            this.invalidMessage = '链接已过期'
+          } else {
+            this.isValid = true
+            this.isVisitor = response.data.isVisitor
+          }
+        }
+      })
+    if (this.isValid) {
       this.$store.commit('ENTER_CONFERENCE', this.conferenceID)
-      Api.getObjects({
+      await Api.getObjects({
         model: 'Conference',
         condition: { id: this.conferenceID }
       })
@@ -533,355 +526,349 @@ export default {
           this.founderID = response.data.objects[0].founderID
           this.conferenceName = response.data.objects[0].conferenceName
           this.conferenceInformation = response.data.objects[0]
-          this.isVisitor = (this.teamID !== this.conferenceInformation.teamID)
-          if (this.isVisitor) {
-            this.checkConferenceToken()
-          }
         })
-    } else {
-      this.isValid = false
     }
   },
   mounted () {
-    this.windowHeight = window.innerHeight + 'px'
-    this.windowWidth = window.innerWidth + 'px'
-    AgoraRTC.setLogLevel(4)
-    this.uuid = uuid()
-    this.remoteUUID = this.uuid
-    this.initBlocksOfCanvas = new Map()
-    this.initFile = new Map()
-    this.initCommentBlocks = new Map()
-    this.$io.emit('enterCanvas', this.conferenceID, this.userID)
-    this.canvas = new fabric.Canvas('canvas')
-    this.$io.on('receiveObjectOfCanvas', (object, remoteUUID, setOption) => {
-      this.solveObjectOption(object, setOption)
-      this.updateBoard(this.canvas, object, remoteUUID)
-    })
-    this.$io.on('leave', () => {
-      alert('您已被移出会议室')
-      if (this.isVisitor) {
-        this.$router.push({ path: '/team/teampage' })
-      } else {
-        this.$router.push({ path: '/team/teamofuser' })
-      }
-    })
-    this.$io.on('enter', () => {
-      this.updateMemberList()
-    })
-    this.$io.on('exit', () => {
-      this.updateMemberList()
-    })
-    this.$io.on('initCanvas',
-      (itemsOfCanvas, blocksOfCanvas, filesOfCanvas,
-        blocks, blockComments, freeComments) => {
-        for (const item of itemsOfCanvas) {
-          this.updateBoard(this.canvas, item, 0)
+    if (this.isValid) {
+      AgoraRTC.setLogLevel(4)
+      this.uuid = uuid()
+      this.remoteUUID = this.uuid
+      this.initBlocksOfCanvas = new Map()
+      this.initFile = new Map()
+      this.initCommentBlocks = new Map()
+      this.$io.emit('enterCanvas', this.conferenceID, this.userID)
+      this.canvas = new fabric.Canvas('canvas')
+      this.$io.on('receiveObjectOfCanvas', (object, remoteUUID, setOption) => {
+        this.solveObjectOption(object, setOption)
+        this.updateBoard(this.canvas, object, remoteUUID)
+      })
+      this.$io.on('leave', () => {
+        alert('您已被移出会议室')
+        if (this.isVisitor) {
+          this.$router.push({ path: '/team/teampage' })
+        } else {
+          this.$router.push({ path: '/team/teamofuser' })
         }
-        for (const block of blocksOfCanvas) {
-          this.documentArray.push(block.itemID)
-          this.initBlocksOfCanvas.set(block.itemID,
-            {
-              left: block.itemLeft,
-              top: block.itemTop,
-              type: block.type,
-              language: block.language,
+      })
+      this.$io.on('enter', () => {
+        this.updateMemberList()
+      })
+      this.$io.on('exit', () => {
+        this.updateMemberList()
+      })
+      this.$io.on('initCanvas',
+        (itemsOfCanvas, blocksOfCanvas, filesOfCanvas,
+          blocks, blockComments, freeComments) => {
+          for (const item of itemsOfCanvas) {
+            this.updateBoard(this.canvas, item, 0)
+          }
+          for (const block of blocksOfCanvas) {
+            this.documentArray.push(block.itemID)
+            this.initBlocksOfCanvas.set(block.itemID,
+              {
+                left: block.itemLeft,
+                top: block.itemTop,
+                type: block.type,
+                language: block.language,
+                zoom: this.zoom
+              })
+          }
+          for (const file of filesOfCanvas) {
+            this.fileArray.push(file.fileID)
+            this.initFile.set(file.fileID, {
+              left: file.fileLeft,
+              top: file.fileTop,
+              fileContent: file.fileContent,
               zoom: this.zoom
             })
-        }
-        for (const file of filesOfCanvas) {
-          this.fileArray.push(file.fileID)
-          this.initFile.set(file.fileID, {
-            left: file.fileLeft,
-            top: file.fileTop,
-            fileContent: file.fileContent,
-            zoom: this.zoom
-          })
-        }
-        for (const block of blocks) {
-          if (block.stickBlockID === null ||
-            block.stickBlockID === undefined) {
-            this.blocks.push(block.commentBlockID)
-            this.initCommentBlocks.set(block.commentBlockID,
-              {
-                left: block.left,
-                top: block.top,
-                commentBlockID: block.commentBlockID,
-                conferenceID: block.conferenceID,
-                stickBlockID: block.stickBlockID
-              })
-          } else {
-            const object = this.initBlocksOfCanvas.get(block.stickBlockID)
-            this.initBlocksOfCanvas.set(block.stickBlockID,
-              { ...object, commentID: block.commentBlockID })
           }
-        }
-        for (let index = blockComments.length - 1; index >= 0; index--) {
-          this.blockComments.push(blockComments[index])
-        }
-        for (let index = freeComments.length - 1; index >= 0; index--) {
-          this.freeComments.push(freeComments[index])
+          for (const block of blocks) {
+            if (block.stickBlockID === null ||
+              block.stickBlockID === undefined) {
+              this.blocks.push(block.commentBlockID)
+              this.initCommentBlocks.set(block.commentBlockID,
+                {
+                  left: block.left,
+                  top: block.top,
+                  commentBlockID: block.commentBlockID,
+                  conferenceID: block.conferenceID,
+                  stickBlockID: block.stickBlockID
+                })
+            } else {
+              const object = this.initBlocksOfCanvas.get(block.stickBlockID)
+              this.initBlocksOfCanvas.set(block.stickBlockID,
+                { ...object, commentID: block.commentBlockID })
+            }
+          }
+          for (let index = blockComments.length - 1; index >= 0; index--) {
+            this.blockComments.push(blockComments[index])
+          }
+          for (let index = freeComments.length - 1; index >= 0; index--) {
+            this.freeComments.push(freeComments[index])
+          }
+        })
+      this.$io.on('shareViewInvitation', (params) => {
+        this.$bvModal.show('share-view-check')
+        this.paramsForSharingView = params
+      })
+      this.canvas.on('object:added', (option) => {
+        this.objectChanged(option, 'added')
+      })
+      this.canvas.on('object:removed', (option) => {
+        this.objectChanged(option, 'removed')
+      })
+      this.canvas.on('object:modified', (option) => {
+        this.objectChanged(option, 'modified')
+      })
+      document.addEventListener('keydown', (event) => {
+        let activeObjects
+        switch (event.code) {
+          case 'Delete':
+          case 'Backspace':
+            activeObjects = this.canvas.getActiveObjects()
+            if (activeObjects) {
+              for (const activeObject of activeObjects) {
+                if (!activeObject.isEditing) {
+                  this.canvas.remove(activeObject)
+                }
+              }
+              this.canvas.renderAll()
+            }
+            break
         }
       })
-    this.$io.on('shareViewInvitation', (params) => {
-      this.$bvModal.show('share-view-check')
-      this.paramsForSharingView = params
-    })
-    this.canvas.on('object:added', (option) => {
-      this.objectChanged(option, 'added')
-    })
-    this.canvas.on('object:removed', (option) => {
-      this.objectChanged(option, 'removed')
-    })
-    this.canvas.on('object:modified', (option) => {
-      this.objectChanged(option, 'modified')
-    })
-    document.addEventListener('keydown', (event) => {
-      let activeObjects
-      switch (event.code) {
-        case 'Delete':
-        case 'Backspace':
-          activeObjects = this.canvas.getActiveObjects()
-          if (activeObjects) {
-            for (const activeObject of activeObjects) {
-              if (!activeObject.isEditing) {
-                this.canvas.remove(activeObject)
-              }
-            }
-            this.canvas.renderAll()
+      this.canvas.on({
+        'mouse:down': (event) => {
+          if (event.target === null && this.dragMode) {
+            this.dragging = true
+            this.canvas.selection = false
           }
-          break
-      }
-    })
-    this.canvas.on({
-      'mouse:down': (event) => {
-        if (event.target === null && this.dragMode) {
-          this.dragging = true
-          this.canvas.selection = false
-        }
-      },
-      'mouse:up': (event) => {
-        if (this.dragging) {
-          this.dragging = false
-        }
-        this.canvas.selection = true
-      },
-      'mouse:move': (event) => {
-        if (this.dragging && event && event.e) {
-          const delta = new fabric.Point(event.e.movementX, event.e.movementY)
-          this.relativeX += event.e.movementX / this.zoom
-          this.relativeY += event.e.movementY / this.zoom
-          this.canvas.relativePan(delta)
-          for (let index = this.documentArray.length - 1;
-            index >= 0; index--) {
-            const block = this.getElementById('docContainer' +
-              this.documentArray[index])
-            const left = block.style.left
-            const top = block.style.top
-            block.style.left = Number(left.substr(0, left.length - 2)) +
-              event.e.movementX + 'px'
-            block.style.top = Number(top.substr(0, top.length - 2)) +
-              event.e.movementY + 'px'
+        },
+        'mouse:up': (event) => {
+          if (this.dragging) {
+            this.dragging = false
+          }
+          this.canvas.selection = true
+        },
+        'mouse:move': (event) => {
+          if (this.dragging && event && event.e) {
+            const delta = new fabric.Point(event.e.movementX, event.e.movementY)
+            this.relativeX += event.e.movementX / this.zoom
+            this.relativeY += event.e.movementY / this.zoom
+            this.canvas.relativePan(delta)
+            for (let index = this.documentArray.length - 1;
+              index >= 0; index--) {
+              const block = this.getElementById('docContainer' +
+                this.documentArray[index])
+              const left = block.style.left
+              const top = block.style.top
+              block.style.left = Number(left.substr(0, left.length - 2)) +
+                event.e.movementX + 'px'
+              block.style.top = Number(top.substr(0, top.length - 2)) +
+                event.e.movementY + 'px'
+            }
+            for (let index = this.blocks.length - 1; index >= 0; index--) {
+              const comment = this.getElementById('comment-block' +
+                this.blocks[index])
+              const left = parseFloat(comment.style.left)
+              const top = parseFloat(comment.style.top)
+              comment.style.left = left + event.e.movementX + 'px'
+              comment.style.top = top + event.e.movementY + 'px'
+            }
+            for (let index = this.fileArray.length - 1; index >= 0; index--) {
+              const fileItem = this.getElementById('pdf-wrapper' +
+                this.fileArray[index])
+              const left = parseFloat(fileItem.style.left)
+              const top = parseFloat(fileItem.style.top)
+              fileItem.style.left = left + event.e.movementX + 'px'
+              fileItem.style.top = top + event.e.movementY + 'px'
+            }
+          }
+        },
+        'mouse:wheel': (mouseEvent) => {
+          mouseEvent.e.preventDefault()
+          mouseEvent.e.stopPropagation()
+          const oldZoom = this.canvas.getZoom()
+          let zoom = (event.deltaY > 0 ? -0.05 : 0.05) + this.canvas.getZoom()
+          zoom = Math.max(0.1, zoom)
+          zoom = Math.min(10, zoom)
+          this.zoom = zoom
+          this.relativeX = mouseEvent.pointer.x / zoom -
+            (mouseEvent.pointer.x - this.relativeX * oldZoom) / oldZoom
+          this.relativeY = mouseEvent.pointer.y / zoom -
+            (mouseEvent.pointer.y - this.relativeY * oldZoom) / oldZoom
+          const zoomPoint = new fabric.Point(mouseEvent.pointer.x,
+            mouseEvent.pointer.y)
+          this.canvas.zoomToPoint(zoomPoint, zoom)
+          for (let index = this.documentArray.length - 1; index >= 0; index--) {
+            const docRef = 'doc' + this.documentArray[index]
+            const documentComponent = this.$refs[docRef][0]
+            const block = documentComponent.codeMirror
+            let left = documentComponent.getContainer().style.left
+            left = left === '0' ? 0 : Number(left.substr(0, left.length - 2))
+            let top = documentComponent.getContainer().style.top
+            top = top === '0' ? 0 : Number(top.substr(0, top.length - 2))
+            documentComponent.getContainer().style.left =
+              zoom / oldZoom * (left - mouseEvent.pointer.x) +
+              mouseEvent.pointer.x + 'px'
+            documentComponent.getContainer().style.top =
+              zoom / oldZoom * (top - mouseEvent.pointer.y) +
+              mouseEvent.pointer.y + 'px'
+            block.setSize(400 * zoom, 400 * zoom)
+            documentComponent.getContainer().style.fontSize =
+              Math.ceil(14 * zoom) + 'px'
           }
           for (let index = this.blocks.length - 1; index >= 0; index--) {
-            const comment = this.getElementById('comment-block' +
-              this.blocks[index])
+            const comment = this.getElementById(
+              'comment-block' + this.blocks[index])
             const left = parseFloat(comment.style.left)
             const top = parseFloat(comment.style.top)
-            comment.style.left = left + event.e.movementX + 'px'
-            comment.style.top = top + event.e.movementY + 'px'
+            comment.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) +
+              mouseEvent.pointer.x + 'px'
+            comment.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) +
+              mouseEvent.pointer.y + 'px'
+            comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
           }
           for (let index = this.fileArray.length - 1; index >= 0; index--) {
-            const fileItem = this.getElementById('pdf-wrapper' +
-              this.fileArray[index])
+            const fileItem = this.getElementById(
+              'pdf-wrapper' + this.fileArray[index])
             const left = parseFloat(fileItem.style.left)
             const top = parseFloat(fileItem.style.top)
-            fileItem.style.left = left + event.e.movementX + 'px'
-            fileItem.style.top = top + event.e.movementY + 'px'
+            fileItem.style.left =
+              zoom / oldZoom * (left - mouseEvent.pointer.x) +
+              mouseEvent.pointer.x + 'px'
+            fileItem.style.top =
+              zoom / oldZoom * (top - mouseEvent.pointer.y) +
+              mouseEvent.pointer.y + 'px'
+            fileItem.style.width =
+              parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
+            fileItem.style.height =
+              parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
           }
         }
-      },
-      'mouse:wheel': (mouseEvent) => {
-        mouseEvent.e.preventDefault()
-        mouseEvent.e.stopPropagation()
-        const oldZoom = this.canvas.getZoom()
-        let zoom = (event.deltaY > 0 ? -0.05 : 0.05) + this.canvas.getZoom()
-        zoom = Math.max(0.1, zoom)
-        zoom = Math.min(10, zoom)
-        this.zoom = zoom
-        this.relativeX = mouseEvent.pointer.x / zoom -
-          (mouseEvent.pointer.x - this.relativeX * oldZoom) / oldZoom
-        this.relativeY = mouseEvent.pointer.y / zoom -
-          (mouseEvent.pointer.y - this.relativeY * oldZoom) / oldZoom
-        const zoomPoint = new fabric.Point(mouseEvent.pointer.x,
-          mouseEvent.pointer.y)
-        this.canvas.zoomToPoint(zoomPoint, zoom)
-        for (let index = this.documentArray.length - 1; index >= 0; index--) {
-          const docRef = 'doc' + this.documentArray[index]
-          const documentComponent = this.$refs[docRef][0]
-          const block = documentComponent.codeMirror
-          let left = documentComponent.getContainer().style.left
-          left = left === '0' ? 0 : Number(left.substr(0, left.length - 2))
-          let top = documentComponent.getContainer().style.top
-          top = top === '0' ? 0 : Number(top.substr(0, top.length - 2))
-          documentComponent.getContainer().style.left =
-            zoom / oldZoom * (left - mouseEvent.pointer.x) +
-            mouseEvent.pointer.x + 'px'
-          documentComponent.getContainer().style.top =
-            zoom / oldZoom * (top - mouseEvent.pointer.y) +
-            mouseEvent.pointer.y + 'px'
-          block.setSize(400 * zoom, 400 * zoom)
-          documentComponent.getContainer().style.fontSize =
-            Math.ceil(14 * zoom) + 'px'
+      })
+      const that = this
+      this.$io.on('newDocumentBlock', (params) => {
+        that.documentArray.push(params.docID)
+        this.initBlocksOfCanvas.set(params.docID, {
+          left: (params.left + this.relativeX) * this.zoom,
+          top: (params.top + this.relativeY) * this.zoom,
+          type: params.type,
+          language: params.language,
+          zoom: this.zoom
+        })
+      })
+      this.$io.on('moveDocumentBlock', (params) => {
+        const targetDoc = this.$refs[`doc${params.docID}`][0].$el
+        targetDoc.setAttribute('style',
+          `position: absolute;
+          left: ${(params.left + this.relativeX) * this.zoom}px;
+          top: ${(params.top + this.relativeY) * this.zoom}px`)
+      })
+      this.$io.on('deleteDocumentBlock', (docID) => {
+        that.documentArray.splice(
+          that.documentArray.findIndex(document => document === docID), 1)
+      })
+      this.$io.on('newPdfFile', (params) => {
+        that.fileArray.push(params.fileID)
+        that.initFile.set(params.fileID, {
+          left: (params.left + this.relativeX) * this.zoom,
+          top: (params.top + this.relativeY) * this.zoom,
+          fileContent: params.fileContent,
+          zoom: this.zoom
+        })
+      })
+      this.$io.on('moveFile', (params) => {
+        const targetFile = that.$refs[`file${params.fileID}`][0].$el
+        targetFile.style.postion = 'absolute'
+        targetFile.style.left = (params.left + this.relativeX) * this.zoom + 'px'
+        targetFile.style.top = (params.top + this.relativeY) * this.zoom + 'px'
+      })
+      this.$io.on('removeFile', (fileID) => {
+        that.fileArray.splice(
+          this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
+      })
+
+      this.$io.on('initVideo', this.initVideo)
+      this.$io.emit('enterVideo',
+        this.userID,
+        this.conferenceID)
+      this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+        if (bvEvent.componentId === 'media-device-test') {
+          cancelAnimationFrame(this.volumeAnimation)
         }
-        for (let index = this.blocks.length - 1; index >= 0; index--) {
-          const comment = this.getElementById(
-            'comment-block' + this.blocks[index])
-          const left = parseFloat(comment.style.left)
-          const top = parseFloat(comment.style.top)
-          comment.style.left = zoom / oldZoom * (left - mouseEvent.pointer.x) +
-            mouseEvent.pointer.x + 'px'
-          comment.style.top = zoom / oldZoom * (top - mouseEvent.pointer.y) +
-            mouseEvent.pointer.y + 'px'
-          comment.style.fontSize = Math.ceil(14 * zoom) + 'px'
-        }
-        for (let index = this.fileArray.length - 1; index >= 0; index--) {
-          const fileItem = this.getElementById(
-            'pdf-wrapper' + this.fileArray[index])
-          const left = parseFloat(fileItem.style.left)
-          const top = parseFloat(fileItem.style.top)
-          fileItem.style.left =
-            zoom / oldZoom * (left - mouseEvent.pointer.x) +
-            mouseEvent.pointer.x + 'px'
-          fileItem.style.top =
-            zoom / oldZoom * (top - mouseEvent.pointer.y) +
-            mouseEvent.pointer.y + 'px'
-          fileItem.style.width =
-            parseFloat(fileItem.style.width) * zoom / oldZoom + 'px'
-          fileItem.style.height =
-            parseFloat(fileItem.style.height) * zoom / oldZoom + 'px'
+      })
+      window.onload = e => {
+        e = e || window.event
+        if (e) {
+          this.$io.emit('enterConference',
+            this.userID,
+            this.conferenceID)
         }
       }
-    })
-    const that = this
-    this.$io.on('newDocumentBlock', (params) => {
-      that.documentArray.push(params.docID)
-      this.initBlocksOfCanvas.set(params.docID, {
-        left: (params.left + this.relativeX) * this.zoom,
-        top: (params.top + this.relativeY) * this.zoom,
-        type: params.type,
-        language: params.language,
-        zoom: this.zoom
-      })
-    })
-    this.$io.on('moveDocumentBlock', (params) => {
-      const targetDoc = this.$refs[`doc${params.docID}`][0].$el
-      targetDoc.setAttribute('style',
-        `position: absolute;
-        left: ${(params.left + this.relativeX) * this.zoom}px;
-         top: ${(params.top + this.relativeY) * this.zoom}px`)
-    })
-    this.$io.on('deleteDocumentBlock', (docID) => {
-      that.documentArray.splice(
-        that.documentArray.findIndex(document => document === docID), 1)
-    })
-    this.$io.on('newPdfFile', (params) => {
-      that.fileArray.push(params.fileID)
-      that.initFile.set(params.fileID, {
-        left: (params.left + this.relativeX) * this.zoom,
-        top: (params.top + this.relativeY) * this.zoom,
-        fileContent: params.fileContent,
-        zoom: this.zoom
-      })
-    })
-    this.$io.on('moveFile', (params) => {
-      const targetFile = that.$refs[`file${params.fileID}`][0].$el
-      targetFile.style.postion = 'absolute'
-      targetFile.style.left = (params.left + this.relativeX) * this.zoom + 'px'
-      targetFile.style.top = (params.top + this.relativeY) * this.zoom + 'px'
-    })
-    this.$io.on('removeFile', (fileID) => {
-      that.fileArray.splice(
-        this.fileArray.findIndex(pdfFile => pdfFile === fileID), 1)
-    })
-
-    this.$io.on('initVideo', this.initVideo)
-    this.$io.emit('enterVideo',
-      this.userID,
-      this.conferenceID)
-    this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-      if (bvEvent.componentId === 'media-device-test') {
+      window.onbeforeunload = e => {
+        e = e || window.event
+        if (e) {
+          this.$io.emit('exitConference',
+            this.userID,
+            this.conferenceID)
+        }
         cancelAnimationFrame(this.volumeAnimation)
       }
-    })
-    window.onload = e => {
-      e = e || window.event
-      if (e) {
-        this.$io.emit('enterConference',
-          this.userID,
-          this.conferenceID)
-      }
-    }
-    window.onbeforeunload = e => {
-      e = e || window.event
-      if (e) {
-        this.$io.emit('exitConference',
-          this.userID,
-          this.conferenceID)
-      }
-      cancelAnimationFrame(this.volumeAnimation)
-    }
 
-    this.canvas.on({
-      'mouse:down': (event) => {
-        this.addCommentBlock(event)
-      }
-    })
-    this.$io.on('newCommentBlock', (block) => {
-      if (block.stickBlockID === null || block.stickBlockID === undefined) {
-        this.blocks.push(block.commentBlockID)
-        block.left = (block.left + this.relativeX) * this.zoom
-        block.top = (block.top + this.relativeY) * this.zoom
-        this.initCommentBlocks.set(block.commentBlockID, block)
-      } else {
-        const ref = 'doc' + block.stickBlockID
-        this.$refs[ref][0].setComment(true)
-        this.$refs[ref][0].setCommentID(block.commentBlockID)
-      }
-    })
-    this.$io.on('newComment', (comment, type) => {
-      if (type === 'free') {
-        this.freeComments.push(comment)
-      } else {
-        this.blockComments.push(comment)
-      }
-      if (comment.commentBlockID === this.currentBlockID) {
-        this.refresh(this.currentCommentType, this.currentBlockID)
-      }
-    })
-    this.$io.on('deleteComment', (comment, type) => {
-      if (type === 'block') {
-        this.blockComments.splice(
-          this.blockComments.findIndex(
-            data => data.commentItemID === comment.commentItemID), 1)
-      } else {
-        this.freeComments.splice(
-          this.freeComments.findIndex(
-            data => data.commentItemID === comment.commentItemID), 1)
-      }
-      if (comment.commentBlockID === this.currentBlockID) {
-        this.refresh(this.currentCommentType, this.currentBlockID)
-      }
-    })
-    this.$io.on('deleteCommentBlock', (commentBlockID, type, documentBlockID) => {
-      if (type === 'free') {
-        this.blocks.splice(
-          this.blocks.findIndex(block => block === commentBlockID), 1)
-      } else {
-        const ref = 'doc' + documentBlockID
-        this.$refs[ref][0].setComment(false)
-      }
-    })
-    this.toggleMediaDeviceTest()
+      this.canvas.on({
+        'mouse:down': (event) => {
+          this.addCommentBlock(event)
+        }
+      })
+      this.$io.on('newCommentBlock', (block) => {
+        if (block.stickBlockID === null || block.stickBlockID === undefined) {
+          this.blocks.push(block.commentBlockID)
+          block.left = (block.left + this.relativeX) * this.zoom
+          block.top = (block.top + this.relativeY) * this.zoom
+          this.initCommentBlocks.set(block.commentBlockID, block)
+        } else {
+          const ref = 'doc' + block.stickBlockID
+          this.$refs[ref][0].setComment(true)
+          this.$refs[ref][0].setCommentID(block.commentBlockID)
+        }
+      })
+      this.$io.on('newComment', (comment, type) => {
+        if (type === 'free') {
+          this.freeComments.push(comment)
+        } else {
+          this.blockComments.push(comment)
+        }
+        if (comment.commentBlockID === this.currentBlockID) {
+          this.refresh(this.currentCommentType, this.currentBlockID)
+        }
+      })
+      this.$io.on('deleteComment', (comment, type) => {
+        if (type === 'block') {
+          this.blockComments.splice(
+            this.blockComments.findIndex(
+              data => data.commentItemID === comment.commentItemID), 1)
+        } else {
+          this.freeComments.splice(
+            this.freeComments.findIndex(
+              data => data.commentItemID === comment.commentItemID), 1)
+        }
+        if (comment.commentBlockID === this.currentBlockID) {
+          this.refresh(this.currentCommentType, this.currentBlockID)
+        }
+      })
+      this.$io.on('deleteCommentBlock', (commentBlockID, type, documentBlockID) => {
+        if (type === 'free') {
+          this.blocks.splice(
+            this.blocks.findIndex(block => block === commentBlockID), 1)
+        } else {
+          const ref = 'doc' + documentBlockID
+          this.$refs[ref][0].setComment(false)
+        }
+      })
+      this.toggleMediaDeviceTest()
+    }
   },
   beforeDestroy () {
     cancelAnimationFrame(this.volumeAnimation)
@@ -1150,24 +1137,24 @@ export default {
           if (response.data.message === 'SUCCESS') {
             this.URL = process.env.VUE_APP_CONFERENCE_BASE +
               '?conferenceToken=' + response.data.conferenceToken +
-                       '&' + 'conferenceID=' + this.conferenceID
+              '&' + 'conferenceID=' + this.conferenceID
             this.$copyText(this.URL).then(this.copySuccess, this.copyFail)
           }
         })
-        .catch((error) => console.log(error))
     },
     copySuccess () {
       this.copyNotice = '会议室链接已复制到剪贴板'
-      this.showCopyNotice()
+      this.showCopyNotice(3 * 1000)
     },
     copyFail () {
-      this.copyNotice = '该浏览器不支持自动复制'
-      this.showCopyNotice()
+      this.copyNotice = '该浏览器不支持自动复制\n' +
+                  '会议室链接如下：\n' + this.URL
+      this.showCopyNotice(10 * 60 * 1000)
     },
-    showCopyNotice () {
+    showCopyNotice (lastTime) {
       setTimeout(() => {
-        this.$refs.copySuccess.$emit('close')
-      }, 1500)
+        this.copyNotice = '点击复制会议室链接'
+      }, lastTime)
     },
     updateMemberList () {
       this.$refs.memberList.getMembers()
@@ -1437,9 +1424,22 @@ export default {
       this.$io.emit('deleteDocumentBlock', { conferenceID: this.conferenceID, docID: docID })
     },
     loadFileHandler: function () {
+      const fileMaxSize = 1024 * 1024 * 10 // 10M
       const reader = new FileReader()
       const file = document.getElementById('file-selector').files[0]
       if (file) {
+        console.log(file.name)
+        const type = file.name.substr(file.name.lastIndexOf('.') + 1)
+        // 类型限制
+        if (type !== 'pdf') {
+          alert('请选择pdf文件')
+          return
+        }
+        // 大小限制
+        if (file.size > fileMaxSize) {
+          alert('文件大小不能大于2M')
+          return
+        }
         reader.readAsDataURL(file)
         const that = this
         reader.onload = () => {
@@ -1505,25 +1505,6 @@ export default {
       document.removeEventListener('mousedown', this.documentMouseDown)
       document.removeEventListener('mouseup', this.documentMouseUp)
       this.displayLineHeight = false
-    },
-    checkConferenceToken () {
-      const conferenceToken = this.$route.query.conferenceToken
-      if (conferenceToken) {
-        Api.checkConferenceToken({
-          conferenceToken: conferenceToken
-        })
-          .then((response) => {
-            if (response.data.message === 'VALID' &&
-              response.data.expired === false) {
-              this.isValid = true
-            } else {
-              this.isValid = false
-            }
-          })
-          .catch(error => console.log(error))
-      } else {
-        this.isValid = false
-      }
     },
     notifyMove: function (params) {
       this.$io.emit('moveDocumentBlock', {
@@ -1673,6 +1654,17 @@ export default {
 }
 </script>
 <style scoped>
+.copy-notice {
+  white-space: pre-line;
+  height: fit-content;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 10px 0;
+}
+
 .canvas-container {
   position: relative;
   margin: 0;
@@ -1757,7 +1749,7 @@ export default {
 }
 
 .logo span {
-  font-family: Logo, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Logo, Cochin, Georgia, Times, "Times New Roman", serif;
   font-size: 30px;
 }
 
@@ -1884,5 +1876,15 @@ input {
 
 #cams-dropdown {
   width: 82px;
+}
+
+.upload-file-notice {
+  white-space: pre-line;
+  height: fit-content;
+  margin: 0;
+  padding: 0;
+}
+div + .device-name {
+  margin-top: 25px;
 }
 </style>

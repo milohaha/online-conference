@@ -13,6 +13,9 @@ describe('MemberList', () => {
   let response
   beforeEach(() => {
     wrapper = shallowMount(MemberList, {
+      props: {
+        founderID: 3
+      },
       stubs: ['router-view'],
       localVue,
       store,
@@ -36,7 +39,6 @@ describe('MemberList', () => {
         }
       })
     }, reject => { reject('error') })
-    wrapper.vm.founderID = 3
   })
   test('测试排序函数', () => {
     const members = [
@@ -67,18 +69,5 @@ describe('MemberList', () => {
     await wrapper.vm.getMembers()
     expect(wrapper.vm.sortMembers[1].id).toBe(2)
     expect(mockfn).toBeCalledTimes(1)
-  })
-  test('测试获取团队或会议室信息', async () => {
-    wrapper.vm.getMembers = jest.fn()
-    Api.getObjects = jest.fn().mockReturnValue(
-      new Promise(resolve => {
-        resolve({ data: { Objects: [{ founderID: 1 }] } })
-      }, reject => { reject('error') })
-    )
-    await wrapper.vm.getGroupInformation()
-    setTimeout(() => {
-      expect(wrapper.vm.getMembers).toBeCalledTimes(1)
-      expect(wrapper.vm.founderID).toBe(1)
-    }, 1000)
   })
 })

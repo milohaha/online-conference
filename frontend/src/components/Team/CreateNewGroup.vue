@@ -121,9 +121,11 @@ export default {
             } else if (response.data.message === 'EXISTS') {
               this.notice = '创建失败，该名称已存在'
               this.noticeStyle = 'danger'
+              this.createResult = ''
             } else {
               this.notice = '创建失败，请稍后再尝试'
               this.noticeStyle = 'warning'
+              this.createResult = ''
             }
           }).then(() => {
             this.groupName = this.inputName
