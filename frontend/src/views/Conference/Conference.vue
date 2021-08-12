@@ -320,18 +320,18 @@
       role="dialog"
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
-      no-close-on-backdrop>>
+      no-close-on-backdrop>
       <template #modal-header="{ }">
-        <h5 class="modal-title" id="modal-label">Media Device Test</h5>
+        <h5 class="modal-title" id="modal-label">影音设备检测</h5>
       </template>
       <template>
         <div class="device-check-container">
-          <h5 class="device-name">Microphone</h5>
-          <p>Produce sounds to check if the mic works.</p>
+          <h5 class="device-name">麦克风</h5>
+          <p>发出声音以确认麦克风正常</p>
           <div class="input-group mb-3">
             <b-dropdown
               id="mics-dropdown"
-              text="Mics"
+              text="麦克风"
               @click.native="(event) =>
               switchMicrophone(event.target.outerText)">
                 <template v-for="(mic,index) in mics">
@@ -351,11 +351,11 @@
                    aria-valuemax="100">
               </div>
             </div>
-            <h5 class="device-name">Camera</h5>
-            <p>Move in front of the camera to check if it works.</p>
+            <h5 class="device-name">摄像头</h5>
+            <p>查看画面以确认摄像头正常</p>
             <div class="input-group mb-3">
               <b-dropdown id="cams-dropdown"
-                          text="Cams"
+                          text="摄像头"
                           @click.native="(event) => switchCamera(event.target.outerText)">
                 <template v-for="(cam,index) in cams">
                   <b-dropdown-item v-bind:key="index">{{ cam.label }}</b-dropdown-item>
@@ -389,8 +389,7 @@
       <share-my-view-check @agree="agreeToShareMyView"
                            @reject="rejectToShareMyView"></share-my-view-check>
     </div>
-    <div v-else
-         class="invalid-token">
+    <div class="invalid-token">
       <p>链接已失效</p>
       <img src="../../assets/picture/error404.png"
            alt="链接失效">
@@ -487,9 +486,11 @@ export default {
       this.canvas.freeDrawingBrush.width = this.size
     }
   },
-  async created () {
+  created () {
     this.windowWidth = window.innerWidth
     this.windowHeight = window.innerHeight
+  },
+  async mounted () {
     this.conferenceID = Number(this.$route.query.conferenceID)
     this.conferenceToken = this.$route.query.conferenceToken
     await Api.checkConferenceToken({
@@ -527,9 +528,9 @@ export default {
           this.conferenceName = response.data.objects[0].conferenceName
           this.conferenceInformation = response.data.objects[0]
         })
+    } else {
+      document.getElementsByClassName('invalid-token')[0].style.display = 'flex'
     }
-  },
-  mounted () {
     if (this.isValid) {
       AgoraRTC.setLogLevel(4)
       this.uuid = uuid()
@@ -1428,7 +1429,6 @@ export default {
       const reader = new FileReader()
       const file = document.getElementById('file-selector').files[0]
       if (file) {
-        console.log(file.name)
         const type = file.name.substr(file.name.lastIndexOf('.') + 1)
         // 类型限制
         if (type !== 'pdf') {
@@ -1533,7 +1533,7 @@ export default {
         }
       } else {
         if (micLabel) {
-          micLabel.setAttribute('value', 'Not found, please check')
+          micLabel.setAttribute('value', '找不到设备,请检查')
         }
       }
       this.cams = await AgoraRTC.getCameras()
@@ -1549,7 +1549,7 @@ export default {
       } else {
         if (camLabel) {
           camLabel.setAttribute(
-            'value', 'Not found, please check')
+            'value', '找不到设备,请检查')
         }
       }
     },
@@ -1821,7 +1821,7 @@ p {
 }
 
 .invalid-token {
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1884,6 +1884,7 @@ input {
   margin: 0;
   padding: 0;
 }
+
 div + .device-name {
   margin-top: 25px;
 }
