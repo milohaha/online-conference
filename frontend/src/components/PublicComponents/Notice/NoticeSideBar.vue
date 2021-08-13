@@ -177,6 +177,7 @@ export default {
 .bell {
   width: 40px;
   height: 40px;
+  margin-top: 5px;
 }
 
 .message-badge {

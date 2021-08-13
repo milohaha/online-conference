@@ -417,7 +417,7 @@ export default {
   data: function () {
     return {
       size: 3,
-      color: '#111111',
+      color: '#1178d4',
       isMessageSideBarOpen: false,
       displayPicker: false,
       displayLineHeight: false,
@@ -1678,13 +1678,13 @@ p {
   background-color: #fff;
   position: fixed;
   top: 5px;
-  left: 1%;
+  left: 10px;
 }
 
 .left-center {
   z-index: 100;
   position: fixed;
-  left: 1%;
+  left: 10px;
   top: 23%;
 }
 
@@ -1692,20 +1692,20 @@ p {
   z-index: 100;
   position: fixed;
   bottom: 5px;
-  left: 1%;
+  left: 10px;
 }
 
 .right-top-center {
   z-index: 100;
   position: fixed;
   top: 5px;
-  right: 2%;
+  right: 10px;
 }
 
 .right-bottom-center {
   z-index: 100;
   position: fixed;
-  right: 5px;
+  right: 10px;
   bottom: 5px;
 }
 
@@ -1763,7 +1763,7 @@ p {
   display: inline-block;
   width: 50px;
   height: 50px;
-  border-bottom-right-radius: 30px;
+  border-radius: 5px;
   position: fixed;
   right: 5px;
   bottom: 5px;

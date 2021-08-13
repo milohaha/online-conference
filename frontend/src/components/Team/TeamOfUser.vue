@@ -67,7 +67,7 @@
       <div class="team-member-list">
         <team-member-list groupType="Team"></team-member-list>
       </div>
-      <div class="team-conference-lists my-3">
+      <div class="team-conference-lists">
         <conference-list ref="conferenceList"></conference-list>
       </div>
     </div>
@@ -136,6 +136,10 @@ export default {
 }
 </script>
 <style scoped>
+.single-team {
+  margin-top: 6px;
+}
+
 .team-info-area {
   width: 400px;
   height: 700px;
@@ -146,11 +150,15 @@ export default {
   width: 800px;
 }
 
+.team-conference-lists {
+  margin-top: 40px;
+}
+
 .team-info-card {
   min-width: 20rem;
   max-width: 22rem;
   border-radius: 5px;
-  box-shadow: 1px 1px 5px #7f7f7f;
+  box-shadow: 1px 1px 5px #dbdbdb;
 }
 
 .group-item-create,

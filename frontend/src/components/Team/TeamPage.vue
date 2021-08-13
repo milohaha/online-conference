@@ -9,7 +9,7 @@
         </b-link>
       </div>
       <div class="created-teams">
-        <b-card-group class="team-group">
+        <div class="team-group d-flex">
           <team-in-list
             v-for="teamCreated in teamsCreated"
             :key="teamCreated.id"
@@ -17,7 +17,7 @@
             :teamName="teamCreated.teamName">
           </team-in-list>
           <b-card
-            class="m-4 team-create-card align-items-center"
+            class="mx-4 my-1 team-create-card align-items-center"
             bg-variant="light">
             <b-button
               class="fmtfont fmt-add team-create-button"
@@ -26,7 +26,7 @@
               v-b-popover.hover.right="'创建团队'">
             </b-button>
           </b-card>
-        </b-card-group>
+        </div>
       </div>
     </div>
     <div class="team-join-page my-3">
@@ -36,7 +36,7 @@
         </b-link>
       </div>
       <div class="joined-teams">
-        <b-card-group class="team-group">
+        <div class="team-group d-flex">
           <team-in-list
             v-for="teamJoined in teamsJoined"
             :key="teamJoined.id"
@@ -44,7 +44,7 @@
             :teamName="teamJoined.teamName">
           </team-in-list>
           <b-card
-            class="m-4 team-join-card align-items-center"
+            class="mx-4 my-1 team-join-card align-items-center"
             bg-variant="light">
             <b-button
               class="fmtfont fmt-add team-join-button"
@@ -53,7 +53,7 @@
               v-b-popover.hover.right="'加入团队'">
             </b-button>
           </b-card>
-        </b-card-group>
+        </div>
       </div>
     </div>
   </div>
@@ -118,7 +118,7 @@ span {
 }
 
 .team-group {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 420px;
 }
 
@@ -127,7 +127,7 @@ span {
   min-width: 16rem;
   max-width: 16rem;
   border-radius: 5px;
-  box-shadow: 1px 1px 5px #7f7f7f;
+  box-shadow: 1px 1px 5px #dbdbdb;
 }
 
 .team-create-button,

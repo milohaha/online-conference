@@ -84,15 +84,16 @@ img {
 
 .conference-list-card {
   border-radius: 5px;
-  box-shadow: 1px 1px 5px #7f7f7f;
+  box-shadow: 1px 1px 5px #dbdbdb;
 }
 
 .conference-list-link {
   text-decoration: none;
+  color: black;
 }
 
 .conference-list-group {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 320px;
 }
 </style>

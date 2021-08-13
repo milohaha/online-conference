@@ -5,7 +5,7 @@
     img-alt="Image"
     img-top
     bg-variant="light"
-    class="m-4 single-card">
+    class="mx-4 my-1 single-card">
     <b-card-text>
       <p>团队ID: {{ teamID }}</p>
       <p>一个团队，一个小天地</p>
@@ -36,6 +36,7 @@ export default {
   min-width: 16rem;
   max-width: 16rem;
   border-radius: 5px;
-  box-shadow: 1px 1px 5px #7f7f7f;
+  box-shadow: 1px 1px 5px #dbdbdb;
+  margin-top: 5px;
 }
 </style>

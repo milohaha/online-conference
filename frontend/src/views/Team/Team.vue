@@ -77,11 +77,12 @@ export default {
 .recent-file,
 .team-manage {
   text-decoration: none;
+  color: #000;
 }
 
 .team-manage-page {
   position: absolute;
-  top: 78px;
+  top: 85px;
   left: 164px;
   width: 1360px;
 }
